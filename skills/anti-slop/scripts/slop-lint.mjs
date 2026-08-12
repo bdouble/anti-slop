@@ -75,9 +75,14 @@ function blankComments(input) {
   return input.replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '));
 }
 
+// `title` is dropped WITH its contents, alongside style/script: it lives in <head>,
+// never renders as prose, and its text is usually templated boilerplate ("Name — CV").
+// Leaving it in charged the document for punctuation the reader never sees.
+// Observed failure 2026-08-12: a resume whose body carried zero em-dashes still tripped
+// the ≤1 shipping policy and blocked a DOCX render, on the <title> alone.
 function stripHtml(input) {
   return input
-    .replace(/<(style|script)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<(style|script|title)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&amp;/gi, '&')

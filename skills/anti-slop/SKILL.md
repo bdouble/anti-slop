@@ -187,6 +187,18 @@ guardrails: `references/detection-guide.md`.
   own headline example — matched no regex at all until the eval fixture caught
   it. Assume by-eye verification of regex coverage is wrong; run
   `evals/eval-antithesis.mjs` in the repo.
+- 2026-08-12: `--html` linted `<title>` text as prose. A resume whose body had
+  zero em-dashes still tripped the ≤1 policy and blocked a DOCX render, on the
+  templated `<title>Name — CV</title>` alone. `stripHtml` now drops `title` with
+  its contents alongside `style`/`script`. When a lint finding cites punctuation
+  or a phrase you cannot find in the visible copy, check `<head>` before editing
+  the prose — the finding may be about markup no reader sees.
+- 2026-08-12: A vendored copy of this skill drifted two minor versions behind
+  (v1.3.0 vs v1.5.0) and silently enforced the retired zero-contrast budget, so
+  a legitimate contrast got cut from a shipping document to satisfy a rule that
+  no longer existed. If a consumer vendors these files, it must verify the hash
+  before trusting a score — a stale linter fails closed in the wrong direction,
+  flattening prose rather than passing slop.
 
 ## Related
 
