@@ -1,0 +1,24 @@
+{
+  "name": "anti-slop",
+  "displayName": "Anti-Slop",
+  "version": "1.0.0",
+  "description": "Writing-quality skill for coding agents: prevents AI-slop patterns at generation time and detects plus remediates them in existing text. Recipe-first guidance plus a zero-dependency deterministic linter over 70 catalogued patterns.",
+  "author": {
+    "name": "Brian Benitez",
+    "url": "https://github.com/bdouble"
+  },
+  "homepage": "https://github.com/bdouble/anti-slop",
+  "repository": "https://github.com/bdouble/anti-slop",
+  "license": "MIT",
+  "keywords": [
+    "writing",
+    "editing",
+    "ai-slop",
+    "prose",
+    "linter",
+    "style",
+    "negative-parallelism",
+    "cover-letter",
+    "copywriting"
+  ]
+}
