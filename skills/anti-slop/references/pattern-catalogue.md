@@ -12,10 +12,10 @@ Two representation notes, both faithful to the source:
 
 ## Contents
 
-- [Lexical](#lexical) — `self-praise` · `ai-signature` · `ai-cliche` · `corporate-buzzword` · `adverbial-bloat` · `watchlist` · `elegant-variation` · `over-correction`
-- [Syntactic](#syntactic) — `hedge` · `copula-avoidance` · `antithesis` · `not-only-but-also` · `self-posed-qa` · `colon-reveal` · `countdown` · `dramatic-fragment` · `trailing-participle` · `sentenceUniformity` · `anaphora` · `overused-transition` · `wordy` · `concession-pivot` · `starterMonotony` · `contractionRate` · `rule-of-three-abuse`
-- [Structural](#structural) — `meta-commentary` · `signposted-conclusion` · `closing-tautology` · `boldFirstBullets` · `duplication` · `paragraphUniformity` · `boldDensity` · `titleCaseHeadings` · `one-point-dilution` · `fractal-summaries`
-- [Rhetorical](#rhetorical) — `significance-inflation` · `despite-challenges` · `false-suspense` · `rhetorical-setup` · `vague-attribution` · `imagine-opener` · `false-range` · `invented-label` · `dead-metaphor` · `analogy-stacking` · `mirrored-metaphor`
+- [Lexical](#lexical) — `self-praise` · `ai-signature` · `ai-cliche` · `corporate-buzzword` · `adverbial-bloat` · `vague-quantifier` · `watchlist` · `elegant-variation` · `over-correction`
+- [Syntactic](#syntactic) — `hedge` · `hedge-stacking` · `copula-avoidance` · `antithesis` · `not-only-but-also` · `self-posed-qa` · `colon-reveal` · `countdown` · `dramatic-fragment` · `trailing-participle` · `sentenceUniformity` · `anaphora` · `overused-transition` · `wordy` · `concession-pivot` · `starterMonotony` · `contractionRate` · `rule-of-three-abuse`
+- [Structural](#structural) — `meta-commentary` · `signposted-conclusion` · `closing-tautology` · `template-header` · `boldFirstBullets` · `duplication` · `paragraphUniformity` · `boldDensity` · `titleCaseHeadings` · `one-point-dilution` · `fractal-summaries`
+- [Rhetorical](#rhetorical) — `significance-inflation` · `assert-dont-prove` · `despite-challenges` · `false-suspense` · `rhetorical-setup` · `vague-attribution` · `imagine-opener` · `false-range` · `invented-label` · `dead-metaphor` · `analogy-stacking` · `mirrored-metaphor`
 - [Tonal](#tonal) — `application-boilerplate` · `era-opener` · `chat-leakage` · `engagement-bait` · `patronizing-analogy` · `ten-x-hype` · `horoscope` · `genericness` · `forced-positivity` · `manufactured-personality` · `false-vulnerability`
 - [Mechanical](#mechanical) — `machine-artifact` · `placeholder` · `chat-opener` · `emDashDensity` · `unicodeDecoration` · `latin-sidebar`
 - [Stylometric texture](#stylometric-texture) — `trigramEntropy` · `crossParaBurstiness` · `punctDistribution` · `lowTtr` · `smartPunctSignature` · `bypassNormalization` · `stylometricCluster`
@@ -72,6 +72,16 @@ Word- and phrase-level tells. Lexicons decay as models train away from publicize
 - "Clearly, this is critically important." → "This blocks the launch."
 **The rule (positive form):** delete the adverb; if the sentence needs propping up, add a number instead. Never swap one adverb for another. ("fundamentally" is allowed once when anchoring a core argument.)
 
+### Vague quantifier (`vague-quantifier`)
+**Tier:** weak · **Family:** Lexical · **Detection:** linter · **False-positive risk:** high
+**Why it's slop:** a quantity claim that avoids the quantity. "various", "numerous", "a number of" occupy the slot where the number goes and commit to nothing, so the sentence sounds evidenced without being checkable. Ordinary English on its own — the linter allows two before scoring, and a cluster is the signal.
+**Before → After:**
+- "We interviewed various stakeholders." → "We interviewed the CFO and two board members."
+- "The migration broke numerous downstream jobs." → "The migration broke nine downstream jobs."
+- "a multitude of options across a range of vendors" → "eleven options across four vendors."
+**The rule (positive form):** give the number, or name them. If you know neither, say what you do know ("most of the team", "everyone who tested it").
+**Note:** `myriad` and `plethora` live in `ai-signature`, not here — their cohort is sharper and earns the higher tier.
+
 ### Watchlist word (`watchlist`)
 **Tier:** weak · **Family:** Lexical · **Detection:** linter · **False-positive risk:** high
 **Why it's slop:** dynamic/ecosystem/landscape/empower/data-driven/scalable are fine once; a cluster of them reads as generated. Density is the signal, not any single word.
@@ -110,6 +120,16 @@ Sentence-level constructions. Several are legitimate rhetorical figures used onc
 - "In many ways, this is arguably the better approach." → "This approach wins on latency and costs the same."
 - "It is important to note that adoption grew." → "Adoption grew 40% in March."
 **The rule (positive form):** delete the preamble and start on the claim; if you need a caveat, make it precise ("in 7 of 10 cases").
+
+### Stacked modal hedge (`hedge-stacking`)
+**Tier:** strong · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** low
+**Why it's slop:** two hedges doing one hedge's job. "might possibly", "could potentially" marks a writer buying time rather than committing — the doubling adds no caution the single word did not already carry, and signals that no evidence is coming.
+**Before → After:**
+- "This might possibly improve retention." → "This lifted retention 4 points in the pilot."
+- "The change could potentially reduce latency." → "The change cut p99 latency by about a third in staging."
+- "It's possible that adoption might stall." → "Adoption stalls if fewer than 30% of teams migrate by June."
+**The rule (positive form):** keep at most one hedge, and prefer a precise qualifier to any of them ("in 7 of 10 cases" beats "might possibly").
+**Note:** a bare "might" or "could" never fires — those are ordinary English. `likely` is excluded from the pattern on purpose: "would likely take a week" is a normal estimate, not a hedge stack.
 
 ### Copula avoidance (`copula-avoidance`)
 **Tier:** strong · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** low-moderate
@@ -277,6 +297,16 @@ Document shape and formatting tells: how the piece is laid out and where it anno
 - "This proves that design matters." → "Redesigning the form lifted completion from 40% to 71%."
 **The rule (positive form):** let the evidence stand; if the point landed, no announcement is needed.
 
+### Template section header (`template-header`)
+**Tier:** strong · **Family:** Structural · **Detection:** linter · **False-positive risk:** low
+**Why it's slop:** the header names the section's ROLE instead of its content. "Final Thoughts" tells the reader where they are in a template; it tells them nothing about what the section says, and it is interchangeable across every piece ever written.
+**Before → After:**
+- "## Final Thoughts" → "## Why we chose Postgres over DynamoDB"
+- "## Key Takeaways" → "## The three numbers that decided it"
+- "## Why This Actually Works" → "## The cache invalidation trick"
+**The rule (positive form):** a header should be the most specific true sentence about what follows — readable on its own in a table of contents.
+**Note:** anchored to markdown heading syntax, so body prose ("my final thoughts are in the doc") never fires. `TL;DR` is deliberately not on the list: it is a genuine human convention, not a template tell.
+
 ### Bold-first bullets (`boldFirstBullets`)
 **Tier:** strong · **Family:** Structural · **Detection:** linter · **False-positive risk:** low-moderate
 **Why it's slop:** every list item formatted `**Keyword**: sentence` is a near-ubiquitous generated-markdown shape almost nobody hand-writes for a whole list.
@@ -339,6 +369,16 @@ Argument and persuasion moves that inflate, tease, or borrow authority.
 - "This marks a pivotal moment that cannot be overstated." → "This is our first release to clear one million daily users."
 - "Her work left an indelible mark on the field." → "Her paper is cited in three of the four leading textbooks."
 **The rule (positive form):** state the specific, bounded fact and let the reader judge its size.
+
+### Assertion in place of evidence (`assert-dont-prove`)
+**Tier:** strong · **Family:** Rhetorical · **Detection:** linter · **False-positive risk:** low-moderate
+**Why it's slop:** declaring a thing obvious, instead of showing it. "History is clear", "the truth is simple", "make no mistake" borrow the cadence of a proven point without paying for one — and they appear most often exactly where the evidence is missing.
+**Before → After:**
+- "The truth is simple: remote work wins." → "Our remote team shipped 30% more features in 2025 than the year we were in-office."
+- "History is clear on platform shifts." → "Every platform shift since 1995 took roughly a decade to reach half of users."
+- "Make no mistake, this is a turning point." → "This is the first quarter self-serve outsold enterprise."
+**The rule (positive form):** delete the assertion and lead with the evidence. If you have none, you have no claim yet — go get the fact.
+**Note:** distinct from `hedge`, which under-claims, and from `significance-inflation`, which inflates a fact rather than substituting for one.
 
 ### Acknowledge-and-dismiss (`despite-challenges`)
 **Tier:** strong · **Family:** Rhetorical · **Detection:** linter · **False-positive risk:** low-moderate

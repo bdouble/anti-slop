@@ -11,8 +11,8 @@
     {
       "name": "anti-slop",
       "source": "./",
-      "description": "Prevents AI-slop patterns while drafting and remediates them in existing prose. Teaches what good writing IS (recipe-first) rather than shipping a banned-word list, and bundles a zero-dependency Node linter over 70 catalogued patterns with reliability tiers, stylometric texture detection, and a dedicated treatment of negative parallelism (\"it's not X, it's Y\").",
-      "version": "1.0.1",
+      "description": "Prevents AI-slop patterns while drafting and remediates them in existing prose. Teaches what good writing IS (recipe-first) rather than shipping a banned-word list, and bundles a zero-dependency Node linter over 74 catalogued patterns with reliability tiers, stylometric texture detection, and a dedicated treatment of negative parallelism (\"it's not X, it's Y\").",
+      "version": "1.1.0",
       "author": {
         "name": "Brian Benitez",
         "url": "https://github.com/bdouble"

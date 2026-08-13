@@ -710,6 +710,11 @@ export function lintText(input, opts = {}) {
   // every one after it scores. Runs AFTER span-dedup so the free pass is never
   // spent on a finding that gets deduped away. Guarded for vendored copies of
   // patterns.mjs predating CONTRAST_FAMILY.
+  //
+  // 2026-08-13: freeing it is a SCORING decision, not a disposition. The freed
+  // finding also gets `review: 'keep-test'` so the report can lift it out of
+  // the "corroborate only" bucket it shared with the texture dump. Guarded on
+  // requiresKeepTest for vendored patterns.mjs predating the flag.
   const CF = PATTERNS.CONTRAST_FAMILY;
   if (CF && CF.freePerDocument > 0) {
     const famIds = new Set(CF.ids);
@@ -723,6 +728,7 @@ export function lintText(input, opts = {}) {
       f.fix = 'Free by policy (one contrast device per piece). Any further contrast scores. '
         + 'Keeping it still requires the keep-test: does the reader actually believe the negated half? '
         + 'See references/negative-parallelism.md.';
+      if (CF.requiresKeepTest) f.review = 'keep-test';
     }
   }
 
@@ -735,7 +741,13 @@ export function lintText(input, opts = {}) {
   // corroborate but never justify action alone — so they never block a render.
   const gateScore = deduped.filter((f) => f.tier === 'fatal' || f.tier === 'strong' || f.tier === 'lexical')
     .reduce((sum, f) => sum + f.points, 0);
-  return { score, gateScore, band: fatal ? 'FATAL' : scoreBand(score), fatal, findings: deduped, notLinted: NOT_LINTED };
+  // requiresReview (2026-08-13): findings the linter deliberately did not score
+  // but which a human/agent must still rule on. Orthogonal to tier and to both
+  // score aggregates by design — a document can be score 0, gateScore 0, band
+  // LOW and still owe a disposition. Consumers that want to block on it opt in
+  // via --require-review-disposition; nothing here changes existing exit codes.
+  const requiresReview = deduped.filter((f) => f.review).length;
+  return { score, gateScore, band: fatal ? 'FATAL' : scoreBand(score), fatal, requiresReview, findings: deduped, notLinted: NOT_LINTED };
 }
 
 export function scoreBand(score) {
@@ -746,6 +758,35 @@ export function scoreBand(score) {
 }
 
 // ── Formatting ───────────────────────────────────────────────────────────────
+
+// Questions for each review kind, sourced from the pattern data so the report
+// and the catalogue cannot drift. Add a kind here when a second one appears.
+function reviewQuestions(kind) {
+  if (kind === 'keep-test') return PATTERNS.CONTRAST_FAMILY?.keepTest || [];
+  return [];
+}
+
+// The keep-test block (2026-08-13). Printed for findings the linter freed from
+// scoring but which still owe a judgment call. It exists because pointing at a
+// reference file did not work: the drafting agent has to meet the questions in
+// the artifact it is already reading.
+export function formatReviewBlock(result) {
+  const flagged = result.findings.filter((f) => f.review);
+  if (flagged.length === 0) return [];
+  const lines = ['', `KEEP-TEST REQUIRED (${flagged.length}) — scored free, but you must still rule on each`];
+  for (const f of flagged) {
+    lines.push(`  line ${f.line}: ${f.rule}`);
+    lines.push(`    "${f.match}"`);
+    const qs = reviewQuestions(f.review);
+    if (qs.length) {
+      lines.push('    All three must hold, or state Y flat:');
+      qs.forEach((q, i) => lines.push(`      ${i + 1}. ${q}`));
+    }
+  }
+  lines.push('  Any test fails → cut the negated half and state the claim directly.');
+  lines.push('  Procedure, repairs, and the legitimate-use gallery: references/negative-parallelism.md');
+  return lines;
+}
 
 export function formatReport(result, { file } = {}) {
   const lines = [];
@@ -759,14 +800,19 @@ export function formatReport(result, { file } = {}) {
   } else {
     lines.push(`FINDINGS (${result.findings.length})`);
     for (const f of result.findings) {
-      lines.push(`  [${f.tier} +${f.points}] line ${f.line}: ${f.rule} — ${f.match}`);
+      const mark = f.review ? ` ⚑${f.review}` : '';
+      lines.push(`  [${f.tier} +${f.points}${mark}] line ${f.line}: ${f.rule} — ${f.match}`);
       lines.push(`      → ${f.fix}`);
     }
-    if (result.findings.some((f) => f.tier === 'weak' || f.tier === 'info')) {
+    // The "corroborate only" note must NOT cover review-flagged findings: they
+    // are exactly the ones you have to act on. It still covers the texture
+    // report and the weak tier, which are genuinely corroborating.
+    if (result.findings.some((f) => (f.tier === 'weak' || f.tier === 'info') && !f.review)) {
       lines.push('');
       lines.push('  Note: weak/info findings corroborate only — never act on them alone.');
     }
   }
+  lines.push(...formatReviewBlock(result));
   lines.push('');
   lines.push('NOT LINTED (judgment patterns — needs the recipe pass + independent review)');
   for (const n of result.notLinted) lines.push(`  - ${n}`);
@@ -807,6 +853,10 @@ Usage:
   node slop-lint.mjs <file> --max <n>    Exit 1 if score > n (FATAL always exits 1)
   cat draft.md | node slop-lint.mjs -    Read from stdin
 
+  --require-review-disposition           Exit 1 while any finding still owes a
+                                         judgment call (see KEEP-TEST REQUIRED).
+                                         Off by default; for gated renders.
+
 Bands: 0–5 low · 6–12 medium · 13+ high · FATAL overrides all. Ship target: ≤${PATTERNS.META.shipTarget}.`);
     process.exit(argv.length === 0 ? 1 : 0);
   }
@@ -837,6 +887,12 @@ Bands: 0–5 low · 6–12 medium · 13+ high · FATAL overrides all. Ship targe
 
   if (result.fatal > 0) process.exit(1);
   if (max !== null && !Number.isNaN(max) && result.score > max) process.exit(1);
+  // Opt-in only: a keep-test owed is invisible to score and gateScore by
+  // design, so a caller that wants it to block must ask for it explicitly.
+  if (argv.includes('--require-review-disposition') && result.requiresReview > 0) {
+    console.error(`slop-lint: ${result.requiresReview} finding(s) still owe a keep-test disposition.`);
+    process.exit(1);
+  }
   process.exit(0);
 }
 

@@ -32,6 +32,19 @@ jobs:
       - name: Negative-parallelism family regression
         run: node evals/eval-antithesis.mjs
 
+      # Freeing a contrast from SCORING must never free it from JUDGMENT, and
+      # the disposition axis must never move a score. A never-form shipped once
+      # because the freed finding sat at a tier the report tells readers to
+      # ignore.
+      - name: Keep-test disposition contract
+        run: node evals/eval-keep-test.mjs
+
+      # The v1.7.0 ports sit close to ordinary English. Most of these checks are
+      # false-positive guards: a bare "might" must never fire, "would likely" is
+      # an estimate, body prose is not a template header.
+      - name: Ported patterns — hits and false-positive guards
+        run: node evals/eval-ported-patterns.mjs
+
       # Band contract from README "Verify": clean prose must stay LOW, slop must
       # stay HIGH, machine artifacts must stay FATAL. Guards against a widened
       # pattern quietly flagging good writing.

@@ -39,7 +39,7 @@ Paste the block from `skills/anti-slop/references/AGENTS-SNIPPET.md` into your
 .claude-plugin/         plugin + marketplace manifests
 skills/anti-slop/       the Agent Skill
 ├── SKILL.md            recipe · negative parallelism · fast catalogue · workflow
-├── data/patterns.mjs   THE canonical pattern source (machine-readable, 70 patterns)
+├── data/patterns.mjs   THE canonical pattern source (machine-readable, 74 patterns)
 ├── references/         pattern catalogue · negative parallelism · genre recipes ·
 │                       detection guide · Codex shim
 └── scripts/slop-lint.mjs   zero-dep Node CLI linter (reads patterns.mjs)
@@ -47,6 +47,8 @@ evals/                  maintainer tooling — not shipped inside the skill
 ├── triggers.md         skill-routing evals (should / should-not trigger)
 ├── check-catalogue.mjs catalogue ↔ pattern-source drift check
 ├── eval-antithesis.mjs contrast-family recall/precision harness
+├── eval-keep-test.mjs  keep-test disposition contract (+ scoring invariance)
+├── eval-ported-patterns.mjs  v1.7.0 ports: hit/miss + false-positive guards
 ├── fixtures/           labeled corpus for the harness
 └── corpus/             whole-document lint fixtures (slop · clean · fatal · laundered)
 ```
@@ -99,12 +101,21 @@ See `skills/anti-slop/references/negative-parallelism.md`.
 - Any change to a contrast regex must run `evals/eval-antithesis.mjs` before
   and after. A by-eye coverage check has already missed the family's most
   common shape once.
+- Freeing a finding from SCORING never frees it from JUDGMENT. The contrast
+  allowance zeroes points but sets `review: 'keep-test'`, counted in
+  `result.requiresReview` and printed with its questions inline. Keep the two
+  axes separate — filing a mandatory judgment call under a tier the report
+  labels "corroborate only" is how a never-form shipped on a score of 0
+  (2026-08-13). `evals/eval-keep-test.mjs` pins it, including the invariant
+  that the disposition axis never moves a score.
 
 ## Verify
 
 ```bash
 node evals/check-catalogue.mjs      # catalogue ↔ pattern source
 node evals/eval-antithesis.mjs      # contrast family: recall + precision
+node evals/eval-keep-test.mjs       # keep-test disposition + scoring invariance
+node evals/eval-ported-patterns.mjs # v1.7.0 ports + their FP guards
 ```
 
 Whole-document bands:

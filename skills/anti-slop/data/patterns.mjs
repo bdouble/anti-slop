@@ -24,7 +24,7 @@
 //   LIGHT  — apply where it improves the text.
 
 export const META = {
-  version: '1.5.0', // 1.5.0 (2026-08-12): negative-parallelism family completed — 6 new antithesis shapes (never-form, question-form, degree-form, that-clause, point-form, past-tense verb-phrase) + "No A, no B, just C" added to countdown; CONTRAST_FAMILY introduces a one-free-per-document allowance across the contrast rules so the linter matches the skill's stated "cap at one per piece" policy instead of enforcing de facto zero tolerance (source: Oremus, The Atlantic, 2026-07-14 — Pangram measures the construction at 3x human frequency, i.e. the human baseline is not zero); 1.4.0 (2026-08-02): antithesis pattern widened — 4 new regexes covering you're/I'm/they're/he's/she's subjects, two-sentence period-separated reveal, markdown-context (table/list) sentence starts, and the mirrored trailing "X, not a/an/the Y." order (observed failure: original 4 patterns missed ~10 real instances in one document); 1.3.0 (2026-07-23): colon-reveal + dramatic-fragment + rhetorical-setup (imported from petergyang/no-ai-slop catalogue); 1.2.0 (2026-07-15): stylometric tier (adapted from conorbronsdon/avoid-ai-writing, MIT) + gateScore; 1.1.0: em-dash perception policy, FATAL FP fixes, span-dedup
+  version: '1.7.0', // 1.7.0 (2026-08-13): four patterns ported from a downstream consumer's local de-slop catalogue, which had drifted into a partial second source of truth — `vague-quantifier` (weak, free-allowance 2: various/numerous/multitude are ordinary English, a cluster is the tell), `hedge-stacking` (strong: STACKED modals only — bare "might"/"could" must never fire, and `likely` is excluded because "would likely take a week" is a normal estimate), `template-header` (strong, anchored to markdown heading syntax so body prose never fires; TL;DR deliberately excluded as a genuine human convention), `assert-dont-prove` (strong: asserting a thing is obvious in place of showing it). 1.6.0 (2026-08-13): CONTRAST_FAMILY gains a disposition axis — the freed first contrast now carries `review: 'keep-test'` alongside its info tier, the engine returns a `requiresReview` count, and the keep-test questions live in the pattern data so the report prints them inline. Fixes a gap where the free pass was filed under the report's own "corroborate only, never act on them alone" note, so the mandatory judgment call read as an instruction to ignore it (observed: a shipped never-form on a score of 0). Scoring, bands and gateScore are unchanged; the new `--require-review-disposition` exit is opt-in. 1.5.0 (2026-08-12): negative-parallelism family completed — 6 new antithesis shapes (never-form, question-form, degree-form, that-clause, point-form, past-tense verb-phrase) + "No A, no B, just C" added to countdown; CONTRAST_FAMILY introduces a one-free-per-document allowance across the contrast rules so the linter matches the skill's stated "cap at one per piece" policy instead of enforcing de facto zero tolerance (source: Oremus, The Atlantic, 2026-07-14 — Pangram measures the construction at 3x human frequency, i.e. the human baseline is not zero); 1.4.0 (2026-08-02): antithesis pattern widened — 4 new regexes covering you're/I'm/they're/he's/she's subjects, two-sentence period-separated reveal, markdown-context (table/list) sentence starts, and the mirrored trailing "X, not a/an/the Y." order (observed failure: original 4 patterns missed ~10 real instances in one document); 1.3.0 (2026-07-23): colon-reveal + dramatic-fragment + rhetorical-setup (imported from petergyang/no-ai-slop catalogue); 1.2.0 (2026-07-15): stylometric tier (adapted from conorbronsdon/avoid-ai-writing, MIT) + gateScore; 1.1.0: em-dash perception policy, FATAL FP fixes, span-dedup
   lastReviewed: '2026-08-12',
   reviewIntervalDays: 120,
   scoreBands: { low: 5, medium: 12 }, // 0–5 low · 6–12 medium · 13+ high
@@ -50,9 +50,40 @@ export const META = {
 // The allowance is NOT the keep-test. The linter cannot tell whether the
 // negated X is a real reader misconception; that judgment call lives in
 // references/negative-parallelism.md and can waive a scored finding on review.
+//
+// 2026-08-13: that last paragraph described an intent the output could not
+// carry. The freed finding was zeroed to `info` — a tier whose only other
+// occupant is the non-actionable texture report, and which the report footer
+// labels "corroborate only, never act on them alone." So the one finding
+// carrying a MANDATORY judgment call was filed under, and labelled with, the
+// system's own instruction to ignore it. A consumer (career-ops) shipped a
+// textbook never-form ("The hard part was never building. It was …") on a
+// score of 0 with no keep-test ever run.
+//
+// The free pass is correct and unchanged. What was missing is a DISPOSITION
+// axis: the five tiers all encode detector reliability, so "high-confidence
+// match, zero points, human must rule on it" had no representation. Findings
+// freed here now also carry `review: 'keep-test'`, the engine reports a
+// `requiresReview` count, and the questions below travel with the pattern data
+// so the report can print them inline — the drafting agent meets the keep-test
+// while looking at the finding, instead of needing a reference it was never
+// pointed at. Scoring is untouched; `--require-review-disposition` is opt-in.
+//
+// Scoped to this family deliberately. The sibling allowances ("one free
+// however" on overused-transition, maxAllowed on emDashDensity) use the same
+// zeroing mechanism, but those frees are unconditional — no keep-test exists
+// for them, so they get no disposition flag.
 export const CONTRAST_FAMILY = {
   ids: ['antithesis', 'not-only-but-also', 'countdown', 'colon-reveal'],
   freePerDocument: 1,
+  requiresKeepTest: true,
+  // All three must hold, or state Y flat. Mirrors SKILL.md § Negative
+  // parallelism → The keep-test, and references/negative-parallelism.md.
+  keepTest: [
+    'Does the reader genuinely hold belief X on arriving at this sentence?',
+    'Is X their belief, not a strawman built so Y sounds earned?',
+    "Would deleting X break the sentence (is the correction the point)?",
+  ],
 };
 
 // ─── Lexicons (phrase lists; case-insensitive, word-boundary matched) ────────
@@ -284,6 +315,37 @@ export const LEXICONS = [
     ],
   },
   {
+    // 2026-08-13, ported from a downstream consumer's local catalogue. The tell
+    // is a quantity claim that avoids the quantity. Deliberately WEAK with a
+    // free allowance: "numerous trials" is ordinary English, and precision on
+    // clean human prose is the failure mode that matters most here. A cluster
+    // is the signal. `myriad`/`plethora` are NOT here — they sit in
+    // `ai-signature`, where their sharper cohort earns the higher tier.
+    id: 'vague-quantifier', family: 'lexical', label: 'Vague quantifier (density signal)',
+    tier: 'weak', points: 1, freeAllowance: 2, frequencyLabel: 'LIGHT',
+    fpRisk: 'high', dateCohort: 'evergreen',
+    fix: 'Give the number, or name them. "various stakeholders" → "the CFO and two board members"; "numerous trials" → "nine trials".',
+    terms: [
+      'various', 'numerous', 'multitude', 'countless', 'a variety of',
+      'a range of', 'a host of', 'a number of', 'a wide array of',
+    ],
+  },
+  {
+    // 2026-08-13. Asserting that a thing is obvious, in place of showing it.
+    // Distinct from `hedge` (which under-claims) — this over-claims by fiat,
+    // and from `significance-inflation` (which inflates a fact rather than
+    // substituting for one).
+    id: 'assert-dont-prove', family: 'rhetorical', label: 'Assertion in place of evidence',
+    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    dateCohort: 'evergreen',
+    fix: 'Delete the assertion and state the evidence. If you have none, you have no claim.',
+    terms: [
+      'the truth is simple', 'the reality is simple', 'history is clear',
+      'the evidence is clear', 'one thing is clear', 'the answer is simple',
+      'make no mistake', 'the fact of the matter is',
+    ],
+  },
+  {
     id: 'watchlist', family: 'lexical', label: 'Watchlist word (density signal)',
     tier: 'weak', points: 1, freeAllowance: 2, frequencyLabel: 'LIGHT',
     fpRisk: 'high', dateCohort: '2024-2026',
@@ -465,6 +527,34 @@ export const REGEX_RULES = [
     // cost:") and Title-Case headings never match.
     fix: 'Rewrite as one plain sentence. Colons are for lists, labels, and quotes — not manufactured drama.',
     patterns: [/\b(?:the\s+(?:best|worst|hardest|weirdest|strangest|surprising|real|key|fun|scariest|craziest)\s+part|the\s+(?:catch|kicker|twist|irony|reality|truth|secret|beauty|magic|upshot|punchline)|the\s+(?:detail|thing|part|reason|trick|feature|insight|move|question)\s+(?:that|is|here)[\w\s'’-]{0,40})\s*:\s+[a-z][^.?!\n]{0,80}[.?!]/gi],
+  },
+  {
+    // 2026-08-13, ported from a downstream consumer's local catalogue.
+    // STACKED modals only. A bare "might" / "could" is ordinary English and
+    // must never fire — the tell is two hedges doing one hedge's job, which
+    // marks a writer buying time instead of committing. `likely` is excluded
+    // on purpose: "would likely take a week" is a normal, useful estimate.
+    id: 'hedge-stacking', family: 'syntactic', label: 'Stacked modal hedge ("might possibly")',
+    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    fix: 'Keep one hedge at most, or replace with a precise qualifier ("in 7 of 10 cases", not "might possibly").',
+    patterns: [
+      /\b(?:might|may|could|can|would)\s+(?:possibly|potentially|perhaps|conceivably|arguably)\b/gi,
+      /\b(?:possibly|potentially|perhaps|conceivably)\s+(?:might|may|could|would)\b/gi,
+      /\bit(?:'s|\s+is)\s+possible\s+that\b[^.!?]{0,60}?\b(?:might|may|could)\b/gi,
+    ],
+  },
+  {
+    // 2026-08-13, ported from a downstream consumer's local catalogue. Headings
+    // that label the section's ROLE instead of its content — the blog-template
+    // shape. Anchored to markdown heading syntax so body prose ("my final
+    // thoughts on this are…") never fires. `TL;DR` is deliberately absent: it
+    // is a genuine human convention, not a template tell.
+    id: 'template-header', family: 'structural', label: 'Template section header',
+    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    fix: 'Replace with a header naming the specific content ("Final Thoughts" → "Why we chose Postgres").',
+    patterns: [
+      /^#{1,6}\s+(?:final thoughts|closing thoughts|parting thoughts|key takeaways?|the takeaway|the bottom line|why this (?:actually )?works|what this means(?: for you)?|wrapping up|in closing)\s*:?\s*$/gim,
+    ],
   },
   {
     id: 'countdown', family: 'syntactic', label: 'Countdown ("Not X. Not Y. Just Z.")',

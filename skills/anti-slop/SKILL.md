@@ -92,6 +92,14 @@ did not invent it. The human baseline is not zero — Shakespeare, Lombardi, and
 DiGiorno all pass the keep-test. The linter gives the first contrast device a free pass and scores
 every one after. Zeroing the device out is over-correction, its own failure.
 
+**Free from scoring is not free from judgment.** The freed contrast still owes
+you a keep-test verdict. The linter says so: it reports the finding under
+`KEEP-TEST REQUIRED` with the three questions inline, counts it in
+`requiresReview`, and deliberately keeps it out of the "corroborate only"
+note. A zero score with an open keep-test is an unfinished document, not a
+clean one. Gated renders can block on it with
+`--require-review-disposition`.
+
 **Displacement watch.** Cutting it must not relocate it. "Y. Full stop." · "The
 real answer: Y." · "The catch? Y." · "Not X. Not Z. Just Y." · "Sure, X. But Y."
 are the same impulse in a different costume: stage the claim, withhold the
@@ -193,6 +201,31 @@ guardrails: `references/detection-guide.md`.
   its contents alongside `style`/`script`. When a lint finding cites punctuation
   or a phrase you cannot find in the visible copy, check `<head>` before editing
   the prose — the finding may be about markup no reader sees.
+- 2026-08-13: A downstream consumer kept a local de-slop catalogue beside this
+  skill, and it drifted into a partial second source of truth — an audit found
+  four items it covered that the skill did not (vague quantifiers, stacked modal
+  hedges, template section headers, assertion-in-place-of-evidence), ported in
+  v1.7.0. Lesson for consumers: a local catalogue kept "for convenience" becomes
+  a rival authority, and the drift runs BOTH ways — the copy can fall behind the
+  skill, and it can also hold rules the skill never learned. Keep one catalogue.
+  Three of the four ports sit close to ordinary English, so they carry explicit
+  false-positive guards in `evals/eval-ported-patterns.mjs`: a bare
+  "might"/"could" never fires, `likely` is excluded from the hedge stack
+  ("would likely take a week" is an estimate, not a hedge), `template-header` is
+  anchored to markdown heading syntax, and `vague-quantifier` stays weak-tier
+  with two free per document.
+- 2026-08-13: The one-free-contrast allowance was zeroing the freed finding to
+  `info` — the same tier as the non-actionable texture report, which the report
+  footer labels "corroborate only — never act on them alone." So the single
+  finding carrying a MANDATORY keep-test was filed under the system's own
+  instruction to ignore it, and a consumer shipped a textbook never-form ("The
+  hard part was never building. It was …") on a score of 0. Freeing something
+  from SCORING is not the same as freeing it from JUDGMENT; the five tiers only
+  encode detector reliability, so that state had no representation. Findings now
+  carry a `review` disposition, `lintText` returns `requiresReview`, and the
+  report prints the three keep-test questions inline — pointing at
+  `references/negative-parallelism.md` did not work, because the drafting agent
+  only reads the lint output. Pinned by `evals/eval-keep-test.mjs`.
 - 2026-08-12: A vendored copy of this skill drifted two minor versions behind
   (v1.3.0 vs v1.5.0) and silently enforced the retired zero-contrast budget, so
   a legitimate contrast got cut from a shipping document to satisfy a rule that
@@ -209,4 +242,6 @@ guardrails: `references/detection-guide.md`.
 - Repo `evals/` (maintainer tooling, not shipped inside the skill) —
   `eval-antithesis.mjs` scores the contrast family against a labeled fixture.
   Run it before and after ANY change to a contrast regex.
+  `eval-keep-test.mjs` pins the disposition contract: that a freed contrast
+  still reports a keep-test, and that doing so never moves a score.
 - Codex / non-Claude runtimes: `references/AGENTS-SNIPPET.md`.

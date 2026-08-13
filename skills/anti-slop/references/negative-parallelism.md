@@ -82,6 +82,8 @@ Run all three. All must hold, or state Y flat.
 
 `CONTRAST_FAMILY` zeroes the first contrast finding in a document so a deliberate use does not consume the whole ship budget. That is a scoring convenience. It says nothing about whether the instance is good. A scored second instance that passes all three questions can be kept on judgment; a free first instance that fails all three should still be cut.
 
+That distinction lived only in this paragraph, and the freed finding went out at `info` tier, where the report footer told readers not to act on it. A never-form shipped on a score of 0. Since 2026-08-13 the freed finding also carries `review: 'keep-test'`, lands in `result.requiresReview`, and prints under `KEEP-TEST REQUIRED` with the three questions inline, so adjudication happens in the lint output instead of depending on someone opening this file. **A score of 0 with an open keep-test is an unfinished document.** `--require-review-disposition` lets a gated render enforce that.
+
 ## 5. Five repairs, keyed to why the negation appeared
 
 Diagnose first — the wrong repair relocates the problem.
