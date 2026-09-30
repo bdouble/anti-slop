@@ -232,6 +232,7 @@ guardrails: `references/detection-guide.md`.
   no longer existed. If a consumer vendors these files, it must verify the hash
   before trusting a score — a stale linter fails closed in the wrong direction,
   flattening prose rather than passing slop.
+- 2026-09-30: A cover-letter sentence built as a colon + a three-part list of parallel wh-clauses ("Paces speeds up the early decisions every project depends on: where it can go, how it connects to the grid, and what it will take to permit.") passed the linter at score 0, the corpus and package overlap checks, and the voice-judge (which counted it as one of two triads, under its three-list threshold and as company-specific), and Brian cut it by hand as "the AI slop pattern": three examples plus the common phrasing. It is specific to the company but the SHAPE is the tell: abstract lead ("the early decisions every project depends on") + colon + where/how/what triplet that lists the obvious parts of the domain. Company-specific nouns do not launder a stock structure. When a sentence defines what the employer does, say the one thing that matters to the writer in their own words ("working on electric infrastructure acceleration is incredibly compelling") instead of enumerating three sub-parts. Not yet lintable as a regex (the colon-then-triplet form is common in legitimate prose); treat as a judgment check alongside rule-of-three, and count this shape toward the triad budget even when the triad is inside one sentence.
 
 ## Related
 
