@@ -39,7 +39,7 @@ Paste the block from `skills/anti-slop/references/AGENTS-SNIPPET.md` into your
 .claude-plugin/         plugin + marketplace manifests
 skills/anti-slop/       the Agent Skill
 ├── SKILL.md            recipe · negative parallelism · fast catalogue · workflow
-├── data/patterns.mjs   THE canonical pattern source (machine-readable, 74 patterns)
+├── data/patterns.mjs   THE canonical pattern source (machine-readable, 77 patterns)
 ├── references/         pattern catalogue · negative parallelism · genre recipes ·
 │                       detection guide · Codex shim
 └── scripts/slop-lint.mjs   zero-dep Node CLI linter (reads patterns.mjs)
@@ -49,6 +49,7 @@ evals/                  maintainer tooling — not shipped inside the skill
 ├── eval-antithesis.mjs contrast-family recall/precision harness
 ├── eval-keep-test.mjs  keep-test disposition contract (+ scoring invariance)
 ├── eval-ported-patterns.mjs  v1.7.0 ports: hit/miss + false-positive guards
+├── eval-outreach-patterns.mjs  v1.8.0 outreach rules: hit/miss + false-positive guards
 ├── fixtures/           labeled corpus for the harness
 └── corpus/             whole-document lint fixtures (slop · clean · fatal · laundered)
 ```
@@ -116,6 +117,7 @@ node evals/check-catalogue.mjs      # catalogue ↔ pattern source
 node evals/eval-antithesis.mjs      # contrast family: recall + precision
 node evals/eval-keep-test.mjs       # keep-test disposition + scoring invariance
 node evals/eval-ported-patterns.mjs # v1.7.0 ports + their FP guards
+node evals/eval-outreach-patterns.mjs # v1.8.0 outreach rules + their FP guards
 ```
 
 Whole-document bands:

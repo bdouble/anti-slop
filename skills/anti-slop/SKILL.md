@@ -122,6 +122,7 @@ Repairs, keep-test procedure, and the legitimate-use gallery:
 | "In conclusion, …" | End on the strongest concrete point. |
 | Every bullet "**Keyword**: sentence" | Vary format, or write prose. |
 | "Great question!" / "I hope this helps" | Delete — chat register never ships. |
+| "I hope this message finds you well. I just wanted to reach out…" / "no pressure, feel free to…" | First clause: why you're writing to this person. Last line: one specific ask, alone. |
 | Three perfectly parallel triads in a row | Vary to 2, 4, or 5 items; keep one deliberate triad. |
 | More than one em-dash per document | Perception rule: readers read "—" as AI even when it isn't. Keep at most one; replace by role (aside→commas, definition→colon, interruption→period). |
 
@@ -233,6 +234,17 @@ guardrails: `references/detection-guide.md`.
   before trusting a score — a stale linter fails closed in the wrong direction,
   flattening prose rather than passing slop.
 - 2026-09-30: A cover-letter sentence built as a colon + a three-part list of parallel wh-clauses ("Paces speeds up the early decisions every project depends on: where it can go, how it connects to the grid, and what it will take to permit.") passed the linter at score 0, the corpus and package overlap checks, and the voice-judge (which counted it as one of two triads, under its three-list threshold and as company-specific), and Brian cut it by hand as "the AI slop pattern": three examples plus the common phrasing. It is specific to the company but the SHAPE is the tell: abstract lead ("the early decisions every project depends on") + colon + where/how/what triplet that lists the obvious parts of the domain. Company-specific nouns do not launder a stock structure. When a sentence defines what the employer does, say the one thing that matters to the writer in their own words ("working on electric infrastructure acceleration is incredibly compelling") instead of enumerating three sub-parts. Not yet lintable as a regex (the colon-then-triplet form is common in legitimate prose); treat as a judgment check alongside rule-of-three, and count this shape toward the triad budget even when the triad is inside one sentence.
+- 2026-10-14: Outreach formulae scored 0. `application-boilerplate` matched exact
+  strings, so "I hope this MESSAGE finds you well" and "I came across Northwind"
+  slipped past, and whole stock follow-ups and referral asks linted clean. Cold
+  DMs and follow-ups rarely pass a render gate, so the linter is often their only
+  mechanical check. Now covered by `outreach-boilerplate`, `permission-hedge`,
+  and a one-free `exclamationDensity`. Two things stay legal on purpose: a plain
+  one-sentence statement of interest ("I'd love the chance to talk it through"),
+  which real hand-edited letters use, and bare "if/but/just/I think", whose
+  blanket ban (common in job-search rule lists) flattens connected prose. A
+  closer is a tell when it repeats across letters; catch that at the corpus
+  level, not per document. Pinned by `evals/eval-outreach-patterns.mjs`.
 
 ## Related
 
@@ -245,4 +257,6 @@ guardrails: `references/detection-guide.md`.
   Run it before and after ANY change to a contrast regex.
   `eval-keep-test.mjs` pins the disposition contract: that a freed contrast
   still reports a keep-test, and that doing so never moves a score.
+  `eval-outreach-patterns.mjs` pins the outreach rules and their
+  false-positive guards.
 - Codex / non-Claude runtimes: `references/AGENTS-SNIPPET.md`.

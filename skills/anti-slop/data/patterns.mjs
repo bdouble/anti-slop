@@ -24,8 +24,8 @@
 //   LIGHT  — apply where it improves the text.
 
 export const META = {
-  version: '1.7.0', // 1.7.0 (2026-08-13): four patterns ported from a downstream consumer's local de-slop catalogue, which had drifted into a partial second source of truth — `vague-quantifier` (weak, free-allowance 2: various/numerous/multitude are ordinary English, a cluster is the tell), `hedge-stacking` (strong: STACKED modals only — bare "might"/"could" must never fire, and `likely` is excluded because "would likely take a week" is a normal estimate), `template-header` (strong, anchored to markdown heading syntax so body prose never fires; TL;DR deliberately excluded as a genuine human convention), `assert-dont-prove` (strong: asserting a thing is obvious in place of showing it). 1.6.0 (2026-08-13): CONTRAST_FAMILY gains a disposition axis — the freed first contrast now carries `review: 'keep-test'` alongside its info tier, the engine returns a `requiresReview` count, and the keep-test questions live in the pattern data so the report prints them inline. Fixes a gap where the free pass was filed under the report's own "corroborate only, never act on them alone" note, so the mandatory judgment call read as an instruction to ignore it (observed: a shipped never-form on a score of 0). Scoring, bands and gateScore are unchanged; the new `--require-review-disposition` exit is opt-in. 1.5.0 (2026-08-12): negative-parallelism family completed — 6 new antithesis shapes (never-form, question-form, degree-form, that-clause, point-form, past-tense verb-phrase) + "No A, no B, just C" added to countdown; CONTRAST_FAMILY introduces a one-free-per-document allowance across the contrast rules so the linter matches the skill's stated "cap at one per piece" policy instead of enforcing de facto zero tolerance (source: Oremus, The Atlantic, 2026-07-14 — Pangram measures the construction at 3x human frequency, i.e. the human baseline is not zero); 1.4.0 (2026-08-02): antithesis pattern widened — 4 new regexes covering you're/I'm/they're/he's/she's subjects, two-sentence period-separated reveal, markdown-context (table/list) sentence starts, and the mirrored trailing "X, not a/an/the Y." order (observed failure: original 4 patterns missed ~10 real instances in one document); 1.3.0 (2026-07-23): colon-reveal + dramatic-fragment + rhetorical-setup (imported from petergyang/no-ai-slop catalogue); 1.2.0 (2026-07-15): stylometric tier (adapted from conorbronsdon/avoid-ai-writing, MIT) + gateScore; 1.1.0: em-dash perception policy, FATAL FP fixes, span-dedup
-  lastReviewed: '2026-08-12',
+  version: '1.8.0', // 1.8.0 (2026-10-14): outreach coverage — `outreach-boilerplate` (strong: regex variants of stock letter/DM openers and closers; the exact-string `application-boilerplate` lexicon missed "I hope this MESSAGE finds you well" and "I came across <Company>", and 13 common outreach clichés scored 0; "I'd love/welcome the chance" deliberately excluded because a plain statement of interest is a human close), `permission-hedge` (strong: "I was wondering if", "no pressure", "in case it got lost" — asking permission to have written; bare if/but/just/might deliberately excluded), `exclamationDensity` (strong statistical: ≤1 per piece). Source of the observed failures and the eval fixtures: yashasvishailly/job-search-writing-rules (MIT). 1.7.0 (2026-08-13): four patterns ported from a downstream consumer's local de-slop catalogue, which had drifted into a partial second source of truth — `vague-quantifier` (weak, free-allowance 2: various/numerous/multitude are ordinary English, a cluster is the tell), `hedge-stacking` (strong: STACKED modals only — bare "might"/"could" must never fire, and `likely` is excluded because "would likely take a week" is a normal estimate), `template-header` (strong, anchored to markdown heading syntax so body prose never fires; TL;DR deliberately excluded as a genuine human convention), `assert-dont-prove` (strong: asserting a thing is obvious in place of showing it). 1.6.0 (2026-08-13): CONTRAST_FAMILY gains a disposition axis — the freed first contrast now carries `review: 'keep-test'` alongside its info tier, the engine returns a `requiresReview` count, and the keep-test questions live in the pattern data so the report prints them inline. Fixes a gap where the free pass was filed under the report's own "corroborate only, never act on them alone" note, so the mandatory judgment call read as an instruction to ignore it (observed: a shipped never-form on a score of 0). Scoring, bands and gateScore are unchanged; the new `--require-review-disposition` exit is opt-in. 1.5.0 (2026-08-12): negative-parallelism family completed — 6 new antithesis shapes (never-form, question-form, degree-form, that-clause, point-form, past-tense verb-phrase) + "No A, no B, just C" added to countdown; CONTRAST_FAMILY introduces a one-free-per-document allowance across the contrast rules so the linter matches the skill's stated "cap at one per piece" policy instead of enforcing de facto zero tolerance (source: Oremus, The Atlantic, 2026-07-14 — Pangram measures the construction at 3x human frequency, i.e. the human baseline is not zero); 1.4.0 (2026-08-02): antithesis pattern widened — 4 new regexes covering you're/I'm/they're/he's/she's subjects, two-sentence period-separated reveal, markdown-context (table/list) sentence starts, and the mirrored trailing "X, not a/an/the Y." order (observed failure: original 4 patterns missed ~10 real instances in one document); 1.3.0 (2026-07-23): colon-reveal + dramatic-fragment + rhetorical-setup (imported from petergyang/no-ai-slop catalogue); 1.2.0 (2026-07-15): stylometric tier (adapted from conorbronsdon/avoid-ai-writing, MIT) + gateScore; 1.1.0: em-dash perception policy, FATAL FP fixes, span-dedup
+  lastReviewed: '2026-10-14',
   reviewIntervalDays: 120,
   scoreBands: { low: 5, medium: 12 }, // 0–5 low · 6–12 medium · 13+ high
   shipTarget: 2,
@@ -634,6 +634,75 @@ export const REGEX_RULES = [
     fix: 'Replace the promise with the specific, bounded result.',
     patterns: [/\b10x\s+(?:your|the)\b/gi],
   },
+  {
+    // 2026-10-14, observed failure. `application-boilerplate` matches exact
+    // strings, so "I hope this finds you well" fired and "I hope this MESSAGE
+    // finds you well" did not; "I came across your profile" fired and "I came
+    // across Northwind" did not. Thirteen stock outreach openers and closers
+    // all scored 0, and two whole messages (a follow-up after silence and a
+    // referral ask, from yashasvishailly/job-search-writing-rules, MIT) scored
+    // 0 end to end. A downstream consumer had also shipped "I'd welcome the
+    // chance to talk" in 13 of 40 cover letters. These are the regex variants.
+    //
+    // Scoped to phrasings that only occur in a letter or message to a reader
+    // you want something from. "I look forward to the day…" (essay) and "I came
+    // across this bug" (narrative) must never fire; see the MISS cases in
+    // evals/eval-outreach-patterns.mjs.
+    id: 'outreach-boilerplate', family: 'tonal', label: 'Outreach boilerplate (stock opener/closer)',
+    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    fix: 'Open on the reason you are writing to THIS person (one clause), close on one specific ask. Delete the formula; nothing replaces it.',
+    patterns: [
+      // Openers
+      /\b(?:I\s+)?hope\s+(?:this|my)\s+(?:(?:e-?mail|message|note|letter)\s+)?finds\s+you\b/gi,
+      /\b(?:I\s+)?hope\s+you(?:'re|\s+are)\s+(?:doing\s+)?(?:well|great|good)\b/gi,
+      /\b(?:I\s+)?hope\s+you(?:'re|\s+are)\s+having\s+an?\s+(?:great|good|wonderful)\s+(?:week|day)\b/gi,
+      /\bI\s+(?:just\s+)?wanted\s+to\s+(?:reach\s+out|follow\s+up|check\s+in|touch\s+base|introduce\s+myself)\b/gi,
+      /\bjust\s+(?:following\s+up|checking\s+in|circling\s+back|bumping\s+this)\b/gi,
+      /\bI(?:'m|\s+am)\s+reaching\s+out\s+(?:because|to)\b/gi,
+      /\bI\s+(?:recently\s+)?(?:came\s+across|stumbled\s+(?:upon|across))\s+(?:your|the)\s+(?:profile|post|posting|company|work|role|job|listing|opening|website|article|team)\b/gi,
+      /(?:^|[.!?]\s+|,\s+)I\s+(?:recently\s+)?(?:came\s+across|stumbled\s+(?:upon|across))\s+[A-Z][\w&.-]*/gm,
+      /\b(?:been\s+)?following\s+your\s+(?:journey|story|progress|career)\b/gi,
+      /\ballow\s+me\s+to\s+introduce\s+myself\b/gi,
+      /(?:^|[.!?,]\s+)[Mm]y\s+name\s+is\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?,?\s+and\s+I(?:'m|\s+am)\b/gm,
+      /(?:^|[.!?,]\s+)quick\s+question\b/gim,
+      // Closers
+      /\b(?:I\s+)?look(?:ing)?\s+forward\s+to\s+(?:hearing\s+(?:from\s+you|back)|the\s+opportunity|speaking\s+with\s+you|connecting|discussing\s+(?:this|the\s+role|further)|your\s+(?:reply|response))\b/gi,
+      /\bthank\s+you\s+for\s+your\s+time\s+and\s+consideration\b/gi,
+      /\bdon't\s+hesitate\s+to\s+(?:reach\s+out|contact|let\s+me\s+know|get\s+in\s+touch)\b/gi,
+      // NOT here: "Let me know if you have any questions". SKILL.md gotcha
+      // 2026-07-15 rules it normal human email register.
+      /\bexcited\s+(?:about|by)\s+the\s+(?:possibility|prospect)\b/gi,
+      /\b(?:let's\s+)?(?:touch\s+base|circle\s+back)\b/gi,
+      /\bwould\s+love\s+to\s+(?:connect|chat|hop\s+on|grab\s+(?:a\s+)?(?:coffee|time))\b/gi,
+      // NOT here: "I'd love the chance to talk it through" / "I'd welcome the
+      // chance to talk". A plain one-sentence statement of interest is a human
+      // close (a downstream author's own hand-edited, sent letters use it).
+      // The tell is the same closer reused across many letters, which is a
+      // corpus-level check, not a per-document lexical one.
+    ],
+  },
+  {
+    // 2026-10-14, same observed failure as `outreach-boilerplate`. Distinct
+    // from `hedge` (which softens a CLAIM) and `hedge-stacking`: these phrases
+    // ask the reader for permission to have written at all. Bare "if", "but",
+    // "just", "might" are ordinary English and are NOT here — a blanket ban on
+    // them sands off voice (and "that said" / "But" openers are human).
+    id: 'permission-hedge', family: 'tonal', label: 'Permission-seeking hedge',
+    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    fix: 'Make the ask plainly ("Worth 15 minutes?") or give the reader a clean exit ("If not, say so and I\'ll apply cold."). Do not apologize for writing.',
+    patterns: [
+      /\bI\s+was\s+wondering\s+(?:if|whether)\b/gi,
+      /\bwould\s+it\s+be\s+possible\s+(?:to|for)\b/gi,
+      /\bno\s+pressure(?:\s+at\s+all)?\b/gi,
+      /\bfeel\s+free\s+to\s+(?:let\s+me\s+know|reach\s+out|ignore|say\s+no|pass)\b/gi,
+      /\bhope\s+you\s+don't\s+mind\b/gi,
+      /\bif\s+you(?:'re|\s+are)\s+open\s+to\s+it\b/gi,
+      /\bif\s+you\s+have\s+a\s+(?:few|spare|couple\s+of)\s+minutes\b/gi,
+      /\bin\s+case\s+(?:it|this|my\s+(?:last\s+|previous\s+)?(?:message|e-?mail|note))\s+got\s+(?:lost|buried)\b/gi,
+      /\b(?:at\s+your\s+earliest\s+convenience|whenever\s+(?:it's\s+)?convenient(?:\s+for\s+you)?)\b/gi,
+      /\bsorry\s+to\s+(?:bother|bug|trouble)\s+you\b/gi,
+    ],
+  },
 ];
 
 // ─── Statistical detectors (engine-implemented; thresholds configured here) ──
@@ -683,6 +752,14 @@ export const STATISTICAL = {
   duplication: {
     tier: 'strong', points: 5, minWords: 8,
     fix: 'Cut the repeat — verbatim repeated sentences are a dead giveaway of unedited output.',
+  },
+  exclamationDensity: {
+    // 2026-10-14. One exclamation mark is a choice; two or more in a piece
+    // sent to someone who owes you nothing reads as eager or generated (the
+    // observed outreach "before" messages carried two to four each). The
+    // engine skips markdown images ("![") and "!=" so code-ish text is clean.
+    tier: 'strong', points: 2, perExtraPoint: 1, maxPoints: 4, maxAllowed: 1,
+    fix: 'Keep at most one exclamation mark per piece; end the rest with a period and let the content carry the energy.',
   },
   unicodeDecoration: {
     tier: 'weak', points: 2,

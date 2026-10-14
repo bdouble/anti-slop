@@ -249,6 +249,21 @@ function detectEmDashDensity(cfg, prose, sentences, findings) {
   });
 }
 
+function detectExclamationDensity(cfg, prose, findings) {
+  if (!cfg) return; // vendored patterns.mjs predating 1.8.0
+  const matches = [...prose.matchAll(/!(?![[=])/g)];
+  const count = matches.length;
+  if (count <= cfg.maxAllowed) return;
+  const extra = count - cfg.maxAllowed;
+  const points = Math.min(cfg.points + cfg.perExtraPoint * (extra - 1), cfg.maxPoints);
+  findings.push({
+    rule: 'exclamation density', id: 'exclamation-density', tier: cfg.tier, points,
+    line: lineAt(prose, matches[cfg.maxAllowed].index),
+    match: `${count} exclamation marks (≤${cfg.maxAllowed} per piece)`,
+    fix: cfg.fix,
+  });
+}
+
 function detectSentenceUniformity(cfg, sentences, findings) {
   if (sentences.length < cfg.minSentences) return;
   const counts = sentences.map(wordCount).filter((n) => n > 0);
@@ -638,6 +653,7 @@ export function lintText(input, opts = {}) {
   }
 
   detectEmDashDensity(S.emDashDensity, prose, sentences, findings);
+  detectExclamationDensity(S.exclamationDensity, prose, findings);
   detectSentenceUniformity(S.sentenceUniformity, sentences, findings);
   detectParagraphUniformity(S.paragraphUniformity, format === 'html' ? visible : raw, findings);
   detectStarterMonotony(S.starterMonotony, sentenceObjs, prose, findings);

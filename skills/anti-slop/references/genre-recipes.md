@@ -1,6 +1,6 @@
 # Genre Recipes
 
-Last updated: 2026-07-15
+Last updated: 2026-10-14
 
 Each genre below is a positive contract: what the output IS — its shape, length, opening, closing, and register. Write to the contract from the first sentence; do not draft freely and clean up after. The pattern catalogue (`pattern-catalogue.md`) names what to cut; these recipes name what to build.
 
@@ -16,6 +16,9 @@ Each genre below is a positive contract: what the output IS — its shape, lengt
 - [Resume bullets](#resume-bullets)
 - [Short bio](#short-bio)
 - [Recruiter / networking message](#recruiter--networking-message)
+- [Follow-up after silence](#follow-up-after-silence)
+- [Referral ask](#referral-ask)
+- [Application form answer](#application-form-answer)
 
 ---
 
@@ -45,7 +48,7 @@ Each genre below is a positive contract: what the output IS — its shape, lengt
 
 - **Shape:** one central narrative — a company-specific problem you can solve, backed by proof. 3–4 short paragraphs, one page.
 - **Length:** 250–400 words general; 200–300 for executive letters, tighter and every sentence signaling scope or judgment.
-- **Opening contract:** lead with a specific quantified achievement or a company-specific observation. Never "I am writing to apply", "To Whom It May Concern", or a self-label ("results-driven", "perfect fit").
+- **Opening contract:** lead with a specific quantified achievement or a company-specific observation. Never "I am writing to apply", "To Whom It May Concern", or a self-label ("results-driven", "perfect fit"). The observation is one sourced clause that sets up your claim, never a paragraph reciting what the company does; if you can't cite where a fact about their business came from (their posting, their post, a named article), it is a guess, so cut it or state it as a pattern of their stage.
 - **Body contract:** open on their specific need, connect it to a relevant achievement of yours carrying a number, and land on one clear benefit to them. Two or three mapped outcomes, not a duties list.
 - **Closing contract:** state the next step. No "looking forward to hearing from you."
 - **Register:** confident, specific, first-person with contractions; at least one fact that only applies to this company.
@@ -101,9 +104,42 @@ Each genre below is a positive contract: what the output IS — its shape, lengt
 
 - **Shape:** specific signal first, one line on what you're working on, one low-friction ask.
 - **Length:** under 150 words; a cold message earns a reply by being short and specific.
-- **Opening contract:** a specific, real reason for reaching out to this person. Never "I came across your profile" or "I'd love to pick your brain."
+- **Opening contract:** a specific, real reason for reaching out to this person. Never "I came across your profile" or "I'd love to pick your brain." One clause on how you found them is the ceiling: never describe their own company, product, funding, or thesis back to them. They were there.
 - **Closing contract:** one concrete, easy-to-say-yes-to ask (a 15-minute call, one question, an intro). For recruiter replies, state your status plainly — open, not open, or open under conditions — plus band and fit.
 - **Register:** warm, brief, direct; no filler pleasantries, no flattery that could go to anyone.
 
 **Before → After:**
 - "Hi! I came across your profile and was really impressed by your background. I'd love to connect and pick your brain about your career journey sometime if you're open to it!" → "Your post on migrating off Segment matched a problem my team is hitting now. I'm the PM on our analytics rebuild. Could I ask you two questions about how you handled the event backfill — happy to keep it to email or a 15-minute call."
+
+## Follow-up after silence
+
+- **Shape:** say once that it is a follow-up, add one thing the first message did not have, then give the reader a clean way out.
+- **Length:** two to four sentences; shorter than the message it follows.
+- **Opening contract:** name the role or thread in the first clause. Never "just following up", "just checking in", "circling back", or "in case it got lost".
+- **Closing contract:** one specific next step, or an explicit exit ("or I can leave it here; either is fine"). A second follow-up takes a new angle; there is no third.
+- **Register:** calm, unneedy. No apology for writing, no guilt framing, at most one exclamation mark (usually none).
+
+**Before → After:**
+- "Hi again! Just following up on my previous message in case it got lost. No pressure at all, but I would still love to connect if you have a few minutes. Feel free to let me know either way!" → "Hi Sarah, following up once. The billing rebuild I mentioned took six weeks and I can walk you through exactly how, or I can leave it here. Either is fine." *(after: yashasvishailly/job-search-writing-rules, MIT)*
+
+## Referral ask
+
+- **Shape:** the role and why it fits in one line, then a paste-ready blurb the referrer can forward unchanged, then an explicit out.
+- **Length:** under 120 words including the blurb; the blurb itself is two lines.
+- **Opening contract:** the specific posting (company, role, when it went up). Never "I hope you don't mind me reaching out."
+- **Closing contract:** make saying no as cheap as saying yes ("If you'd rather not, say so and I'll apply cold"). Never make the referrer decide whether you fit; the blurb decides it for them.
+- **Register:** warm, direct, low-cost to act on.
+
+**Before → After:**
+- "Hey! Hope you're doing well. I hope you don't mind me reaching out, but I saw that your company is hiring for a role that I think might be a good fit for me. Would you be able to refer me? I'd really appreciate it!" → "Hey Priya, Northwind posted an ops role on Tuesday and it's the job I've been doing for three years. Here's a two-line version you can paste if you're willing to refer me: [two lines]. If you'd rather not, say so and I'll apply cold." *(after: yashasvishailly/job-search-writing-rules, MIT)*
+
+## Application form answer
+
+- **Shape:** answer the literal question in the first sentence, give one proof, stop. No bonus material, no restating the question.
+- **Length:** what the box asks for; when unbounded, two to four sentences.
+- **Opening contract:** the answer itself. "Why do you want to work here?" opens on the reason, not on enthusiasm.
+- **Closing contract:** none needed; the proof is the last sentence.
+- **Register:** plain and specific; a sentence that would fit any company's form unchanged is cut.
+
+**Before → After:**
+- "I'm incredibly excited about Halo's mission and I feel like my values really align with the team's. I've always been passionate about fintech and I'd love to be part of such an innovative journey." → "Payments companies hit an operations wall around Series B, when finance still reconciles by hand and nobody has time to fix it. I've sat in that seat. I want the version of the job where I fix it before it calcifies." *(after: yashasvishailly/job-search-writing-rules, MIT)*

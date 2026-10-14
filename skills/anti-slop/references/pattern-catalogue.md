@@ -1,6 +1,6 @@
 # Anti-Slop Pattern Catalogue
 
-Last updated: 2026-08-12
+Last updated: 2026-10-14
 
 This catalogue is derived from `data/patterns.mjs`. The .mjs file wins any conflict. It exists to give each machine-detectable pattern a plain-language rule and concrete before/after rewrites, so a writer can fix a finding by recipe instead of by synonym-swap. When the skill misses a new slop pattern in real use, append a new entry under "Appended from observed failures" with a date; never rewrite an existing entry, and never edit this file to disagree with the .mjs source.
 
@@ -16,8 +16,8 @@ Two representation notes, both faithful to the source:
 - [Syntactic](#syntactic) — `hedge` · `hedge-stacking` · `copula-avoidance` · `antithesis` · `not-only-but-also` · `self-posed-qa` · `colon-reveal` · `countdown` · `dramatic-fragment` · `trailing-participle` · `sentenceUniformity` · `anaphora` · `overused-transition` · `wordy` · `concession-pivot` · `starterMonotony` · `contractionRate` · `rule-of-three-abuse`
 - [Structural](#structural) — `meta-commentary` · `signposted-conclusion` · `closing-tautology` · `template-header` · `boldFirstBullets` · `duplication` · `paragraphUniformity` · `boldDensity` · `titleCaseHeadings` · `one-point-dilution` · `fractal-summaries`
 - [Rhetorical](#rhetorical) — `significance-inflation` · `assert-dont-prove` · `despite-challenges` · `false-suspense` · `rhetorical-setup` · `vague-attribution` · `imagine-opener` · `false-range` · `invented-label` · `dead-metaphor` · `analogy-stacking` · `mirrored-metaphor`
-- [Tonal](#tonal) — `application-boilerplate` · `era-opener` · `chat-leakage` · `engagement-bait` · `patronizing-analogy` · `ten-x-hype` · `horoscope` · `genericness` · `forced-positivity` · `manufactured-personality` · `false-vulnerability`
-- [Mechanical](#mechanical) — `machine-artifact` · `placeholder` · `chat-opener` · `emDashDensity` · `unicodeDecoration` · `latin-sidebar`
+- [Tonal](#tonal) — `application-boilerplate` · `outreach-boilerplate` · `permission-hedge` · `era-opener` · `chat-leakage` · `engagement-bait` · `patronizing-analogy` · `ten-x-hype` · `horoscope` · `genericness` · `forced-positivity` · `manufactured-personality` · `false-vulnerability`
+- [Mechanical](#mechanical) — `machine-artifact` · `placeholder` · `chat-opener` · `emDashDensity` · `exclamationDensity` · `unicodeDecoration` · `latin-sidebar`
 - [Stylometric texture](#stylometric-texture) — `trigramEntropy` · `crossParaBurstiness` · `punctDistribution` · `lowTtr` · `smartPunctSignature` · `bypassNormalization` · `stylometricCluster`
 - [Appended from observed failures](#appended-from-observed-failures)
 
@@ -514,6 +514,22 @@ Register and stance problems: the prose adopts a voice (chatbot, brochure, hype)
 - "10x your team's output." → "This cut our release cycle from two weeks to two days."
 **The rule (positive form):** replace the multiplier with the specific, bounded result.
 
+### Outreach boilerplate (`outreach-boilerplate`)
+**Tier:** strong · **Family:** Tonal · **Detection:** linter · **False-positive risk:** low
+**Why it's slop:** stock openers and closers for a letter or message to someone who owes you nothing: "I hope this message finds you well", "I just wanted to reach out", "I came across Northwind", "I've been following your journey", "I look forward to the opportunity", "Thank you for your time and consideration", "Let's circle back". The reader has seen each one hundreds of times, and each delays or replaces the reason you wrote. The regex sibling of `application-boilerplate`, whose exact strings missed every variant. A plain one-sentence statement of interest ("I'd love the chance to talk it through") is NOT this pattern; reusing the same closer across many letters is, and that is a corpus-level check.
+**Before → After:**
+- "Hi Sarah, I hope this message finds you well! I came across Northwind and I've been following your journey since the seed round." → "Hi Sarah, saw the ops hire go up."
+- "I just wanted to reach out about the platform role. Looking forward to hearing from you!" → "The platform role is the job I've done for three years: I moved Acme's billing off the monolith in six weeks. Worth fifteen minutes?"
+**The rule (positive form):** the first clause names why you are writing to this person; the last line is one specific ask, alone. Delete the formula; nothing replaces it.
+
+### Permission-seeking hedge (`permission-hedge`)
+**Tier:** strong · **Family:** Tonal · **Detection:** linter · **False-positive risk:** low-moderate
+**Why it's slop:** "I was wondering if", "would it be possible to", "no pressure at all", "feel free to let me know", "hope you don't mind", "if you're open to it", "in case it got lost", "sorry to bother you". Distinct from `hedge`, which softens a claim: these ask the reader's permission to have written at all, before the message has said anything worth standing on. Bare "if", "but", "just", and "might" are ordinary English and are deliberately not matched; banning them sands off voice.
+**Before → After:**
+- "Just following up on my previous message in case it got lost. No pressure at all, but feel free to let me know either way!" → "Following up once. The billing rebuild I mentioned took six weeks; I can walk you through it, or I can leave it here. Either is fine."
+- "I was wondering if it would be possible to set up a call if you're open to it." → "Worth fifteen minutes on Thursday?"
+**The rule (positive form):** make the ask plainly, or give the reader a clean exit ("If you'd rather not, say so and I'll apply cold"). Never apologize for writing.
+
 ### Horoscope test (`horoscope`)
 **Tier:** judgment · **Family:** Tonal · **Detection:** judgment (not linted) · **False-positive risk:** moderate
 **Why it's slop:** prose that could have been written by anyone, for anyone: vague claims and universal advice that pass find-and-replace unchanged. This is the whole-document test to run first.
@@ -592,6 +608,14 @@ Markup and artifact tells. The three fatal entries are near-certain proof of une
 - "We shipped it — and it broke." → "We shipped it. And it broke."
 **The rule (positive form):** at most one em-dash per document (attribution lines "— Name" exempt); replace every other one by role: aside → commas or parentheses, definition → colon, interruption → period, list-explanation → semicolon.
 
+### Exclamation density (`exclamationDensity`)
+**Tier:** strong · **Family:** Mechanical · **Detection:** linter · **False-positive risk:** low (one per piece is always free; markdown images and `!=` are skipped)
+**Why it's slop:** one exclamation mark is a choice. Two or more in a piece sent to someone who owes you nothing reads as eager, and as generated: the stock outreach drafts that motivated this rule carried two to four each.
+**Before → After:**
+- "Hi again! Just following up! Let me know either way!" → "Following up once."
+- "Excited to share our launch! It's live today!" → "Our launch is live today."
+**The rule (positive form):** keep at most one exclamation mark per piece; end the rest with a period and let the content carry the energy.
+
 ### Unicode decoration (`unicodeDecoration`)
 **Tier:** weak · **Family:** Mechanical · **Detection:** linter · **False-positive risk:** low (single curly apostrophes — contractions, possessives — are ignored as of 2026-07-15; arrows, bullets, and curly double quotes still flag)
 **Why it's slop:** decorative unicode — arrows (→), styled bullets (•), emoji list markers, styled letters — in plain professional prose reads as machine output.
@@ -664,3 +688,9 @@ New patterns land here, each with a date, when the skill misses a slop pattern i
 **Observed failure:** `SKILL.md` said "cap at one per piece"; the linter charged 2 points per hit against a ship target of 2, so one deliberate contrast consumed the whole budget and two failed the document outright. Effective policy was zero tolerance.
 
 **Judgment context:** zero tolerance is what produces the flattened, voiceless output the skill's own restraint section exists to prevent. Real human drafts sampled from actual use turned out to use corrective negation repeatedly and legitimately — every instance corrects a belief the reader actually holds. Those sentences are now `LEGIT` and `CLEAN` fixtures precisely so no future widening can flag them. `CONTRAST_FAMILY` gives the first device a free pass; the keep-test, which no regex can run, decides the rest.
+
+### 2026-10-14 — outreach formulae scored 0
+
+**Observed failure:** `application-boilerplate` is an exact-string lexicon, so "I hope this finds you well" fired and "I hope this message finds you well" did not; "I came across your profile" fired and "I came across Northwind" did not. Thirteen common outreach openers and closers scored 0 one by one, and two whole stock messages (a follow-up after silence and a referral ask, from yashasvishailly/job-search-writing-rules, MIT) scored 0 end to end. Cold DMs, follow-ups, and referral asks usually ship without a render gate, so the linter is often the only mechanical check they get.
+
+**Judgment context:** the fix is two regex rules (`outreach-boilerplate`, `permission-hedge`) and a one-free `exclamationDensity`, held to `evals/eval-outreach-patterns.mjs`. Two candidate bans were rejected after scanning a real author's sent letters. "I'd love the chance to talk it through" is his own hand-edited close, so a plain one-sentence statement of interest stays legal; what is a tell is the same closer across many letters, which only a corpus check can see. And the source list's blanket ban on "if", "but", "just", and "I think" would flag ordinary connected prose ("That said", "But" as an opener), the over-correction the restraint section warns against. Only phrases that ask permission to have written are matched.

@@ -45,6 +45,12 @@ jobs:
       - name: Ported patterns — hits and false-positive guards
         run: node evals/eval-ported-patterns.mjs
 
+      # The v1.8.0 outreach rules sit next to ordinary English too: "I look
+      # forward to the day", "I came across this bug", a README's "feel free to
+      # open an issue", and a plain "I'd love the chance to talk" must not fire.
+      - name: Outreach patterns — hits and false-positive guards
+        run: node evals/eval-outreach-patterns.mjs
+
       # Band contract from README "Verify": clean prose must stay LOW, slop must
       # stay HIGH, machine artifacts must stay FATAL. Guards against a widened
       # pattern quietly flagging good writing.
