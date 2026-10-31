@@ -301,12 +301,14 @@ function detectEmDashDensity(cfg, prose, sentences, findings) {
   // Review 2026-10-31 (m4): a spaced en dash between two range tokens (numbers,
   // weekdays, months) is a range, not a dash.
   const RANGE = /^(?:\d[\d.,:%]*(?:am|pm)?|mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun|(?:mon|tues|wednes|thurs|fri|satur|sun)day|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)$/i;
+  // 2.0.1: an open-ended range ("2023 – Present", the résumé date line) ends on a word.
+  const RANGE_END = /^(?:present|current|now|today|ongoing)$/i;
   const isRange = (m) => {
     if (m[0] !== '–') return false;
     const before = (prose.slice(Math.max(0, m.index - 20), m.index).match(/(\S+)\s+$/) || [])[1];
     const after = (prose.slice(m.index + 1, m.index + 21).match(/^\s+(\S+)/) || [])[1];
     const clean = (w) => (w || '').replace(/^[("'[]+|[)"',.;:\]]+$/g, '');
-    return RANGE.test(clean(before)) && RANGE.test(clean(after));
+    return RANGE.test(clean(before)) && (RANGE.test(clean(after)) || RANGE_END.test(clean(after)));
   };
   const matches = [...prose.matchAll(/—|(?<=\s)(?:--|–)(?=\s)/g)].filter((m) => !attributions.has(m.index) && !isRange(m));
   const count = matches.length;
@@ -437,8 +439,25 @@ function detectAnaphora(cfg, sentenceObjs, prose, findings) {
 function detectBoldFirstBullets(cfg, raw, findings) {
   // 2026-10-31: also the colon-INSIDE form ("- **Speed:** It loads fast"), the LLM
   // default, which the old regex missed.
-  const md = [...raw.matchAll(/^[ \t]*(?:[-*+]|\d+[.)])[ \t]+\*\*[^*\n]+?(?:\*\*\s*[:：—-]|[:：]\*\*)/gm)];
-  const html = [...raw.matchAll(/<li\b[^>]*>\s*<(strong|b)\b[^>]*>(?:[^<]+<\/\1>\s*[:：—-]|[^<]*[:：]\s*<\/\1>)/gi)];
+  // 2.0.1: a bold label over a short delimited list ("- **Languages:** Python, Go,
+  // SQL", a résumé Skills line) is a reference list, not a prose bullet.
+  const minItems = cfg.listMinItems ?? 3;
+  const maxWords = cfg.listItemMaxWords ?? 6;
+  const isList = (rest) => {
+    const text = rest.replace(/<[^>]+>/g, ' ').trim();
+    if (/[.!?]\s+\S/.test(text)) return false; // more than one sentence: prose
+    const items = text.replace(/[.;]$/, '').split(/\s*[|,;·•]\s*/).filter(Boolean);
+    return items.length >= minItems && items.every((it) => (it.match(/\S+/g) || []).length <= maxWords);
+  };
+  const restOf = (m, end) => {
+    const start = m.index + m[0].length;
+    const stop = raw.slice(start).search(end);
+    return raw.slice(start, stop < 0 ? raw.length : start + stop);
+  };
+  const md = [...raw.matchAll(/^[ \t]*(?:[-*+]|\d+[.)])[ \t]+\*\*[^*\n]+?(?:\*\*\s*[:：—-]|[:：]\*\*)/gm)]
+    .filter((m) => !isList(restOf(m, /\n/)));
+  const html = [...raw.matchAll(/<li\b[^>]*>\s*<(strong|b)\b[^>]*>(?:[^<]+<\/\1>\s*[:：—-]|[^<]*[:：]\s*<\/\1>)/gi)]
+    .filter((m) => !isList(restOf(m, /<\/li>/i)));
   const total = md.length + html.length;
   if (total < cfg.min) return;
   const first = md[0] || html[0];

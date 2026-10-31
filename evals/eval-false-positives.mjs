@@ -159,6 +159,8 @@ hit('corporate-buzzword', 'the same word used in prose still fires', 'We leverag
 hit('em-dash-density', 'two spaced en dashes used as dashes', 'The new policy – announced without warning – affects thousands of workers.');
 miss('em-dash-density', 'en dash in number and date ranges', 'Revenue grew 10–12% between 2019–2021, on pages 4–9 of the filing.');
 miss('em-dash-density', 'SPACED en-dash ranges (review m4)', 'Office hours are Monday – Friday, 9 – 5, in room 210, from June – August.');
+miss('em-dash-density', 'open-ended résumé date ranges (2.0.1)', 'Head of Product\n2023 – Present\n\nDirector, Product\n2019 – 2023\n\nConsultant\nJan 2018 – current');
+hit('em-dash-density', '"now" after a word is still a dash (2.0.1)', 'We waited – and now – we ship.');
 
 // ── emoji: a ZWJ sequence is one emoji, and its joiner is not a bypass trick ─
 miss('emoji-density', 'two ZWJ emoji count as two (review m5)', 'Pairing today 👩‍💻👨‍💻 on the billing fix.', { genre: 'linkedin' });
@@ -169,6 +171,13 @@ check('meta', 'emoji-bullets', 'emoji list markers are weak (release notes use �
 // ── bold labels: HTML colon-inside and numbered lists (review m6, n6) ──────
 hit('bold-first-bullets', 'HTML <li><strong>Speed:</strong>', '<ul><li><strong>Speed:</strong> fast</li><li><strong>Cost:</strong> low</li><li><strong>Scale:</strong> big</li></ul>', { format: 'html' });
 hit('bold-first-bullets', 'numbered list with bold labels', '1. **Speed:** fast\n2. **Cost:** low\n3. **Scale:** big');
+
+// ── bold labels over short delimited lists are reference lists (2.0.1) ─────
+miss('bold-first-bullets', 'résumé Skills, comma lists', '- **Product Leadership:** Product Vision & Strategy, Roadmap Development, M&A Integration\n- **Product Management:** Zero-to-One, Platform Product Management, Stakeholder Alignment\n- **Data & AI/ML:** Data Product Management, A/B Testing & Experimentation, ML Model Productization');
+miss('bold-first-bullets', 'résumé Skills, pipe lists', '- **Languages:** Python | Go | SQL\n- **Cloud:** AWS | GCP | Azure\n- **Tools:** Next.js/TypeScript | pgvector | Inngest');
+miss('bold-first-bullets', 'HTML Skills list', '<ul><li><strong>Languages:</strong> Python, Go, SQL</li><li><strong>Cloud:</strong> AWS, GCP, Azure</li><li><strong>Data:</strong> dbt, Airflow, Snowflake</li></ul>', { format: 'html' });
+hit('bold-first-bullets', 'label + prose description still fires', '- **Speed:** It loads in under a second, even on slow networks.\n- **Cost:** It runs on one small instance, so hosting stays cheap.\n- **Scale:** It handles ten times the traffic without changes.');
+hit('bold-first-bullets', 'label + two-sentence list-ish text is prose', '- **Speed:** Fast. Very fast, really, truly\n- **Cost:** Low. Cheap, lean, small\n- **Scale:** Big. Wide, tall, deep');
 
 // ── library genre validation (review n2) ───────────────────────────────────
 {

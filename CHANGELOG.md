@@ -11,6 +11,21 @@ fails CI when they disagree.
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-10-31
+
+### Fixed
+
+- `em-dash-density` counted the spaced en dash in an open-ended date range
+  ("2023 – Present") as a dash. A range may now end on present, current, now,
+  today or ongoing. Every résumé date line had been counted, so a standard CV
+  failed the gate.
+- `bold-first-bullets` (widened in 2.0.0 to the colon-inside form) fired on
+  résumé Skills sections such as "- **Languages:** Python, Go, SQL". A bold
+  label followed by a short delimited list (at least `listMinItems` items of at
+  most `listItemMaxWords` words, separated by commas, pipes, semicolons or
+  middots, and only one sentence) is a reference list and is skipped.
+  Label-plus-description bullets still fire.
+
 ## [2.0.0] - 2026-10-31
 
 Major release, for three incompatible changes:
@@ -340,7 +355,8 @@ Patterns 1.5.0. First release:
 Only `v1.1.0` is tagged; the other releases link to their commits.
 
 [Unreleased]: https://github.com/bdouble/anti-slop/compare/f1ea509...HEAD
-[2.0.0]: https://github.com/bdouble/anti-slop/compare/f1ea509...HEAD
+[2.0.1]: https://github.com/bdouble/anti-slop/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/bdouble/anti-slop/compare/f1ea509...v2.0.0
 [1.2.0]: https://github.com/bdouble/anti-slop/commit/f1ea509
 [1.1.0]: https://github.com/bdouble/anti-slop/releases/tag/v1.1.0
 [1.0.1]: https://github.com/bdouble/anti-slop/commit/8ab6e64
