@@ -11,6 +11,13 @@ fails CI when they disagree.
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-10-31
+
+A content release: the skill, its references and its evals are now fully
+generic. Linting behavior is unchanged; every eval and corpus result matches
+2.0.1. The one data-shape change is the removed `frequencyLabel` field below.
+A 2.x `slop-lint.mjs` reads this `patterns.mjs` unchanged.
+
 ### Changed
 
 - Example and fixture sentences drawn from unpublished drafts were replaced
@@ -24,8 +31,9 @@ fails CI when they disagree.
   own configurable defaults.
 - `genre-recipes.md` drops a few house rules (executive-letter length, "no
   personal or political content" on LinkedIn, "band and fit" in recruiter
-  replies). SKILL.md step 8 no longer assumes a particular drafts folder, and
-  it names no specific house-style skills.
+  replies). SKILL.md step 8 no longer assumes a particular drafts folder, it
+  names no specific house-style skills, and its description lists cover
+  letters and resumes after the general genres.
 
 ### Removed
 
@@ -373,9 +381,10 @@ Patterns 1.5.0. First release:
 - the reference set;
 - the evals, with CI.
 
-Only `v1.1.0` is tagged; the other releases link to their commits.
+Releases 1.0.0, 1.0.1 and 1.2.0 are untagged and link to their commits.
 
-[Unreleased]: https://github.com/bdouble/anti-slop/compare/f1ea509...HEAD
+[Unreleased]: https://github.com/bdouble/anti-slop/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/bdouble/anti-slop/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/bdouble/anti-slop/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/bdouble/anti-slop/compare/f1ea509...v2.0.0
 [1.2.0]: https://github.com/bdouble/anti-slop/commit/f1ea509
