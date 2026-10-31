@@ -3,7 +3,7 @@
 /**
  * eval-false-positives.mjs — false-positive guards and the ship-gate contract.
  *
- * Why this exists (2026-10-31). An internal comparison against blader/humanizer, Wikipedia's "Signs of AI writing" and a practitioner prompt set (2026-10-31)
+ * Why this exists (2026-10-31). An internal comparison against blader/humanizer, Wikipedia's "Signs of AI writing" and the skill's social-post item list (2026-10-31)
  * found that human prose
  * could fail outright:
  *   - "Of course, we shipped it on Friday…" returned FATAL "Chatbot opener",
@@ -159,7 +159,7 @@ hit('corporate-buzzword', 'the same word used in prose still fires', 'We leverag
 hit('em-dash-density', 'two spaced en dashes used as dashes', 'The new policy – announced without warning – affects thousands of workers.');
 miss('em-dash-density', 'en dash in number and date ranges', 'Revenue grew 10–12% between 2019–2021, on pages 4–9 of the filing.');
 miss('em-dash-density', 'SPACED en-dash ranges (review m4)', 'Office hours are Monday – Friday, 9 – 5, in room 210, from June – August.');
-miss('em-dash-density', 'open-ended résumé date ranges (2.0.1)', 'Head of Product\n2023 – Present\n\nDirector, Product\n2019 – 2023\n\nConsultant\nJan 2018 – current');
+miss('em-dash-density', 'open-ended résumé date ranges (2.0.1)', 'Engineering Manager\n2022 – Present\n\nSenior Engineer\n2018 – 2022\n\nContractor\nJan 2016 – current');
 hit('em-dash-density', '"now" after a word is still a dash (2.0.1)', 'We waited – and now – we ship.');
 
 // ── emoji: a ZWJ sequence is one emoji, and its joiner is not a bypass trick ─
@@ -173,8 +173,8 @@ hit('bold-first-bullets', 'HTML <li><strong>Speed:</strong>', '<ul><li><strong>S
 hit('bold-first-bullets', 'numbered list with bold labels', '1. **Speed:** fast\n2. **Cost:** low\n3. **Scale:** big');
 
 // ── bold labels over short delimited lists are reference lists (2.0.1) ─────
-miss('bold-first-bullets', 'résumé Skills, comma lists', '- **Product Leadership:** Product Vision & Strategy, Roadmap Development, M&A Integration\n- **Product Management:** Zero-to-One, Platform Product Management, Stakeholder Alignment\n- **Data & AI/ML:** Data Product Management, A/B Testing & Experimentation, ML Model Productization');
-miss('bold-first-bullets', 'résumé Skills, pipe lists', '- **Languages:** Python | Go | SQL\n- **Cloud:** AWS | GCP | Azure\n- **Tools:** Next.js/TypeScript | pgvector | Inngest');
+miss('bold-first-bullets', 'résumé Skills, comma lists', '- **Engineering:** System Design, Code Review & Mentoring, Incident Response\n- **Operations:** Capacity Planning, Vendor Management, Budget Forecasting\n- **Data & Analytics:** SQL Reporting, A/B Testing & Experimentation, Dashboard Design');
+miss('bold-first-bullets', 'résumé Skills, pipe lists', '- **Languages:** Python | Go | SQL\n- **Cloud:** AWS | GCP | Azure\n- **Tools:** Terraform | Docker | Grafana');
 miss('bold-first-bullets', 'HTML Skills list', '<ul><li><strong>Languages:</strong> Python, Go, SQL</li><li><strong>Cloud:</strong> AWS, GCP, Azure</li><li><strong>Data:</strong> dbt, Airflow, Snowflake</li></ul>', { format: 'html' });
 hit('bold-first-bullets', 'label + prose description still fires', '- **Speed:** It loads in under a second, even on slow networks.\n- **Cost:** It runs on one small instance, so hosting stays cheap.\n- **Scale:** It handles ten times the traffic without changes.');
 hit('bold-first-bullets', 'label + two-sentence list-ish text is prose', '- **Speed:** Fast. Very fast, really, truly\n- **Cost:** Low. Cheap, lean, small\n- **Scale:** Big. Wide, tall, deep');

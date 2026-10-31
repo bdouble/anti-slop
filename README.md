@@ -53,12 +53,12 @@ evals/                  maintainer tooling — not shipped inside the skill
 ├── eval-ported-patterns.mjs  patterns-v1.7.0 ports: hit/miss + false-positive guards
 ├── eval-outreach-patterns.mjs  patterns-v1.8.0 outreach rules: hit/miss + false-positive guards
 ├── eval-false-positives.mjs    human-prose guards + the gateScore ship gate
-├── eval-social-genre.mjs       --genre linkedin|x rules vs the Grok Bot items
+├── eval-social-genre.mjs       --genre linkedin|x rules vs the social-post items
 ├── eval-staging-ports.mjs      humanizer/Wikipedia ports + evaluated re-tiering
 ├── eval-tools.mjs              acceptance.mjs and --baseline
 ├── eval-holdout.mjs            recall + false positives on text never tuned against
 ├── check-release.mjs           SKILL.md word cap, frontmatter, one version everywhere
-├── fixtures/           labeled tuning corpus (contrast family, humanizer, Grok)
+├── fixtures/           labeled tuning corpus (contrast family, humanizer, social posts)
 ├── holdout/            held-out contrast sentences + real human prose (never tune here)
 └── corpus/             whole-document lint fixtures (slop · clean · fatal · laundered)
 ```
@@ -87,8 +87,7 @@ line one, generic closers ("Agree?", "Thoughts?"), fragment runs, three-question
 runs, and more than five hashtags or three emojis. Without the flag they never
 run, because a one-line paragraph or "Thoughts?" is normal elsewhere. The
 hashtag (5) and emoji (3) caps and the no-opening-question hook rule are house
-defaults from one posting guide; change them in `data/patterns.mjs` if your
-venue differs.
+defaults; change them in `data/patterns.mjs` if your venue differs.
 
 The linter is a floor, not the whole pass. Judgment patterns it cannot see (the
 horoscope test, genericness, dead metaphor, voice authenticity) print in a NOT
@@ -203,9 +202,6 @@ Never delete a fixture case to make a change pass.
   (`staged-runup`, `phantom-objection`, `deep-saying`, `self-narration`), the
   no-invention rule and two-way fact diff, and the before/after fixtures in
   `evals/fixtures/humanizer-passages.md`.
-- **A practitioner's published Grok Bot content prompts** — the LinkedIn and X
-  slop items behind the `--genre` rules and `evals/fixtures/grok-items.md`
-  (synthetic sentences; the prompts name items without examples).
 - **tropes.fyi** (Ossama Chaib), **Pangram's guide to spotting AI writing**,
   **Wikipedia:Signs of AI writing**, and Kobak et al.'s excess-vocabulary study
   — primary pattern sources (see per-pattern citations in the catalogue).

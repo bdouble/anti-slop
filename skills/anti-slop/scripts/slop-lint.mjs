@@ -82,11 +82,11 @@ const NOT_LINTED = PATTERNS.JUDGMENT.map(
 // ── Text helpers ─────────────────────────────────────────────────────────────
 
 // HTML/markdown comments are authoring notes, never reader-facing prose —
-// voice notes, TODOs, and drafting scaffolding. Blanked length-preservingly
+// style notes, TODOs, and drafting scaffolding. Blanked length-preservingly
 // (newlines kept) so every downstream consumer ignores them: the prose rules,
 // the markdown structural detectors, and the paragraph splitter alike, while
 // line numbers and finding spans stay aligned to the original file.
-// Observed failure 2026-08-12: a `<!-- Voice notes: … -->` header quoting a
+// Observed failure 2026-08-12: a `<!-- Notes: … -->` header quoting a
 // sentence spent the document's free contrast pass on the comment instead of
 // on the prose, and bold/heading markup inside comments fed the structural
 // detectors.
@@ -135,8 +135,8 @@ function blankCode(input) {
 // `title` is dropped WITH its contents, alongside style/script: it lives in <head>,
 // never renders as prose, and its text is usually templated boilerplate ("Name — CV").
 // Leaving it in charged the document for punctuation the reader never sees.
-// Observed failure 2026-08-12: a resume whose body carried zero em-dashes still tripped
-// the ≤1 shipping policy and blocked a DOCX render, on the <title> alone.
+// Observed failure 2026-08-12: an HTML document whose body carried zero em-dashes
+// still failed the ≤1 shipping policy on its <title> alone.
 function stripHtml(input) {
   return input
     .replace(/<(style|script|title)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')

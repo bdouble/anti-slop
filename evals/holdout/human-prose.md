@@ -13,7 +13,7 @@ after lint results were known, which left too little to measure and raised a
 selection-bias question. This version follows one rule, written down before the
 linter was run on it and applied mechanically:
 
-1. Installed npm packages from three local dependency trees, each package name
+1. Installed npm packages from three dependency trees, each package name
    once.
 2. `package.json` license exactly MIT or ISC.
 3. A LICENSE file whose copyright lines carry years, all 2022 or earlier (a

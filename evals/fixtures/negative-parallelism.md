@@ -12,7 +12,7 @@ LABEL | id | text
 - `LEGIT` — the construction is present but passes the keep-test (the reader really does hold the negated belief). The linter is expected to flag it too, because no regex can run the keep-test; a human waives it on review. Reported informationally, never scored.
 - `CLEAN` — not the construction. Any match here is a regression. Precision is measured over these.
 
-Sources: the ten shapes of the family; the ~10 real instances that motivated the 2026-08-02 widening; and human-written drafts sampled from real use. The `CLEAN` and `LEGIT` rows are the load-bearing false-positive guard — fluent writers use corrective negation constantly and legitimately, so any widening that flags them is wrong.
+Sources: the ten shapes of the family; sentences written to match the ~10 real instances that motivated the 2026-08-02 widening; and human-style sentences written for this repo. The `CLEAN` and `LEGIT` rows are the load-bearing false-positive guard — fluent writers use corrective negation constantly and legitimately, so any widening that flags them is wrong.
 
 Append new cases; never delete one to make a change pass.
 
@@ -56,25 +56,25 @@ KILL | shape9-that-b | That's not that the data is bad, it's that nobody trusts 
 KILL | shape10-point-a | Speed isn't the point. Accuracy is.
 KILL | shape10-point-b | Headcount is not the problem. Sequencing is.
 KILL | shape10-point-c | Adoption isn't what matters here. Retention is.
-KILL | observed-0802-a | You're not competing on features — you're competing on trust.
-KILL | observed-0802-b | I'm not arguing for less process, but for less ceremony.
-KILL | observed-0802-c | Not your direct concern for this migration, but a source of pattern intelligence.
-KILL | observed-0802-d | They're not stakeholders in the usual sense, they're the actual users.
-KILL | observed-0802-e | He's not the decision maker — he's the one who frames the decision.
-KILL | markdown-table-cell | Signal quality | Not a ranking input, but a diagnostic for the crawl team.
-KILL | markdown-list-item | - Not a replacement for the review, but a filter ahead of it.
+KILL | observed-0802-a | You're not selling software — you're selling peace of mind.
+KILL | observed-0802-b | I'm not asking for more budget, but for fewer approvals.
+KILL | observed-0802-c | Not a blocker for this release, but a source of early warnings.
+KILL | observed-0802-d | They're not vendors in the usual sense, they're the actual builders.
+KILL | observed-0802-e | She's not the approver — she's the one who writes the brief.
+KILL | markdown-table-cell | Error budget | Not a target, but a limit for the release team.
+KILL | markdown-list-item | - Not a substitute for the audit, but a check ahead of it.
 
-LEGIT | voice-prototype | It's not a prototype. It's tested. It's reliable. I use it every day.
-LEGIT | voice-handoff | That's not a handoff, that's a failure mode.
-LEGIT | voice-danger | The danger isn't slow delivery. The danger is building too much of the wrong thing, far too fast.
-LEGIT | voice-not-just | Claude Code is a massive unlock, and it's not just for coding.
-LEGIT | voice-developer | You don't need to become a developer. You just need a system that turns your product judgment into production code.
+LEGIT | legit-beta | It's not a beta. It's been in production for a year. I run payroll on it every month.
+LEGIT | legit-backup | That's not a backup, that's a second copy on the same disk.
+LEGIT | legit-risk | The risk isn't the outage. The risk is customers hearing about it from someone other than us.
+LEGIT | legit-not-just | The new scheduler is a big win, and it's not just for the night shift.
+LEGIT | legit-accountant | You don't need to become an accountant. You just need a ledger that matches every invoice to a payment.
 LEGIT | digiorno | It's not delivery. It's DiGiorno.
 LEGIT | caesar | Not that I loved Caesar less, but that I loved Rome more.
 LEGIT | lombardi | Winning isn't everything; it's the only thing.
 CLEAN | attributed-correction | Most teams read the drop as churn. It's a billing-cycle artifact.
 
-CLEAN | tail-no-determiner | Product judgment grounded in architecture decisions, not slideware.
+CLEAN | tail-no-determiner | Pricing grounded in customer interviews, not guesswork.
 CLEAN | plain-negation-4 | I'm not the right reviewer for this one, so it's a pass from me.
 CLEAN | factual-day | The meeting is Tuesday, not Wednesday.
 CLEAN | factual-list | We shipped search, billing, and the admin console.
@@ -99,7 +99,7 @@ CLEAN | no-list | No blockers, two risks, one open decision.
 
 ## Appended 2026-10-31: external contrast sentences
 
-An internal comparison against blader/humanizer, Wikipedia's "Signs of AI writing" and a practitioner prompt set (2026-10-31) ran the family over 33 contrast sentences
+An internal comparison against blader/humanizer, Wikipedia's "Signs of AI writing" and the skill's social-post item list (2026-10-31) ran the family over 33 contrast sentences
 taken verbatim from humanizer's examples (blader/humanizer, MIT) and Wikipedia's
 "Signs of AI writing" (CC BY-SA 4.0), and caught 7 (21%). They are appended
 here so the misses are pinned. Bare "Y rather than X" sentences from that set

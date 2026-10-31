@@ -21,8 +21,8 @@
  * record the drafting version. Append records to your own private log:
  *   node acceptance.mjs draft.md sent.md --json >> acceptance.jsonl
  *
- * Keep drafts and logs where the project keeps private edit records, never in
- * a public repo or a scratchpad that is deleted with the session.
+ * Keep drafts and logs with the author's own working files, never in a public
+ * repo or a scratchpad that is deleted with the session.
  */
 
 import { readFileSync, realpathSync } from 'fs';

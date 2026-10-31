@@ -4,12 +4,12 @@
  * eval-social-genre.mjs — hit/miss contract for the `--genre linkedin|x` rules.
  *
  * Why this exists (2026-10-31). LinkedIn now demotes AI slop, and the linter
- * caught 8 of 24 items named by a practitioner's Grok Bot slop filters
- * (a practitioner prompt set, 2026-09-25). The HIT cases are those items, as synthetic
- * sentences in `evals/fixtures/grok-items.md`. Four items are judgment calls no
- * regex can make (a fake anecdote, manufactured vulnerability, an unsupported
- * dramatic claim, suspiciously balanced pairs) and one more ("empty hype") is
- * too close to ordinary speech; they are reported, not scored.
+ * caught 8 of 24 items on the skill's social-post item list. The HIT cases are
+ * those items, as synthetic sentences in `evals/fixtures/social-post-items.md`.
+ * Four items are judgment calls no regex can make (a fake anecdote,
+ * manufactured vulnerability, an unsupported dramatic claim, suspiciously
+ * balanced pairs) and one more ("empty hype") is too close to ordinary speech;
+ * they are reported, not scored.
  *
  * The MISS cases matter more. Common posting practice is a line
  * break every 1-2 sentences, a one-sentence close, at most 3 emojis, 3-5
@@ -36,37 +36,37 @@ const results = [];
 const actionable = (text, genre) => lintText(text, { genre }).findings
   .filter((f) => f.id !== 'texture-report' && (f.points > 0 || f.review)).map((f) => f.id);
 
-// ── The Grok Bot items, each linted under its channel's genre ───────────────
-const src = readFileSync(join(ROOT, 'evals', 'fixtures', 'grok-items.md'), 'utf8');
+// ── The social-post items, each linted under its channel's genre ────────────
+const src = readFileSync(join(ROOT, 'evals', 'fixtures', 'social-post-items.md'), 'utf8');
 const items = Object.fromEntries([...src.matchAll(/^=== (\S+)\n([\s\S]*?)(?=^=== |(?![\s\S]))/gm)]
   .map((m) => [m[1], m[2].trim()]));
-const genreOf = (id) => (id.startsWith('gb-x-') ? 'x' : 'linkedin');
+const genreOf = (id) => (id.startsWith('sp-x-') ? 'x' : 'linkedin');
 
 // Items that must produce at least one actionable finding, with the id we expect.
 const EXPECT = {
-  'gb-li-stock-opener-thrilled-to-announce': 'hook-formula',
-  'gb-li-here-s-the-thing': 'ai-cliche',
-  'gb-li-let-that-sink-in': 'engagement-bait',
-  'gb-li-read-that-again': 'engagement-bait',
-  'gb-li-the-future-is-here': 'stock-proclamation',
-  'gb-li-this-changes-everything': 'engagement-bait',
-  'gb-li-generic-inspirational-lesson': 'self-posed-qa',
-  'gb-li-excessive-one-sentence-paragraphs': 'broetry',
-  'gb-li-engagement-bait-agree-': 'social-closer',
-  'gb-li-emoji-filled-list': 'emoji-bullets',
-  'gb-x-unnecessary-headings': 'social-heading',
-  'gb-x-excessive-rhetorical-questions': 'rhetorical-run',
-  'gb-x-choppy-fragments': 'broetry',
-  'gb-car-em-dashes': 'em-dash-density',
-  'gb-car-furthermore-moreover-additionally-in-con': 'overused-transition',
-  'gb-car-it-s-not-just-x-it-s-y': 'antithesis',
-  'gb-car-throat-clearing': 'hedge',
-  'gb-car-same-structure-opening-every-slide': 'anaphora',
+  'sp-li-stock-opener-thrilled-to-announce': 'hook-formula',
+  'sp-li-here-s-the-thing': 'ai-cliche',
+  'sp-li-let-that-sink-in': 'engagement-bait',
+  'sp-li-read-that-again': 'engagement-bait',
+  'sp-li-the-future-is-here': 'stock-proclamation',
+  'sp-li-this-changes-everything': 'engagement-bait',
+  'sp-li-generic-inspirational-lesson': 'self-posed-qa',
+  'sp-li-excessive-one-sentence-paragraphs': 'broetry',
+  'sp-li-engagement-bait-agree-': 'social-closer',
+  'sp-li-emoji-filled-list': 'emoji-bullets',
+  'sp-x-unnecessary-headings': 'social-heading',
+  'sp-x-excessive-rhetorical-questions': 'rhetorical-run',
+  'sp-x-choppy-fragments': 'broetry',
+  'sp-car-em-dashes': 'em-dash-density',
+  'sp-car-furthermore-moreover-additionally-in-con': 'overused-transition',
+  'sp-car-it-s-not-just-x-it-s-y': 'antithesis',
+  'sp-car-throat-clearing': 'hedge',
+  'sp-car-same-structure-opening-every-slide': 'anaphora',
 };
 // Allowed by the house cap: five hashtags is inside "3-5 hashtags or none".
-const BRIEF_ALLOWED = ['gb-li-hashtags'];
-const JUDGMENT = ['gb-li-fake-personal-anecdote', 'gb-li-manufactured-vulnerability',
-  'gb-li-dramatic-unsupported-claim', 'gb-car-suspiciously-balanced-sentence-pairs', 'gb-x-empty-hype'];
+const BRIEF_ALLOWED = ['sp-li-hashtags'];
+const JUDGMENT = ['sp-li-fake-personal-anecdote', 'sp-li-manufactured-vulnerability',
+  'sp-li-dramatic-unsupported-claim', 'sp-car-suspiciously-balanced-sentence-pairs', 'sp-x-empty-hype'];
 
 for (const [id, want] of Object.entries(EXPECT)) {
   const got = actionable(items[id], genreOf(id));
@@ -77,7 +77,7 @@ for (const id of BRIEF_ALLOWED) {
   results.push({ kind: 'miss', id, label: `${id} stays clean (house cap allows 3-5 hashtags)`, pass: !got.includes('hashtag-density'), detail: got.join(',') });
 }
 const judgment = JUDGMENT.map((id) => ({ id, flagged: actionable(items[id], genreOf(id)) }));
-results.push({ kind: 'meta', id: 'coverage', label: `every Grok item is accounted for`,
+results.push({ kind: 'meta', id: 'coverage', label: `every social-post item is accounted for`,
   pass: Object.keys(EXPECT).length + BRIEF_ALLOWED.length + JUDGMENT.length === Object.keys(items).length,
   detail: `${Object.keys(items).length} items` });
 
@@ -112,7 +112,7 @@ I found that out by asking, which took one Slack message and a day of waiting.
 
 Before you add a field to a signup form, find the person who will read it.
 
-#ProductManagement #Onboarding #SaaS`,
+#Onboarding #CustomerSuccess #SaaS`,
   'li-lead-magnet': `I rebuilt our churn review as a one-page checklist, and it cut the meeting from an hour to twenty minutes.
 
 The trick was a single rule: every row needs an owner and a date before anyone discusses it.
@@ -153,7 +153,7 @@ if (jsonOut) {
   console.log('\nJudgment items (not lintable, reported only):');
   for (const j of judgment) console.log(`  · ${j.id}: ${j.flagged.join(', ') || 'no finding'}`);
   const caught = Object.keys(EXPECT).length;
-  console.log(`\nGrok items: ${caught} lintable, ${BRIEF_ALLOWED.length} allowed by the house caps, ${JUDGMENT.length} judgment-only`);
+  console.log(`\nSocial-post items: ${caught} lintable, ${BRIEF_ALLOWED.length} allowed by the house caps, ${JUDGMENT.length} judgment-only`);
   console.log('(Fit on fixtures written alongside the rules, not recall: no held-out real posts exist yet.)');
   console.log(`${results.length - failed.length}/${results.length} passed`);
   console.log(failed.length === 0 ? '\nPASS' : '\nFAIL');

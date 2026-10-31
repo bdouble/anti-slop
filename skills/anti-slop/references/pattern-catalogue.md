@@ -155,12 +155,12 @@ Sentence-level constructions. Several are legitimate rhetorical figures used onc
 - "We don't sell software, we sell outcomes." → "The software cuts your monthly close from ten days to three."
 - "This isn't a setback, it's an opportunity." → "The outage cost a day; here is what we changed."
 - "That's not a side effect of the ratio problem. It's the one real advantage it gives you." → "That's the one real advantage your ratio problem gives you." (two-sentence reveal, not just same-clause)
-- "Not your direct concern for this migration, but a source of pattern intelligence." → "Outside this migration's scope, but useful pattern intelligence." (markdown/table-cell context)
+- "Not a blocker for this release, but a source of early warnings." → "It doesn't block this release, and it warns us early." (markdown/table-cell context)
 - "The value is the question it raises, not the answer it gives." → "Its value is the question it raises." (mirrored trailing order)
 **The rule (positive form):** state Y directly; keep the "not X" only when X is a real misconception the reader holds (the coffee test). Cap at one per piece.
 **Family (2026-08-12):** this rule covers ten shapes of one tic, not one phrasing — additive · supplanting · never-form · stacked negation · verb-phrase · trailing appositive · question-form · degree-form · that-clause · point-form. Editors reliably catch the first and miss the rest. Full taxonomy, the three-question keep-test, five repairs keyed to *why* the negation appeared, and the legitimate-use gallery: `references/negative-parallelism.md`.
 **Budget (2026-08-12):** the first contrast device in a document is free (`CONTRAST_FAMILY` in `data/patterns.mjs`, shared with `not-only-but-also`, `countdown`, and `colon-reveal`); every one after it scores. Scored flat, a single deliberate use had been consuming the entire ship target. The human baseline is not zero — Pangram measures ~3× the human *rate* in AI text, not presence versus absence.
-**Two scope notes for anyone editing the regexes:** the trailing-appositive shape requires a determiner after "not" (this is what separates "a hypothesis, not a fact" from the bare contrastive tail real writers use, "grounded in architecture decisions, not slideware"), and the mirrored trailing order excludes number words after the determiner (quantity corrections such as "nine customers, not the twelve we planned" are arithmetic, not rhetoric). Both are asserted by `evals/fixtures/negative-parallelism.md`. Run `evals/eval-antithesis.mjs` before and after any change here.
+**Two scope notes for anyone editing the regexes:** the trailing-appositive shape requires a determiner after "not" (this is what separates "a hypothesis, not a fact" from the bare contrastive tail real writers use, "grounded in customer interviews, not guesswork"), and the mirrored trailing order excludes number words after the determiner (quantity corrections such as "nine customers, not the twelve we planned" are arithmetic, not rhetoric). Both are asserted by `evals/fixtures/negative-parallelism.md`. Run `evals/eval-antithesis.mjs` before and after any change here.
 
 ### "Not only X but also Y" (`not-only-but-also`)
 **Tier:** strong · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** moderate
@@ -218,7 +218,7 @@ Sentence-level constructions. Several are legitimate rhetorical figures used onc
 **Why it's slop:** when every sentence lands at 15–20 words with the same subject-verb-object shape, the metronome rhythm is the most durable statistical tell; it survives word-swapping.
 **Before → After:**
 - "The team met on Monday. They reviewed the plan. They agreed on scope. They set a deadline." → "The team met Monday. In an hour they had scope, an owner, and a date two weeks out."
-**The rule (positive form):** vary length by joining related clauses as often as by cutting: a 25-word sentence next to a 6-word one. (2026-10-31: "a fragment for punch" removed; hand edits of agent drafts mostly lengthened their short sentences.)
+**The rule (positive form):** vary length by joining related clauses as often as by cutting: a 25-word sentence next to a 6-word one. (2026-10-31: "a fragment for punch" removed; human edits of agent drafts mostly lengthened their short sentences.)
 
 ### Anaphora abuse (`anaphora`)
 **Tier:** strong · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** low-moderate (deliberate anaphora is a known device)
@@ -283,16 +283,16 @@ Sentence-level constructions. Several are legitimate rhetorical figures used onc
 
 ### Clipped cadence (`clippedCadence`)
 **Tier:** weak · **Family:** Syntactic · **Detection:** linter (10+ sentences) · **False-positive risk:** moderate
-**Why it's slop:** when 40% or more of the sentences run eight words or fewer, the prose reads as a row of punches. It is the cadence an agent produces when told to "vary length" by cutting, and hand edits of agent drafts went the other way, mostly lengthening the short sentences. Calibrated on a private set of hand-edited human letters, none of which reached 40%. Feeds `stylometricCluster`.
+**Why it's slop:** when 40% or more of the sentences run eight words or fewer, the prose reads as a row of punches. It is the cadence an agent produces when told to "vary length" by cutting, and human edits of agent drafts went the other way, mostly lengthening the short sentences. Calibrated on a private set of human-edited drafts (not published), none of which reached 40%. Feeds `stylometricCluster`.
 **Before → After:**
 - "We shipped it. It broke. We fixed it. Users came back. Churn fell." → "We shipped it, it broke, and the fix took two days; within a month the users who had left were back and churn was down."
 **The rule (positive form):** join related clauses as often as you cut; keep a short sentence where it lands a new fact.
 
 ### Rhetorical-question run (`rhetoricalRun`)
 **Tier:** strong · **Family:** Syntactic · **Detection:** linter, under `--genre linkedin|x` only · **False-positive risk:** low in posts
-**Why it's slop:** three questions in a row ("Why does this matter? What does it mean for PMs? Where do we go from here?") stage a reveal instead of making the point. Elsewhere a run of questions can be an honest agenda, so the rule is genre-gated.
+**Why it's slop:** three questions in a row ("Why does this matter? What does it mean for teams? Where do we go from here?") stage a reveal instead of making the point. Elsewhere a run of questions can be an honest agenda, so the rule is genre-gated.
 **Before → After:**
-- "Why does this matter? What does it mean for PMs? Where do we go from here?" → "PMs who skip churn interviews lose the cheapest data they will ever get."
+- "Why does this matter? What does it mean for teams? Where do we go from here?" → "Teams that skip churn interviews lose the cheapest data they will ever get."
 **The rule (positive form):** ask one question you will answer, or answer it.
 
 ---
@@ -568,7 +568,7 @@ Register and stance problems: the prose adopts a voice (chatbot, brochure, hype)
 **Tier:** strong · **Family:** Tonal · **Detection:** linter · **False-positive risk:** low
 **Why it's slop:** "I am writing to apply", "to whom it may concern", "I would welcome the opportunity" are decades-old letter formulae that carry zero information about you or the role.
 **Before → After:**
-- "I am writing to express my interest in the PM role. I would welcome the opportunity to contribute." → "Your Q2 letter named checkout drop-off as the top priority; I cut a similar drop-off 22% at Acme."
+- "I am writing to express my interest in the operations role. I would welcome the opportunity to contribute." → "Your Q2 letter named checkout drop-off as the top priority; I cut a similar drop-off 22% at Acme."
 - "I am confident that I would be a perfect fit." → "I've shipped three billing systems; yours is the problem I want next."
 - "I hope this finds you well. I came across your profile." → "Your talk on eval harnesses matched a problem I'm solving now."
 **The rule (positive form):** open with a specific claim about this company and this role.
@@ -651,7 +651,7 @@ Register and stance problems: the prose adopts a voice (chatbot, brochure, hype)
 **Before → After:**
 - "Everything about this launch is exciting and beneficial." → "The launch hit its signup goal; retention is still below target."
 - "We're thrilled about every part of the roadmap." → "The billing rebuild is the risky bet; if it slips, Q3 slips."
-**The rule (positive form):** take a position and name the tension. CAUTION: in job applications, never "fix" forced positivity by inserting self-deprecating gap admissions; that is a different failure, not a repair.
+**The rule (positive form):** take a position and name the tension. CAUTION: in applications and self-assessments, never "fix" forced positivity by inserting self-deprecating gap admissions; that is a different failure, not a repair.
 
 ### Manufactured personality (`manufactured-personality`)
 **Tier:** judgment · **Family:** Tonal · **Detection:** judgment (not linted) · **False-positive risk:** moderate
@@ -670,30 +670,30 @@ Register and stance problems: the prose adopts a voice (chatbot, brochure, hype)
 
 ### Stock proclamation (`stock-proclamation`)
 **Tier:** lexical · **Family:** Tonal · **Detection:** linter · **False-positive risk:** low
-**Why it's slop:** "The future is here", "Welcome to the future" proclaim instead of claim. ("The game has changed" was dropped on review: sports writing uses it literally.) From the Grok Bot LinkedIn filter; applies in every genre.
+**Why it's slop:** "The future is here", "Welcome to the future" proclaim instead of claim. ("The game has changed" was dropped on review: sports writing uses it literally.) From the social-post item list; applies in every genre.
 **Before → After:**
 - "AI agents now write the first draft of every spec. The future is here." → "AI agents now write the first draft of every spec on our team; review takes ten minutes."
 **The rule (positive form):** end on the fact that made you want to write it.
 
 ### Engagement-bait closer (`social-closer`)
 **Tier:** strong · **Family:** Tonal · **Detection:** linter, under `--genre linkedin|x` only · **False-positive risk:** low in posts
-**Why it's slop:** "Agree?", "Thoughts?", "Drop it in the comments", "Follow for more" ask for nothing specific, and common posting guidance holds that "Thoughts?" kills engagement. A specific question ("Which field would you cut first?") and a comment-gated lead magnet ("Comment CHECKLIST and I'll send it") stay clean. In an email, "Thoughts?" is a fine close, so the rule is genre-gated.
+**Why it's slop:** "Agree?", "Thoughts?", "Drop it in the comments", "Follow for more" ask for nothing specific, so they rarely draw a real reply. A specific question ("Which field would you cut first?") and a comment-gated lead magnet ("Comment CHECKLIST and I'll send it") stay clean. In an email, "Thoughts?" is a fine close, so the rule is genre-gated.
 **Before → After:**
 - "Roadmaps are a promise you cannot keep.\n\nAgree?" → "Roadmaps are a promise you cannot keep. Which date on yours would you defend in public?"
 **The rule (positive form):** end on one question the reader can answer, or on your strongest fact.
 
 ### Formula hook (`hook-formula`)
 **Tier:** strong · **Family:** Tonal · **Detection:** linter, first line only, under `--genre linkedin|x` · **False-positive risk:** low in posts
-**Why it's slop:** "I'm thrilled to announce", "Unpopular opinion:", "Here's what I learned", and an opening question are the stock LinkedIn hooks, and common posting guidance says "no opening question". An essay may open with a question, so the rule is genre-gated.
+**Why it's slop:** "I'm thrilled to announce", "Unpopular opinion:", "Here's what I learned", and an opening question are the stock LinkedIn hooks, and the house default is no opening question. An essay may open with a question, so the rule is genre-gated.
 **Before → After:**
-- "I'm thrilled to announce that our first coaching cohort is live." → "Our first coaching cohort starts Monday with 14 PMs from 9 companies."
+- "I'm thrilled to announce that our new support portal is live." → "Our new support portal opens Monday for 1,400 customers on the Pro plan."
 **The rule (positive form):** write five first lines of 110 characters or fewer and keep the one that states something only you could.
 
 ### Invented detail (`invented-detail`)
 **Tier:** judgment · **Family:** Tonal · **Detection:** judgment (not linted) · **False-positive risk:** n/a
-**Why it's slop:** a number, name, quote, source, ranking or anecdote that is not in the source or the author's notes. The recipe's specificity rule invites it unless the fact has to come from somewhere; a fake "last week a junior PM asked me…" is the LinkedIn failure readers forgive least. Humanizer and the Grok Bot prompts both make this their first rule.
+**Why it's slop:** a number, name, quote, source, ranking or anecdote that is not in the source or the author's notes. The recipe's specificity rule invites it unless the fact has to come from somewhere; a fake "last week a junior colleague asked me…" is the LinkedIn failure readers forgive least. Humanizer states the same rule.
 **Before → After:**
-- "Last week a junior PM asked me a question that stopped me in my tracks." (it didn't happen) → state the point without the story, or use one that did.
+- "Last week a junior colleague asked me a question that stopped me in my tracks." (it didn't happen) → state the point without the story, or use one that did.
 **The rule (positive form):** diff facts both ways against the source; if a fact is missing, write the plainer sentence or ask.
 
 ### Re-explaining what the reader knows (`re-explaining`)
@@ -722,7 +722,7 @@ Markup and artifact tells. The three fatal entries are near-certain proof of une
 **Why it's slop:** an unfilled template slot (`[insert accomplishment here]`, `{{name}}`, "add numbers here", "lorem ipsum", a bare `[Company]`/`[Name]` slot) in a submitted document is an instant reject.
 **Before → After:**
 - "I increased revenue by [X]% at [Company Name]." → "I increased revenue 22% at Acme."
-- "Dear [Name], I'm applying to [Role] at [Company]." → "Dear Ms. Okafor, I'm applying to Staff PM at Acme."
+- "Dear [Name], I'm applying to [Role] at [Company]." → "Dear Ms. Okafor, I'm applying to Staff Engineer at Acme."
 - "Dear {{hiring_manager}}," → "Dear Ms. Okafor,"
 **The rule (positive form):** fill every slot with a real value before the piece leaves your hands.
 
@@ -775,21 +775,21 @@ Markup and artifact tells. The three fatal entries are near-certain proof of une
 
 ### Emoji list markers (`emojiBullets`)
 **Tier:** weak · **Family:** Mechanical · **Detection:** linter (2+ lines) · **False-positive risk:** low-moderate
-**Why it's slop:** humanizer §20 and the Grok "emoji-filled list": "✅ Ship small / ✅ Measure retention" or "🚀 **Launch Phase:**" decorates a list instead of writing it. © ® ™ are not counted. Weak since review: human release notes and checklists use ✅ markers too.
+**Why it's slop:** humanizer §20 and the social-post item "emoji-filled list": "✅ Ship small / ✅ Measure retention" or "🚀 **Launch Phase:**" decorates a list instead of writing it. © ® ™ are not counted. Weak since review: human release notes and checklists use ✅ markers too.
 **Before → After:**
 - "✅ Talk to users weekly\n✅ Ship small\n✅ Measure retention" → "Talk to users every week, ship in small pieces, and watch retention."
 **The rule (positive form):** use plain markers or a sentence.
 
 ### Hashtags over the cap (`hashtagDensity`)
 **Tier:** strong · **Family:** Mechanical · **Detection:** linter, under `--genre linkedin|x` only · **False-positive risk:** low
-**Why it's slop:** a house default from one posting guide allows three to five hashtags or none (more than eight kills reach); six or more reads as reach-farming. Change `maxAllowed` in `data/patterns.mjs` if your venue differs.
+**Why it's slop:** the house default allows three to five hashtags or none; six or more reads as reach-farming. Change `maxAllowed` in `data/patterns.mjs` if your venue differs.
 **Before → After:**
-- "#Product #AI #Leadership #Startups #Growth #SaaS" → "#ProductManagement #Onboarding #SaaS"
+- "#Product #AI #Leadership #Startups #Growth #SaaS" → "#Onboarding #CustomerSuccess #SaaS"
 **The rule (positive form):** three to five specific hashtags, or none.
 
 ### Emojis over the cap (`emojiDensity`)
 **Tier:** strong · **Family:** Mechanical · **Detection:** linter, under `--genre linkedin|x` only · **False-positive risk:** low
-**Why it's slop:** a house default from one posting guide allows three emojis per post; more stand in for words. Change `maxAllowed` in `data/patterns.mjs` if your venue differs.
+**Why it's slop:** the house default allows three emojis per post; more stand in for words. Change `maxAllowed` in `data/patterns.mjs` if your venue differs.
 **Before → After:**
 - "Shipped 🚀 Tested ✅ Measured 📈 Celebrated 🎉" → "We shipped, tested and measured the billing page this week. 🎉"
 **The rule (positive form):** at most three, none in place of a word.
@@ -849,16 +849,16 @@ New patterns land here, each with a date, when the skill misses a slop pattern i
 
 **Observed failure:** `SKILL.md` said "cap at one per piece"; the linter charged 2 points per hit against a ship target of 2, so one deliberate contrast consumed the whole budget and two failed the document outright. Effective policy was zero tolerance.
 
-**Judgment context:** zero tolerance is what produces the flattened, voiceless output the skill's own restraint section exists to prevent. Real human drafts sampled from actual use turned out to use corrective negation repeatedly and legitimately — every instance corrects a belief the reader actually holds. Those sentences are now `LEGIT` and `CLEAN` fixtures precisely so no future widening can flag them. `CONTRAST_FAMILY` gives the first device a free pass; the keep-test, which no regex can run, decides the rest.
+**Judgment context:** zero tolerance is what produces the flattened, voiceless output the skill's own restraint section exists to prevent. Real human-written sentences turned out to use corrective negation repeatedly and legitimately — every instance corrects a belief the reader actually holds. Sentences of the same shapes, written for this repo, are now `LEGIT` and `CLEAN` fixtures precisely so no future widening can flag them. `CONTRAST_FAMILY` gives the first device a free pass; the keep-test, which no regex can run, decides the rest.
 
 ### 2026-10-14 — outreach formulae scored 0
 
 **Observed failure:** `application-boilerplate` is an exact-string lexicon, so "I hope this finds you well" fired and "I hope this message finds you well" did not; "I came across your profile" fired and "I came across Northwind" did not. Thirteen common outreach openers and closers scored 0 one by one, and two whole stock messages (a follow-up after silence and a referral ask, from yashasvishailly/job-search-writing-rules, MIT) scored 0 end to end. Cold DMs, follow-ups, and referral asks usually ship without a render gate, so the linter is often the only mechanical check they get.
 
-**Judgment context:** the fix is two regex rules (`outreach-boilerplate`, `permission-hedge`) and a one-free `exclamationDensity`, held to `evals/eval-outreach-patterns.mjs`. Two candidate bans were rejected after scanning a real author's sent letters. "I'd love the chance to talk it through" is his own hand-edited close, so a plain one-sentence statement of interest stays legal; what is a tell is the same closer across many letters, which only a corpus check can see. And the source list's blanket ban on "if", "but", "just", and "I think" would flag ordinary connected prose ("That said", "But" as an opener), the over-correction the restraint section warns against. Only phrases that ask permission to have written are matched.
+**Judgment context:** the fix is two regex rules (`outreach-boilerplate`, `permission-hedge`) and a one-free `exclamationDensity`, held to `evals/eval-outreach-patterns.mjs`. Two candidate bans were rejected after checking them against human-written letters. "I'd love the chance to talk it through" is a common human close, so a plain one-sentence statement of interest stays legal; what is a tell is the same closer across many letters, which only a corpus check can see. And the source list's blanket ban on "if", "but", "just", and "I think" would flag ordinary connected prose ("That said", "But" as an opener), the over-correction the restraint section warns against. Only phrases that ask permission to have written are matched.
 
 ### 2026-10-31 — 100% on the fixture, 21% outside it
 
-**Observed failure:** a comparison against blader/humanizer, Wikipedia's "Signs of AI writing" and a practitioner's Grok Bot LinkedIn/X filters ran the contrast family over 33 real contrast sentences and caught 7. The fixture still scored 100%, because every regex had been fitted to it. A hyphen inside X broke the headline shape ("It's not just a weight-loss drug, it's…" scored clean; "a weight loss drug" fired). The same pass found human prose failing outright: "Of course, we shipped it on Friday…" was FATAL "Chatbot opener", three sentences opening with "The" cost a strong 3 points, and a word mentioned inside inline code scored as a use. It also found the linter catching 14 of 42 humanizer "before" passages and 8 of 24 Grok items: the staging tells (run-ups, phantom objections, deep sayings, closers, source disclaimers) and every post-specific tell were missing.
+**Observed failure:** a comparison against blader/humanizer, Wikipedia's "Signs of AI writing" and the skill's own social-post item list ran the contrast family over 33 real contrast sentences and caught 7. The fixture still scored 100%, because every regex had been fitted to it. A hyphen inside X broke the headline shape ("It's not just a weight-loss drug, it's…" scored clean; "a weight loss drug" fired). The same pass found human prose failing outright: "Of course, we shipped it on Friday…" was FATAL "Chatbot opener", three sentences opening with "The" cost a strong 3 points, and a word mentioned inside inline code scored as a use. It also found the linter catching 14 of 42 humanizer "before" passages and 8 of 24 social-post items: the staging tells (run-ups, phantom objections, deep sayings, closers, source disclaimers) and every post-specific tell were missing.
 
-**Judgment context:** a fixture you tune against stops measuring once the regexes fit it, so `evals/holdout/` holds real contrast sentences and real human prose that no rule may be tuned against, reported by `evals/eval-holdout.mjs` before and after every change. Three proposals were settled by evidence rather than adopted: `punctVariety` (a low share of ; : ( )) was rejected because a private set of hand-edited human letters used those marks no more often than agent drafts did, so it would flag human style; resetting `anaphora` at blank lines was rejected because identical slide or paragraph openings are a tell, and requiring two matching words after "The" or "This" fixes the "The…" false positive on its own (one- and two-letter starters such as "It" stay excluded, as in 1.x); and bare "Y rather than X" stays unmatched because technical prose uses it constantly. Post-specific rules are genre-gated (`--genre linkedin|x`) so that "Thoughts?" in an email and a one-line paragraph in a memo are untouched.
+**Judgment context:** a fixture you tune against stops measuring once the regexes fit it, so `evals/holdout/` holds real contrast sentences and real human prose that no rule may be tuned against, reported by `evals/eval-holdout.mjs` before and after every change. Three proposals were settled by evidence rather than adopted: `punctVariety` (a low share of ; : ( )) was rejected because a private set of human-edited drafts (not published) used those marks no more often than agent drafts did, so it would flag human style; resetting `anaphora` at blank lines was rejected because identical slide or paragraph openings are a tell, and requiring two matching words after "The" or "This" fixes the "The…" false positive on its own (one- and two-letter starters such as "It" stay excluded, as in 1.x); and bare "Y rather than X" stays unmatched because technical prose uses it constantly. Post-specific rules are genre-gated (`--genre linkedin|x`) so that "Thoughts?" in an email and a one-line paragraph in a memo are untouched.

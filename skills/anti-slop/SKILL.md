@@ -2,7 +2,7 @@
 name: anti-slop
 description: >-
   Use when writing or editing any prose a human will read — emails, docs, posts,
-  essays, cover letters, resumes, summaries, PR descriptions, release notes —
+  essays, summaries, PR descriptions, release notes, cover letters, resumes —
   and it must not read as generic AI writing. Triggers on "write this without
   the AI slop", "make it sound human", "de-slop", "cut the fluff", "tighten
   this", "why does this sound like ChatGPT", "remove the corporate/LLM tone",
@@ -32,9 +32,8 @@ is its own failure, not a fix.
 **When NOT to use:** code and code comments; machine-facing output (logs,
 schemas). For prose shipping under a specific person's byline, apply their voice
 skill (e.g. a `<byline>-voice` skill) *on top of* this one — voice wins any
-conflict. For
-house-style mechanics (title case, number formatting), defer to the venue's
-style guide (e.g. `every-style-editor`, `style-editor`).
+conflict. For house-style mechanics (title case, number formatting), defer to
+the venue's style guide or house-style skill.
 
 ## The recipe — what good prose IS
 
@@ -173,12 +172,11 @@ like anyone. Cut in proportion to the actual slop.
    not cost voice.
 7. Re-run the linter, then read aloud once. Ship at gateScore ≤2 with zero
    FATALs (`--max 2` gates on it; weak findings never block).
-8. Only when the author will hand-edit and send the result (a cover letter,
-   outreach, a post) and the project keeps private edit records: save your
-   draft there, not in a scratchpad. Never create draft files in a code repo,
-   a public repo, or anything that ships. After the author edits it,
-   `scripts/acceptance.mjs <draft> <final>` reports how much shipped
-   unchanged: the outcome the score is a proxy for.
+8. When the author will hand-edit and send the result (outreach, a post, a
+   letter), keep your draft where the author keeps their own working files,
+   never in a code repo, a public repo, or anything that ships. After the
+   author edits it, `scripts/acceptance.mjs <draft> <final>` reports how much
+   shipped unchanged: the outcome the score is a proxy for.
 
 ## Red flags — you are about to emit slop
 
@@ -191,7 +189,8 @@ like anyone. Cut in proportion to the actual slop.
 
 ## Genre shapes
 
-Per-genre contracts (cover letter, email, LinkedIn, essay, resume bullets):
+Per-genre contracts (email, executive update, LinkedIn post, essay, bio, cover
+letter, resume bullets, outreach and follow-ups):
 `references/genre-recipes.md`. Detection reliability tiers and false-positive
 guardrails: `references/detection-guide.md`. For a LinkedIn or X post, lint
 with `--genre`; to match an author's cadence, add `--baseline <samples-dir>`
@@ -199,14 +198,15 @@ with `--genre`; to match an author's cadence, add `--baseline <samples-dir>`
 
 ## Gotchas — digest
 
-The dated log of observed failures, verbatim and append-only, is
-`references/gotchas-log.md`. Read it before drafting a cover letter or
-outreach, and before changing a rule. What it taught:
+The full list of lessons from observed failures, each with its reason, is
+`references/gotchas-log.md`. Read it before changing a rule or when a lint
+finding looks wrong. In short:
 
 - Plain human closers ("Let me know if you have questions", "I'd love the
   chance to talk") stay legal; flag chat leakage and permission-seeking.
 - Never "fix" forced positivity with self-deprecating admissions.
-- ≤1 dash is a shipping policy for our text, never evidence about anyone else's.
+- ≤1 dash is a shipping policy for text you produce, never evidence about
+  anyone else's.
 - One contrast per piece is legal, and it still owes the keep-test.
 - Verify a rule with the evals and the held-out set, never by eye.
 - A finding you cannot see in the copy may sit in `<head>`, a comment or code.
@@ -227,7 +227,7 @@ outreach, and before changing a rule. What it taught:
   reads it; the prose catalogue derives from it; append-mostly).
 - `references/negative-parallelism.md` — the family reference behind the section
   above: ten shapes, five repairs, keep-test gallery, provenance.
-- `references/gotchas-log.md` — every observed failure, dated.
+- `references/gotchas-log.md` — lessons from observed failures, with reasons.
 - Repo `evals/` (maintainer tooling, not shipped inside the skill) — run every
   `eval-*.mjs` and `check-*.mjs` before and after ANY rule change, and read
   `eval-holdout.mjs`, which measures text no rule was tuned against.

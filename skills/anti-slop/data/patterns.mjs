@@ -1,9 +1,9 @@
 // patterns.mjs — THE canonical machine-readable AI-slop pattern source.
 //
 // Single source of truth for the anti-slop skill, its bundled linter
-// (scripts/slop-lint.mjs), and any downstream consumers that vendor this file
-// (e.g. a downstream writing pipeline). Prose catalogues are
-// derived from and validated against this file — never the reverse.
+// (scripts/slop-lint.mjs), and any tool that vendors this file. Prose
+// catalogues are derived from and validated against this file — never the
+// reverse.
 //
 // Maintenance contract (append-mostly):
 //   - New patterns come from OBSERVED failures, never imagination.
@@ -17,16 +17,11 @@
 //   strong  — structural constructions reliable at density; act on them.
 //   lexical — word/phrase lists; real signal but time-decaying and genre-noisy.
 //   weak    — corroborating only; must NEVER trigger action on their own.
-//
-// frequencyLabel governs remediation intensity (from the voice system):
-//   HARD   — remove 100% of instances.
-//   STRONG — remove 70–80%; keep the 20–30% doing real structural work.
-//   LIGHT  — apply where it improves the text.
 
 export const META = {
   // From 2.0.0 this equals the plugin release version (.claude-plugin/plugin.json);
   // evals/check-release.mjs enforces it. Full history: CHANGELOG.md at the repo root.
-  version: '2.0.1', // 2.0.1 (2026-10-31): résumé false positives — an open-ended spaced date range ("2023 – Present") no longer counts toward em-dash density, and a bold label over a short delimited list ("- **Languages:** Python, Go, SQL", the résumé Skills line) no longer counts as a bold-first bullet. 2.0.0 (2026-10-31): ship gate is gateScore; genre-gated LinkedIn/X rules (`genres` field, GENRES export); contrast-family recall fixes (hyphen in X, eight new shapes) checked against a held-out set; chat-opener limited to chat-specific shapes at document or paragraph start; FATAL rules still read code; anaphora two-word rule for function-word starters; staging ports from blader/humanizer (staged-runup, phantom-objection, deep-saying, self-narration) and Wikipedia (source-disclaimer, corrective-framing, watchlist-2026); clippedCadence; emojiBullets; single qualifiers and 'in order to' re-tiered by evaluation; density-based free allowances (freePerWords); six unreachable lexicon terms removed (score-neutral). An engine older than 2.0.0 ignores `genres` and would run the social rules on every document, so vendor this file only together with slop-lint.mjs. 1.8.0 (2026-10-14): outreach coverage — `outreach-boilerplate` (strong: regex variants of stock letter/DM openers and closers; the exact-string `application-boilerplate` lexicon missed "I hope this MESSAGE finds you well" and "I came across <Company>", and 13 common outreach clichés scored 0; "I'd love/welcome the chance" deliberately excluded because a plain statement of interest is a human close), `permission-hedge` (strong: "I was wondering if", "no pressure", "in case it got lost" — asking permission to have written; bare if/but/just/might deliberately excluded), `exclamationDensity` (strong statistical: ≤1 per piece). Source of the observed failures and the eval fixtures: yashasvishailly/job-search-writing-rules (MIT). 1.7.0 (2026-08-13): four patterns ported from a downstream consumer's local de-slop catalogue, which had drifted into a partial second source of truth — `vague-quantifier` (weak, free-allowance 2: various/numerous/multitude are ordinary English, a cluster is the tell), `hedge-stacking` (strong: STACKED modals only — bare "might"/"could" must never fire, and `likely` is excluded because "would likely take a week" is a normal estimate), `template-header` (strong, anchored to markdown heading syntax so body prose never fires; TL;DR deliberately excluded as a genuine human convention), `assert-dont-prove` (strong: asserting a thing is obvious in place of showing it). 1.6.0 (2026-08-13): CONTRAST_FAMILY gains a disposition axis — the freed first contrast now carries `review: 'keep-test'` alongside its info tier, the engine returns a `requiresReview` count, and the keep-test questions live in the pattern data so the report prints them inline. Fixes a gap where the free pass was filed under the report's own "corroborate only, never act on them alone" note, so the mandatory judgment call read as an instruction to ignore it (observed: a shipped never-form on a score of 0). Scoring, bands and gateScore are unchanged; the new `--require-review-disposition` exit is opt-in. 1.5.0 (2026-08-12): negative-parallelism family completed — 6 new antithesis shapes (never-form, question-form, degree-form, that-clause, point-form, past-tense verb-phrase) + "No A, no B, just C" added to countdown; CONTRAST_FAMILY introduces a one-free-per-document allowance across the contrast rules so the linter matches the skill's stated "cap at one per piece" policy instead of enforcing de facto zero tolerance (source: Oremus, The Atlantic, 2026-07-14 — Pangram measures the construction at 3x human frequency, i.e. the human baseline is not zero); 1.4.0 (2026-08-02): antithesis pattern widened — 4 new regexes covering you're/I'm/they're/he's/she's subjects, two-sentence period-separated reveal, markdown-context (table/list) sentence starts, and the mirrored trailing "X, not a/an/the Y." order (observed failure: original 4 patterns missed ~10 real instances in one document); 1.3.0 (2026-07-23): colon-reveal + dramatic-fragment + rhetorical-setup (imported from petergyang/no-ai-slop catalogue); 1.2.0 (2026-07-15): stylometric tier (adapted from conorbronsdon/avoid-ai-writing, MIT) + gateScore; 1.1.0: em-dash perception policy, FATAL FP fixes, span-dedup
+  version: '2.0.1', // 2.0.1 (2026-10-31): résumé false positives — an open-ended spaced date range ("2023 – Present") no longer counts toward em-dash density, and a bold label over a short delimited list ("- **Languages:** Python, Go, SQL", the résumé Skills line) no longer counts as a bold-first bullet. 2.0.0 (2026-10-31): ship gate is gateScore; genre-gated LinkedIn/X rules (`genres` field, GENRES export); contrast-family recall fixes (hyphen in X, eight new shapes) checked against a held-out set; chat-opener limited to chat-specific shapes at document or paragraph start; FATAL rules still read code; anaphora two-word rule for function-word starters; staging ports from blader/humanizer (staged-runup, phantom-objection, deep-saying, self-narration) and Wikipedia (source-disclaimer, corrective-framing, watchlist-2026); clippedCadence; emojiBullets; single qualifiers and 'in order to' re-tiered by evaluation; density-based free allowances (freePerWords); six unreachable lexicon terms removed (score-neutral). An engine older than 2.0.0 ignores `genres` and would run the social rules on every document, so vendor this file only together with slop-lint.mjs. 1.8.0 (2026-10-14): outreach coverage — `outreach-boilerplate` (strong: regex variants of stock letter/DM openers and closers; the exact-string `application-boilerplate` lexicon missed "I hope this MESSAGE finds you well" and "I came across <Company>", and 13 common outreach clichés scored 0; "I'd love/welcome the chance" deliberately excluded because a plain statement of interest is a human close), `permission-hedge` (strong: "I was wondering if", "no pressure", "in case it got lost" — asking permission to have written; bare if/but/just/might deliberately excluded), `exclamationDensity` (strong statistical: ≤1 per piece). Source of the observed failures and the eval fixtures: yashasvishailly/job-search-writing-rules (MIT). 1.7.0 (2026-08-13): four patterns ported from a separate de-slop catalogue that had drifted into a partial second source of truth — `vague-quantifier` (weak, free-allowance 2: various/numerous/multitude are ordinary English, a cluster is the tell), `hedge-stacking` (strong: STACKED modals only — bare "might"/"could" must never fire, and `likely` is excluded because "would likely take a week" is a normal estimate), `template-header` (strong, anchored to markdown heading syntax so body prose never fires; TL;DR deliberately excluded as a genuine human convention), `assert-dont-prove` (strong: asserting a thing is obvious in place of showing it). 1.6.0 (2026-08-13): CONTRAST_FAMILY gains a disposition axis — the freed first contrast now carries `review: 'keep-test'` alongside its info tier, the engine returns a `requiresReview` count, and the keep-test questions live in the pattern data so the report prints them inline. Fixes a gap where the free pass was filed under the report's own "corroborate only, never act on them alone" note, so the mandatory judgment call read as an instruction to ignore it (observed: a shipped never-form on a score of 0). Scoring, bands and gateScore are unchanged; the new `--require-review-disposition` exit is opt-in. 1.5.0 (2026-08-12): negative-parallelism family completed — 6 new antithesis shapes (never-form, question-form, degree-form, that-clause, point-form, past-tense verb-phrase) + "No A, no B, just C" added to countdown; CONTRAST_FAMILY introduces a one-free-per-document allowance across the contrast rules so the linter matches the skill's stated "cap at one per piece" policy instead of enforcing de facto zero tolerance (source: Oremus, The Atlantic, 2026-07-14 — Pangram measures the construction at 3x human frequency, i.e. the human baseline is not zero); 1.4.0 (2026-08-02): antithesis pattern widened — 4 new regexes covering you're/I'm/they're/he's/she's subjects, two-sentence period-separated reveal, markdown-context (table/list) sentence starts, and the mirrored trailing "X, not a/an/the Y." order (observed failure: original 4 patterns missed ~10 real instances in one document); 1.3.0 (2026-07-23): colon-reveal + dramatic-fragment + rhetorical-setup (imported from petergyang/no-ai-slop catalogue); 1.2.0 (2026-07-15): stylometric tier (adapted from conorbronsdon/avoid-ai-writing, MIT) + gateScore; 1.1.0: em-dash perception policy, FATAL FP fixes, span-dedup
   lastReviewed: '2026-10-31',
   reviewIntervalDays: 120,
   scoreBands: { low: 5, medium: 12 }, // 0–5 low · 6–12 medium · 13+ high
@@ -68,8 +63,8 @@ const SOCIAL = ['linkedin', 'x'];
 // occupant is the non-actionable texture report, and which the report footer
 // labels "corroborate only, never act on them alone." So the one finding
 // carrying a MANDATORY judgment call was filed under, and labelled with, the
-// system's own instruction to ignore it. A consumer (career-ops) shipped a
-// textbook never-form ("The hard part was never building. It was …") on a
+// system's own instruction to ignore it. A drafting agent shipped a
+// textbook never-form ("The hard part was never the migration. It was …") on a
 // score of 0 with no keep-test ever run.
 //
 // The free pass is correct and unchanged. What was missing is a DISPOSITION
@@ -103,7 +98,7 @@ export const CONTRAST_FAMILY = {
 export const LEXICONS = [
   {
     id: 'ai-signature', family: 'lexical', label: 'AI-signature word',
-    tier: 'lexical', points: 3, frequencyLabel: 'HARD', fpRisk: 'moderate-decaying',
+    tier: 'lexical', points: 3, fpRisk: 'moderate-decaying',
     dateCohort: '2023-2025',
     fix: 'Delete, then rewrite the sentence with a concrete claim. If you cannot, the sentence was empty.',
     terms: [
@@ -119,7 +114,7 @@ export const LEXICONS = [
   },
   {
     id: 'ai-cliche', family: 'lexical', label: 'AI cliché', tier: 'lexical',
-    points: 3, frequencyLabel: 'HARD', fpRisk: 'low', dateCohort: '2023-2025',
+    points: 3, fpRisk: 'low', dateCohort: '2023-2025',
     fix: 'Cut entirely and rewrite the sentence with a concrete claim.',
     terms: [
       "let's dive deep", "let's delve into", "let's dive in", "let's break this down",
@@ -135,7 +130,7 @@ export const LEXICONS = [
   },
   {
     id: 'corporate-buzzword', family: 'lexical', label: 'Corporate buzzword',
-    tier: 'lexical', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    tier: 'lexical', points: 2, fpRisk: 'low-moderate',
     dateCohort: 'evergreen',
     fix: 'Replace with the plain word (utilize→use, leverage→use, facilitate→help, robust→strong, seamless→smooth) or name the specific thing.',
     terms: [
@@ -149,7 +144,7 @@ export const LEXICONS = [
   },
   {
     id: 'self-praise', family: 'lexical', label: 'Unsupported self-praise',
-    tier: 'strong', points: 3, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 3, fpRisk: 'low',
     dateCohort: 'evergreen',
     fix: 'Delete the label, keep the proof: replace the adjective with the specific result it claims.',
     terms: [
@@ -163,7 +158,7 @@ export const LEXICONS = [
   },
   {
     id: 'application-boilerplate', family: 'tonal', label: 'Application boilerplate',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 2, fpRisk: 'low',
     dateCohort: 'evergreen',
     fix: 'Replace decades-old letter formulae with a specific claim about this company and this role.',
     terms: [
@@ -176,7 +171,7 @@ export const LEXICONS = [
   },
   {
     id: 'hedge', family: 'syntactic', label: 'Hedge phrase', tier: 'strong',
-    points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    points: 2, fpRisk: 'low',
     dateCohort: 'evergreen',
     fix: 'Own the claim, or give a precise caveat ("in 7 of 10 cases", not "in many ways").',
     terms: [
@@ -193,7 +188,7 @@ export const LEXICONS = [
   },
   {
     id: 'meta-commentary', family: 'structural', label: 'Meta commentary',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    tier: 'strong', points: 2, fpRisk: 'low-moderate',
     dateCohort: 'evergreen',
     fix: 'Say the thing; never announce that you are about to say the thing.',
     terms: [
@@ -205,7 +200,7 @@ export const LEXICONS = [
   },
   {
     id: 'wordy', family: 'syntactic', label: 'Wordy construction', tier: 'weak',
-    points: 1, frequencyLabel: 'STRONG', fpRisk: 'low',
+    points: 1, fpRisk: 'low',
     dateCohort: 'evergreen',
     // 2026-10-31: "in order to" removed. Wikipedia's "Signs of human writing"
     // lists it, and a small local count found it in human reference text (BSD
@@ -219,7 +214,7 @@ export const LEXICONS = [
   },
   {
     id: 'significance-inflation', family: 'rhetorical', label: 'Significance inflation',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'moderate',
+    tier: 'strong', points: 2, fpRisk: 'moderate',
     dateCohort: '2023-2025',
     fix: 'Delete the inflation; state the specific, bounded fact and let the reader judge significance.',
     terms: [
@@ -234,7 +229,7 @@ export const LEXICONS = [
   },
   {
     id: 'despite-challenges', family: 'rhetorical', label: 'Acknowledge-and-dismiss',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    tier: 'strong', points: 2, fpRisk: 'low-moderate',
     dateCohort: '2023-2025',
     fix: 'Engage the challenge seriously or omit it; drop the boilerplate "faces challenges" formula.',
     terms: [
@@ -244,7 +239,7 @@ export const LEXICONS = [
   },
   {
     id: 'false-suspense', family: 'rhetorical', label: 'False suspense', tier: 'strong',
-    points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    points: 2, fpRisk: 'low-moderate',
     dateCohort: 'evergreen',
     fix: 'Delete the tease; lead with the actual point.',
     terms: [
@@ -255,14 +250,14 @@ export const LEXICONS = [
   },
   {
     id: 'signposted-conclusion', family: 'structural', label: 'Signposted conclusion',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    tier: 'strong', points: 2, fpRisk: 'low-moderate',
     dateCohort: 'evergreen',
     fix: 'Delete — the reader knows where they are. End on the strongest concrete point.',
     terms: ['in conclusion', 'to sum up', 'in summary', 'to wrap up', 'all in all'],
   },
   {
     id: 'closing-tautology', family: 'structural', label: 'Closing tautology',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 2, fpRisk: 'low',
     dateCohort: 'evergreen',
     fix: 'Delete. If the section made its point, no announcement needed. End on evidence or a next action.',
     terms: [
@@ -272,7 +267,7 @@ export const LEXICONS = [
   },
   {
     id: 'vague-attribution', family: 'rhetorical', label: 'Vague attribution',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    tier: 'strong', points: 2, fpRisk: 'low-moderate',
     dateCohort: 'evergreen',
     fix: 'Name the source or delete the claim.',
     terms: [
@@ -283,7 +278,7 @@ export const LEXICONS = [
   },
   {
     id: 'patronizing-analogy', family: 'tonal', label: 'Patronizing analogy',
-    tier: 'strong', points: 2, frequencyLabel: 'STRONG', fpRisk: 'moderate',
+    tier: 'strong', points: 2, fpRisk: 'moderate',
     dateCohort: 'evergreen',
     fix: 'Explain the concept directly instead of reaching for an unrequested metaphor.',
     terms: ['think of it as', "it's like a "],
@@ -294,7 +289,7 @@ export const LEXICONS = [
     // small local count found none in ~94k words of human man pages and four in
     // ~19k words of AI fixtures (directional), so the allowance now scales with
     // length: one free use per 250 words.
-    tier: 'strong', points: 2, freePerWords: 250, frequencyLabel: 'STRONG',
+    tier: 'strong', points: 2, freePerWords: 250,
     fpRisk: 'low-moderate', dateCohort: '2023-2025',
     fix: 'Use the plain copula ("serves as a hub" → "is a hub").',
     terms: ['serves as', 'stands as', 'holds the distinction of being', 'boasts', 'operates as', 'functions as'],
@@ -302,7 +297,7 @@ export const LEXICONS = [
   {
     id: 'adverbial-bloat', family: 'lexical', label: 'Adverbial bloat', tier: 'lexical',
     points: 2, freeAllowance: 1, allowTerms: { fundamentally: 1 },
-    frequencyLabel: 'STRONG', fpRisk: 'moderate-high', dateCohort: 'evergreen',
+    fpRisk: 'moderate-high', dateCohort: 'evergreen',
     fix: 'Delete the adverb; if removal weakens the sentence, the claim is weak. Never swap an adverb for a different adverb.',
     terms: [
       'importantly', 'remarkably', 'fundamentally', 'essentially', 'notably',
@@ -312,7 +307,7 @@ export const LEXICONS = [
   },
   {
     id: 'engagement-bait', family: 'tonal', label: 'Engagement bait', tier: 'strong',
-    points: 3, frequencyLabel: 'HARD', fpRisk: 'low', dateCohort: 'evergreen',
+    points: 3, fpRisk: 'low', dateCohort: 'evergreen',
     fix: 'Delete. Substance earns attention; bait spends credibility.',
     terms: [
       'let that sink in', 'read that again', 'this changes everything',
@@ -320,17 +315,17 @@ export const LEXICONS = [
     ],
   },
   {
-    // 2026-10-31, from the Grok Bot LinkedIn filter ("The future is here").
+    // 2026-10-31, from the social-post item list ("The future is here").
     // All genres: a proclamation in place of a claim reads the same in a
     // memo as in a post. Kept to phrasings with no literal use.
     id: 'stock-proclamation', family: 'tonal', label: 'Stock proclamation',
-    tier: 'lexical', points: 2, frequencyLabel: 'HARD', fpRisk: 'low', dateCohort: '2024-2026',
+    tier: 'lexical', points: 2, fpRisk: 'low', dateCohort: '2024-2026',
     fix: 'Delete it and end on the fact that made you want to write it.',
     terms: ['the future is here', 'the future is now', 'welcome to the future'],
   },
   {
     id: 'rhetorical-setup', family: 'rhetorical', label: 'Rhetorical setup',
-    tier: 'lexical', points: 2, frequencyLabel: 'HARD', fpRisk: 'moderate',
+    tier: 'lexical', points: 2, fpRisk: 'moderate',
     dateCohort: 'evergreen',
     // 2026-07-23: imported from petergyang/no-ai-slop ("Rhetorical setups"). The
     // self-answered "Question? Answer." half of that pattern is already covered by
@@ -346,7 +341,7 @@ export const LEXICONS = [
   },
   {
     id: 'chat-leakage', family: 'tonal', label: 'Chatbot register leakage',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'moderate',
+    tier: 'strong', points: 2, fpRisk: 'moderate',
     dateCohort: 'evergreen',
     // 2026-10-31: read inside code too (as FATAL rules are). A pasted chat
     // answer often arrives inside a fence; "I hope this helps" is never code.
@@ -358,14 +353,14 @@ export const LEXICONS = [
     ],
   },
   {
-    // 2026-08-13, ported from a downstream consumer's local catalogue. The tell
+    // 2026-08-13, ported from a separate de-slop catalogue. The tell
     // is a quantity claim that avoids the quantity. Deliberately WEAK with a
     // free allowance: "numerous trials" is ordinary English, and precision on
     // clean human prose is the failure mode that matters most here. A cluster
     // is the signal. `myriad`/`plethora` are NOT here — they sit in
     // `ai-signature`, where their sharper cohort earns the higher tier.
     id: 'vague-quantifier', family: 'lexical', label: 'Vague quantifier (density signal)',
-    tier: 'weak', points: 1, freeAllowance: 2, freePerWords: 300, frequencyLabel: 'LIGHT',
+    tier: 'weak', points: 1, freeAllowance: 2, freePerWords: 300,
     fpRisk: 'high', dateCohort: 'evergreen',
     fix: 'Give the number, or name them. "various stakeholders" → "the CFO and two board members"; "numerous trials" → "nine trials".',
     terms: [
@@ -379,7 +374,7 @@ export const LEXICONS = [
     // and from `significance-inflation` (which inflates a fact rather than
     // substituting for one).
     id: 'assert-dont-prove', family: 'rhetorical', label: 'Assertion in place of evidence',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    tier: 'strong', points: 2, fpRisk: 'low-moderate',
     dateCohort: 'evergreen',
     fix: 'Delete the assertion and state the evidence. If you have none, you have no claim.',
     terms: [
@@ -390,7 +385,7 @@ export const LEXICONS = [
   },
   {
     id: 'watchlist', family: 'lexical', label: 'Watchlist word (density signal)',
-    tier: 'weak', points: 1, freeAllowance: 2, freePerWords: 300, frequencyLabel: 'LIGHT',
+    tier: 'weak', points: 1, freeAllowance: 2, freePerWords: 300,
     fpRisk: 'high', dateCohort: '2024-2026',
     fix: 'Fine in isolation; a cluster reads as generated. Swap for the concrete noun/verb where possible.',
     terms: [
@@ -412,14 +407,14 @@ export const LEXICONS = [
     // writing" both call a lone qualifier a human habit; local counts found no
     // signal (a small, directional local count). The tell is a
     // stack, which `hedge-stacking` still catches at strong tier.
-    tier: 'weak', points: 1, freeAllowance: 1, frequencyLabel: 'LIGHT',
+    tier: 'weak', points: 1, freeAllowance: 1,
     fpRisk: 'high', dateCohort: 'evergreen',
     fix: 'One qualifier is a choice; several in a short piece make every claim sound unsure. Keep the one the evidence needs.',
     terms: ['arguably', 'in many ways', 'to some extent', 'for the most part', 'by and large', 'in a sense', 'generally speaking'],
   },
   {
     id: 'phantom-objection', family: 'rhetorical', label: 'Arguing with no one (humanizer §5)',
-    tier: 'lexical', points: 2, frequencyLabel: 'STRONG', fpRisk: 'moderate', dateCohort: '2024-2026',
+    tier: 'lexical', points: 2, fpRisk: 'moderate', dateCohort: '2024-2026',
     fix: 'Remove the defense against an objection nobody raised. Keep an objection only when you name who holds it and answer it in full.',
     terms: [
       'a tempting approach would be', 'one might be tempted to', 'an obvious approach would be',
@@ -435,7 +430,7 @@ export const LEXICONS = [
     // language of" and "the heart of the matter" dropped: "The yen is the
     // currency of Japan" and "The real question is whether finance will fund
     // it" are ordinary English. What stays is corroboration only.
-    tier: 'weak', points: 1, frequencyLabel: 'LIGHT', fpRisk: 'moderate', dateCohort: '2024-2026',
+    tier: 'weak', points: 1, fpRisk: 'moderate', dateCohort: '2024-2026',
     fix: 'State the claim it gestures at, with its evidence. "X becomes a trap" says nothing a reader can check.',
     terms: ['the real question is', 'what really matters is', 'the deeper issue is', 'becomes a trap'],
   },
@@ -443,7 +438,7 @@ export const LEXICONS = [
     id: 'self-narration', family: 'structural', label: 'Writing about the document (humanizer §25)',
     // Weak: humanizer marks a single description of the page "weak alone",
     // and change logs legitimately say what replaced what.
-    tier: 'weak', points: 1, frequencyLabel: 'LIGHT', fpRisk: 'moderate', dateCohort: '2024-2026',
+    tier: 'weak', points: 1, fpRisk: 'moderate', dateCohort: '2024-2026',
     fix: 'Describe the subject, not how the text was assembled. Keep a caveat only if it changes what the reader should do.',
     terms: [
       'was added to replace', 'flagged rather than guessed', 'the table below compares',
@@ -457,7 +452,7 @@ export const LEXICONS = [
     // (leverage, multifaceted and quietly from the same list already sit in
     // corporate-buzzword, ai-signature and watchlist.)
     id: 'watchlist-2026', family: 'lexical', label: 'Mid-2026 cohort word (density signal)',
-    tier: 'weak', points: 1, freeAllowance: 2, freePerWords: 300, frequencyLabel: 'LIGHT',
+    tier: 'weak', points: 1, freeAllowance: 2, freePerWords: 300,
     fpRisk: 'high', dateCohort: '2026-mid',
     fix: 'Fine in isolation; a cluster reads as current-model output. Swap for the concrete noun or verb.',
     // "matters" and "challenge" dropped (review m12): too common to signal anything.
@@ -469,7 +464,7 @@ export const LEXICONS = [
 
 export const FATAL_LEXICON = {
   id: 'machine-artifact', family: 'mechanical', label: 'Machine artifact (FATAL)',
-  tier: 'fatal', points: 10, frequencyLabel: 'HARD', fpRisk: 'near-zero',
+  tier: 'fatal', points: 10, fpRisk: 'near-zero',
   dateCohort: 'evergreen',
   fix: 'Proof of unedited machine output. Remove the artifact and re-review the whole piece.',
   terms: [
@@ -568,10 +563,10 @@ export const FATAL_REGEX = [
 export const REGEX_RULES = [
   {
     id: 'antithesis', family: 'syntactic', label: 'antithesis / negative parallelism ("not X, it\'s Y")',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-at-density',
+    tier: 'strong', points: 2, fpRisk: 'low-at-density',
     fix: 'Coffee test: is the "not X" naming a real misconception? If not, state Y directly. Cap at one per piece.',
-    // 2026-08-02: observed-failure additions (Political Landscape Mapping guide,
-    // manual anti-slop pass caught ~10 instances the original 4 patterns missed
+    // 2026-08-02: observed-failure additions (a manual anti-slop pass over one
+    // real document caught ~10 instances the original 4 patterns missed
     // entirely — patterns 1–4 below are the original set, unchanged). Three
     // distinct shapes were slipping through:
     //   (a) subjects outside it's/this-is/that's/we're — "you're not X, you're Y",
@@ -603,8 +598,8 @@ export const REGEX_RULES = [
       // (d) mirrored trailing order: "X, not a/an/the Y."
       // The determiner requirement is load-bearing and must NOT be relaxed:
       // it is what separates the rhetorical reveal ("a hypothesis, not a fact")
-      // from the bare contrastive tail real writers use ("grounded in
-      // architecture decisions, not slideware"). See the KEEP fixtures.
+      // from the bare contrastive tail real writers use ("grounded in customer
+      // interviews, not guesswork"). See the KEEP fixtures.
       // The number-word lookahead excludes factual quantity corrections
       // ("nine customers, not the twelve we planned") — those are arithmetic,
       // not rhetoric. Caught as an FP by the eval fixture, 2026-08-12.
@@ -674,13 +669,13 @@ export const REGEX_RULES = [
   },
   {
     id: 'not-only-but-also', family: 'syntactic', label: '"Not only X but also Y"',
-    tier: 'strong', points: 2, frequencyLabel: 'STRONG', fpRisk: 'moderate',
+    tier: 'strong', points: 2, fpRisk: 'moderate',
     fix: 'Usually padding: state the stronger half. Keep only when both halves carry distinct weight.',
     patterns: [/\bnot\s+only\s+[^.,;:]{2,50}[,;]?\s+but\s+(?:also\s+)?/gi],
   },
   {
     id: 'concession-pivot', family: 'syntactic', label: 'Concession-pivot (sneaky reframe)',
-    tier: 'weak', points: 1, frequencyLabel: 'STRONG', fpRisk: 'high',
+    tier: 'weak', points: 1, fpRisk: 'high',
     fix: 'Same skeleton as "not X, it\'s Y" in a trench coat. If the concession is empty, cut it and assert directly.',
     patterns: [
       /\b(?:sure|granted|yes),\s+[^.!?]{2,60}[.!?]\s+but\b/gi,
@@ -689,15 +684,15 @@ export const REGEX_RULES = [
   },
   {
     id: 'self-posed-qa', family: 'syntactic', label: 'Self-posed Q&A',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    tier: 'strong', points: 2, fpRisk: 'low-moderate',
     fix: 'Delete the question nobody asked; keep the answer as a statement.',
-    // 2026-10-31: + "the lesson" / "the takeaway" (Grok Bot "generic
-    // inspirational lesson": "The lesson? Consistency beats talent.").
+    // 2026-10-31: + "the lesson" / "the takeaway" (social-post item
+    // "generic inspirational lesson": "The lesson? Consistency beats talent.").
     patterns: [/\b(the result|the problem|the worst part|the catch|the kicker|the best part|the twist|the lesson|the takeaway)\?\s+[A-Z][^.?!]{0,60}[.?!]/gi],
   },
   {
     id: 'colon-reveal', family: 'syntactic', label: 'Colon reveal ("The best part: it learns.")',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    tier: 'strong', points: 2, fpRisk: 'low-moderate',
     // 2026-07-23: imported from petergyang/no-ai-slop ("Colon reveals"). Sibling of
     // self-posed-qa — same dramatic-reveal noun phrases, but a colon + lowercase
     // continuation instead of a question mark. Scoped to a curated noun set AND a
@@ -707,13 +702,13 @@ export const REGEX_RULES = [
     patterns: [/\b(?:the\s+(?:best|worst|hardest|weirdest|strangest|surprising|real|key|fun|scariest|craziest)\s+part|the\s+(?:catch|kicker|twist|irony|reality|truth|secret|beauty|magic|upshot|punchline)|the\s+(?:detail|thing|part|reason|trick|feature|insight|move|question)\s+(?:that|is|here)[\w\s'’-]{0,40})\s*:\s+[a-z][^.?!\n]{0,80}[.?!]/gi],
   },
   {
-    // 2026-08-13, ported from a downstream consumer's local catalogue.
+    // 2026-08-13, ported from a separate de-slop catalogue.
     // STACKED modals only. A bare "might" / "could" is ordinary English and
     // must never fire — the tell is two hedges doing one hedge's job, which
     // marks a writer buying time instead of committing. `likely` is excluded
     // on purpose: "would likely take a week" is a normal, useful estimate.
     id: 'hedge-stacking', family: 'syntactic', label: 'Stacked modal hedge ("might possibly")',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 2, fpRisk: 'low',
     fix: 'Keep one hedge at most, or replace with a precise qualifier ("in 7 of 10 cases", not "might possibly").',
     patterns: [
       /\b(?:might|may|could|can|would)\s+(?:possibly|potentially|perhaps|conceivably|arguably)\b/gi,
@@ -722,13 +717,13 @@ export const REGEX_RULES = [
     ],
   },
   {
-    // 2026-08-13, ported from a downstream consumer's local catalogue. Headings
+    // 2026-08-13, ported from a separate de-slop catalogue. Headings
     // that label the section's ROLE instead of its content — the blog-template
     // shape. Anchored to markdown heading syntax so body prose ("my final
     // thoughts on this are…") never fires. `TL;DR` is deliberately absent: it
     // is a genuine human convention, not a template tell.
     id: 'template-header', family: 'structural', label: 'Template section header',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 2, fpRisk: 'low',
     fix: 'Replace with a header naming the specific content ("Final Thoughts" → "Why we chose Postgres").',
     patterns: [
       /^#{1,6}\s+(?:final thoughts|closing thoughts|parting thoughts|key takeaways?|the takeaway|the bottom line|why this (?:actually )?works|what this means(?: for you)?|wrapping up|in closing)\s*:?\s*$/gim,
@@ -736,7 +731,7 @@ export const REGEX_RULES = [
   },
   {
     id: 'countdown', family: 'syntactic', label: 'Countdown ("Not X. Not Y. Just Z.")',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 2, fpRisk: 'low',
     fix: 'State the point directly.',
     patterns: [
       // 2026-08-12: noun phrases widened to 3 tokens — "Not a bug. Not a
@@ -756,7 +751,7 @@ export const REGEX_RULES = [
   },
   {
     id: 'dramatic-fragment', family: 'syntactic', label: 'Dramatic fragmentation ("That\'s it. That\'s the whole thing.")',
-    tier: 'strong', points: 2, frequencyLabel: 'STRONG', fpRisk: 'moderate',
+    tier: 'strong', points: 2, fpRisk: 'moderate',
     // 2026-07-23: imported from petergyang/no-ai-slop ("Dramatic fragmentation").
     // countdown covers the NEGATION form ("Not X. Not Y. Just Z."); this covers the
     // affirmative mic-drop. The terminal-punctuation guard on the second pattern
@@ -774,51 +769,51 @@ export const REGEX_RULES = [
   },
   {
     id: 'trailing-participle', family: 'syntactic', label: 'trailing participial commentary',
-    tier: 'strong', points: 3, frequencyLabel: 'HARD', fpRisk: 'moderate',
+    tier: 'strong', points: 3, fpRisk: 'moderate',
     sentenceFinal: true, // engine applies per-sentence, anchored to sentence end
     fix: 'Delete the trailing "-ing" phrase, or make it its own sentence with a real claim.',
     patterns: [/,\s+(contributing|highlighting|underscoring|fostering|reflecting|showcasing|emphasizing|demonstrating|reinforcing|cementing|solidifying|underlining|signaling|ensuring|cultivating)\b[^.?!]*[.?!]?$/i],
   },
   {
     id: 'overused-transition', family: 'syntactic', label: 'Overused transition',
-    tier: 'lexical', points: 2, frequencyLabel: 'STRONG', fpRisk: 'moderate',
+    tier: 'lexical', points: 2, fpRisk: 'moderate',
     special: 'transitions', // engine: sentence-start However/Moreover/... with "however ≤1 free"
     fix: 'moreover/furthermore/additionally→also; nevertheless→still; however (sentence start)→but.',
     patterns: [/(?:^|[.!?]\s+|\n)\s*(However|Moreover|Furthermore|Additionally|Nevertheless)\b/g],
   },
   {
     id: 'latin-sidebar', family: 'mechanical', label: 'Latin sidebar (e.g.,/i.e.,)',
-    tier: 'weak', points: 1, frequencyLabel: 'STRONG', fpRisk: 'moderate',
+    tier: 'weak', points: 1, fpRisk: 'moderate',
     fix: 'e.g.,→like/such as/for example; i.e.,→meaning/specifically.',
     patterns: [/\b(e\.g\.,|i\.e\.,)/gi],
   },
   {
     id: 'era-opener', family: 'tonal', label: 'Era/context opener ("In today\'s…")',
-    tier: 'strong', points: 3, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 3, fpRisk: 'low',
     fix: 'Cut the scene-setting preamble; open on the specific claim or fact.',
     patterns: [/(?:^|[.!?]\s+)in\s+(?:today'?s|the\s+(?:ever-evolving|fast-paced|rapidly\s+evolving|modern|digital))\b/gi],
   },
   {
     id: 'imagine-opener', family: 'rhetorical', label: 'Futurism opener ("Imagine a world…")',
-    tier: 'strong', points: 3, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 3, fpRisk: 'low',
     fix: 'Open with a concrete fact or claim, not a hypothetical utopia.',
     patterns: [/(?:^|[.!?]\s+)(?:imagine|picture)\s+(?:a\s+world|a\s+company|a\s+future|this)\b/gi],
   },
   {
     id: 'false-range', family: 'rhetorical', label: 'False range ("from X to Y")',
-    tier: 'weak', points: 1, frequencyLabel: 'LIGHT', fpRisk: 'high',
+    tier: 'weak', points: 1, fpRisk: 'high',
     fix: 'If there is no real spectrum between the endpoints, name the actual items without the range frame.',
     patterns: [/\bfrom\s+(?![\d$])[a-z][\w-]{2,20}(?:\s+[\w-]{2,20}){0,2}\s+to\s+(?![\d$])[a-z][\w-]{2,20}(?:\s+[\w-]{2,20}){0,2}\b/gi],
   },
   {
     id: 'invented-label', family: 'rhetorical', label: 'Invented concept label',
-    tier: 'weak', points: 1, frequencyLabel: 'LIGHT', fpRisk: 'high',
+    tier: 'weak', points: 1, fpRisk: 'high',
     fix: 'Only name a concept if you define and earn it; otherwise describe plainly.',
     patterns: [/\bthe\s+\w+\s+(?:paradox|trap|creep|divide|vacuum|inversion)\b/gi],
   },
   {
     id: 'ten-x-hype', family: 'tonal', label: 'Hype multiplier ("10x your…")',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 2, fpRisk: 'low',
     fix: 'Replace the promise with the specific, bounded result.',
     patterns: [/\b10x\s+(?:your|the)\b/gi],
   },
@@ -829,15 +824,14 @@ export const REGEX_RULES = [
     // across Northwind" did not. Thirteen stock outreach openers and closers
     // all scored 0, and two whole messages (a follow-up after silence and a
     // referral ask, from yashasvishailly/job-search-writing-rules, MIT) scored
-    // 0 end to end. A downstream consumer had also shipped "I'd welcome the
-    // chance to talk" in 13 of 40 cover letters. These are the regex variants.
+    // 0 end to end. These are the regex variants.
     //
     // Scoped to phrasings that only occur in a letter or message to a reader
     // you want something from. "I look forward to the day…" (essay) and "I came
     // across this bug" (narrative) must never fire; see the MISS cases in
     // evals/eval-outreach-patterns.mjs.
     id: 'outreach-boilerplate', family: 'tonal', label: 'Outreach boilerplate (stock opener/closer)',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 2, fpRisk: 'low',
     fix: 'Open on the reason you are writing to THIS person (one clause), close on one specific ask. Delete the formula; nothing replaces it.',
     patterns: [
       // Openers
@@ -857,14 +851,15 @@ export const REGEX_RULES = [
       /\b(?:I\s+)?look(?:ing)?\s+forward\s+to\s+(?:hearing\s+(?:from\s+you|back)|the\s+opportunity|speaking\s+with\s+you|connecting|discussing\s+(?:this|the\s+role|further)|your\s+(?:reply|response))\b/gi,
       /\bthank\s+you\s+for\s+your\s+time\s+and\s+consideration\b/gi,
       /\bdon't\s+hesitate\s+to\s+(?:reach\s+out|contact|let\s+me\s+know|get\s+in\s+touch)\b/gi,
-      // NOT here: "Let me know if you have any questions". SKILL.md gotcha
-      // 2026-07-15 rules it normal human email register.
+      // NOT here: "Let me know if you have any questions". The gotcha "Plain
+      // human closers stay legal" (references/gotchas-log.md) rules it normal
+      // human email register.
       /\bexcited\s+(?:about|by)\s+the\s+(?:possibility|prospect)\b/gi,
       /\b(?:let's\s+)?(?:touch\s+base|circle\s+back)\b/gi,
       /\bwould\s+love\s+to\s+(?:connect|chat|hop\s+on|grab\s+(?:a\s+)?(?:coffee|time))\b/gi,
       // NOT here: "I'd love the chance to talk it through" / "I'd welcome the
       // chance to talk". A plain one-sentence statement of interest is a human
-      // close (a downstream author's own hand-edited, sent letters use it).
+      // close that human-written letters use.
       // The tell is the same closer reused across many letters, which is a
       // corpus-level check, not a per-document lexical one.
     ],
@@ -876,7 +871,7 @@ export const REGEX_RULES = [
     // "just", "might" are ordinary English and are NOT here — a blanket ban on
     // them sands off voice (and "that said" / "But" openers are human).
     id: 'permission-hedge', family: 'tonal', label: 'Permission-seeking hedge',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    tier: 'strong', points: 2, fpRisk: 'low-moderate',
     fix: 'Make the ask plainly ("Worth 15 minutes?") or give the reader a clean exit ("If not, say so and I\'ll apply cold."). Do not apologize for writing.',
     patterns: [
       /\bI\s+was\s+wondering\s+(?:if|whether)\b/gi,
@@ -897,7 +892,7 @@ export const REGEX_RULES = [
     // you need to know before Monday: the badge office…", "Let's be honest
     // with the customer" and "Did I enjoy it, honestly?" are ordinary.
     id: 'staged-runup', family: 'rhetorical', label: 'Staged run-up (humanizer §4)',
-    tier: 'lexical', points: 2, frequencyLabel: 'HARD', fpRisk: 'low-moderate',
+    tier: 'lexical', points: 2, fpRisk: 'low-moderate',
     fix: 'Delete the run-up and start with the point it was announcing.',
     patterns: [
       /\blet'?s\s+dive\s+into\b/gi,
@@ -914,7 +909,7 @@ export const REGEX_RULES = [
     // alone ("until Q3" is a release date), "not well documented" (a human
     // complaint) and "widely available" (a product claim).
     id: 'source-disclaimer', family: 'mechanical', label: 'Source-availability disclaimer',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low',
+    tier: 'strong', points: 2, fpRisk: 'low',
     fix: 'Delete the disclaimer and the guess that follows it. If a fact is unknown, leave it out or say who to ask.',
     patterns: [
       /\b(?:in|from|across)\s+(?:the\s+)?(?:provided|available|readily\s+available|publicly\s+available|accessible)\s+(?:sources|search\s+results|materials|documents)\b/gi,
@@ -931,7 +926,7 @@ export const REGEX_RULES = [
     id: 'corrective-framing', family: 'rhetorical', label: 'Corrective framing ("should be treated as X rather than Y")',
     // Review 2026-10-31 (M1): weak. Legal and statistical prose uses both forms
     // plainly ("should be treated as a floor rather than an estimate").
-    tier: 'weak', points: 1, frequencyLabel: 'LIGHT', fpRisk: 'moderate',
+    tier: 'weak', points: 1, fpRisk: 'moderate',
     fix: 'Say what the source shows and stop. Telling the reader how to classify a claim stands in for the evidence.',
     patterns: [
       /\bshould\s+be\s+(?:treated|read|understood|presented|seen|viewed)\s+as\s+[^.;]{2,80}?\brather\s+than\b/gi,
@@ -939,14 +934,14 @@ export const REGEX_RULES = [
     ],
   },
   // ── Social genres (2026-10-31; run only under genre linkedin|x) ────────────
-  // Sources: a practitioner's published Grok Bot LinkedIn/X prompt set
-  // (2026-09-25) and humanizer §2/§4. Common posting practice (1-2 sentence
-  // paragraphs, a one-sentence close, a specific CTA, an occasional
-  // comment-gated lead magnet) must stay clean (evals/eval-social-genre.mjs).
-  // Only generic bait is matched.
+  // Sources: the skill's own social-post item list
+  // (evals/fixtures/social-post-items.md) and humanizer §2/§4. Common posting
+  // practice (1-2 sentence paragraphs, a one-sentence close, a specific CTA, an
+  // occasional comment-gated lead magnet) must stay clean
+  // (evals/eval-social-genre.mjs). Only generic bait is matched.
   {
     id: 'social-closer', family: 'tonal', label: 'Engagement-bait closer (social)',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low', genres: SOCIAL,
+    tier: 'strong', points: 2, fpRisk: 'low', genres: SOCIAL,
     fix: 'End on one specific ask the reader can answer ("Which field would you cut first?"), or on your strongest fact. "Thoughts?" and "Agree?" ask for nothing.',
     patterns: [
       /(?:^|[.!?]\s+)(?:agree|thoughts|agree or disagree|am i wrong|anyone else|sound familiar)\?/gim,
@@ -959,19 +954,19 @@ export const REGEX_RULES = [
   {
     // First line only: no `m` flag, so ^ is the start of the post.
     id: 'hook-formula', family: 'tonal', label: 'Formula hook (first line, social)',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low', genres: SOCIAL,
+    tier: 'strong', points: 2, fpRisk: 'low', genres: SOCIAL,
     fix: 'Open on the concrete claim or number itself (≤110 characters). Write five hooks and keep the one that states something only you could.',
     patterns: [
       /^\s*(?:i'?m|we'?re|i\s+am|we\s+are)\s+(?:so\s+)?(?:thrilled|excited|delighted|honou?red|proud|humbled)\s+to\s+(?:announce|share)\b/i,
       /^\s*(?:unpopular\s+opinion|hot\s+take)\b/i,
       /^\s*here'?s\s+what\s+(?:i\s+learned|they'?re\s+missing|nobody\s+tells\s+you|no\s+one\s+tells\s+you)\b/i,
-      // An opening question (a house default from one posting guide: "No opening question").
+      // An opening question (a house default: no opening question).
       /^\s*[^\n.!?]{3,120}\?/,
     ],
   },
   {
     id: 'social-heading', family: 'structural', label: 'Markdown heading in an X post',
-    tier: 'strong', points: 2, frequencyLabel: 'HARD', fpRisk: 'low', genres: ['x'],
+    tier: 'strong', points: 2, fpRisk: 'low', genres: ['x'],
     fix: 'X renders no markdown, so a heading reads as a pasted document. Make it a sentence.',
     patterns: [/^#{1,6}[ \t]+\S/gm],
   },
@@ -993,18 +988,20 @@ export const STATISTICAL = {
   },
   sentenceUniformity: {
     tier: 'strong', points: 3, minSentences: 6, meanMin: 10, meanMax: 20, stdevBelow: 3.5,
-    // 2026-10-31: the fix no longer says "use a fragment for punch". Hand edits
-    // of agent drafts mostly LENGTHENED their short sentences; the clipped
-    // cadence was what the writer undid.
+    // 2026-10-31: the fix no longer says "use a fragment for punch". In a
+    // private set of human-edited agent drafts (not published), the edits
+    // mostly LENGTHENED short sentences; the clipped cadence was what the
+    // writers undid.
     fix: 'Low burstiness is the most durable statistical tell. Vary length: join related clauses as often as you cut, so a 25-word sentence sits next to a 6-word one.',
   },
   clippedCadence: {
     // 2026-10-31, weak and cluster-only. Share of sentences of <= maxWords
-    // words. Calibrated on a private set of hand-edited human letters (none
-    // reached 40%); the most clipped AI fixture sits at 50%. Its sibling
-    // proposal, a low share of ; : ( ) among punctuation ("punctVariety"), was
-    // REJECTED on the same data: the human letters used those marks no more
-    // often than agent drafts did, so it would have flagged human style.
+    // words. Calibrated on a private set of human-edited drafts (not
+    // published; none reached 40%); the most clipped AI fixture sits at 50%.
+    // Its sibling proposal, a low share of ; : ( ) among punctuation
+    // ("punctVariety"), was REJECTED on the same data: the human-edited drafts
+    // used those marks no more often than agent drafts did, so it would have
+    // flagged human style.
     tier: 'weak', points: 2, minSentences: 10, maxWords: 8, ratio: 0.4,
     fix: 'Most sentences are clipped short. Join related clauses into longer sentences; keep a short one only where it lands a new fact.',
   },
@@ -1059,7 +1056,7 @@ export const STATISTICAL = {
   emojiBullets: {
     // 2026-10-31, all genres. Emoji opening list lines ("✅ Ship small",
     // "🚀 **Launch Phase:**") is the decorative-heading tell (humanizer §20,
-    // Grok "emoji-filled lists"). ©/®/™ are not counted as emoji.
+    // social-post item "emoji-filled list"). ©/®/™ are not counted as emoji.
     // Weak since review 2026-10-31 (m5): human release notes and checklists use
     // ✅ markers too, so it corroborates and never blocks on its own.
     tier: 'weak', points: 2, min: 2,
@@ -1079,14 +1076,14 @@ export const STATISTICAL = {
     fix: 'Three questions in a row stage a reveal. Ask one, or answer it.',
   },
   hashtagDensity: {
-    // House default from one posting guide ("3-5 hashtags or none"); change
-    // maxAllowed here if your venue differs.
+    // House default ("3-5 hashtags or none"); change maxAllowed here if your
+    // venue differs.
     tier: 'strong', points: 2, genres: SOCIAL, maxAllowed: 5,
     fix: 'Keep three to five specific hashtags, or none.',
   },
   emojiDensity: {
-    // House default from one posting guide ("≤3 emojis"); change maxAllowed
-    // here if your venue differs.
+    // House default ("≤3 emojis"); change maxAllowed here if your venue
+    // differs.
     tier: 'strong', points: 2, genres: SOCIAL, maxAllowed: 3,
     fix: 'Keep at most three emojis per post, and none that stand in for a word.',
   },
@@ -1181,7 +1178,7 @@ export const JUDGMENT = [
     description: 'Unnatural thesaurus swaps from aggressive de-AI passes ("paramountly significant").',
     fix: 'Revert to the plain word; anything failing the say-it-aloud test goes.' },
   // 2026-10-31: the paragraph-scale halves of humanizer §5, §24-§26, and the
-  // no-invention rule humanizer and the Grok Bot prompts both state.
+  // no-invention rule humanizer also states.
   { id: 'invented-detail', label: 'Invented detail', family: 'tonal',
     description: 'A number, name, quote, source, ranking or personal anecdote that is not in the source or the author\'s notes. A specificity mandate with no source pushes a drafter to fabricate.',
     fix: 'Diff facts both ways against the source: an added claim is an error, a lost one is too. Missing fact → write the plainer sentence or ask.' },
