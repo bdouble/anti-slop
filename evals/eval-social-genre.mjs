@@ -5,10 +5,11 @@
  *
  * Why this exists (2026-10-31). LinkedIn now demotes AI slop, and the linter
  * caught 8 of 24 items on the skill's social-post item list. The HIT cases are
- * those items, as synthetic sentences in `evals/fixtures/social-post-items.md`. Four items are judgment calls no
- * regex can make (a fake anecdote, manufactured vulnerability, an unsupported
- * dramatic claim, suspiciously balanced pairs) and one more ("empty hype") is
- * too close to ordinary speech; they are reported, not scored.
+ * those items, as synthetic sentences in `evals/fixtures/social-post-items.md`.
+ * Four items are judgment calls no regex can make (a fake anecdote,
+ * manufactured vulnerability, an unsupported dramatic claim, suspiciously
+ * balanced pairs) and one more ("empty hype") is too close to ordinary speech;
+ * they are reported, not scored.
  *
  * The MISS cases matter more. Common posting practice is a line
  * break every 1-2 sentences, a one-sentence close, at most 3 emojis, 3-5

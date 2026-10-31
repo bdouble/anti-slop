@@ -851,8 +851,9 @@ export const REGEX_RULES = [
       /\b(?:I\s+)?look(?:ing)?\s+forward\s+to\s+(?:hearing\s+(?:from\s+you|back)|the\s+opportunity|speaking\s+with\s+you|connecting|discussing\s+(?:this|the\s+role|further)|your\s+(?:reply|response))\b/gi,
       /\bthank\s+you\s+for\s+your\s+time\s+and\s+consideration\b/gi,
       /\bdon't\s+hesitate\s+to\s+(?:reach\s+out|contact|let\s+me\s+know|get\s+in\s+touch)\b/gi,
-      // NOT here: "Let me know if you have any questions". SKILL.md gotcha
-      // 2026-07-15 rules it normal human email register.
+      // NOT here: "Let me know if you have any questions". The gotcha "Plain
+      // human closers stay legal" (references/gotchas-log.md) rules it normal
+      // human email register.
       /\bexcited\s+(?:about|by)\s+the\s+(?:possibility|prospect)\b/gi,
       /\b(?:let's\s+)?(?:touch\s+base|circle\s+back)\b/gi,
       /\bwould\s+love\s+to\s+(?:connect|chat|hop\s+on|grab\s+(?:a\s+)?(?:coffee|time))\b/gi,
@@ -934,10 +935,10 @@ export const REGEX_RULES = [
   },
   // ── Social genres (2026-10-31; run only under genre linkedin|x) ────────────
   // Sources: the skill's own social-post item list
-  // (evals/fixtures/social-post-items.md) and humanizer §2/§4. Common posting practice (1-2 sentence
-  // paragraphs, a one-sentence close, a specific CTA, an occasional
-  // comment-gated lead magnet) must stay clean (evals/eval-social-genre.mjs).
-  // Only generic bait is matched.
+  // (evals/fixtures/social-post-items.md) and humanizer §2/§4. Common posting
+  // practice (1-2 sentence paragraphs, a one-sentence close, a specific CTA, an
+  // occasional comment-gated lead magnet) must stay clean
+  // (evals/eval-social-genre.mjs). Only generic bait is matched.
   {
     id: 'social-closer', family: 'tonal', label: 'Engagement-bait closer (social)',
     tier: 'strong', points: 2, fpRisk: 'low', genres: SOCIAL,

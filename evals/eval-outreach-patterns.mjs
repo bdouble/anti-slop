@@ -84,7 +84,8 @@ miss('outreach-boilerplate', 'lowercase "came across a" mid-sentence', 'We came 
 miss('outreach-boilerplate', '"hope" as a plain verb', 'I hope the migration lands before the holidays.');
 miss('outreach-boilerplate', '"follow up" as a plan', 'We will follow up with the vendor on Tuesday.');
 miss('outreach-boilerplate', 'a direct ask', 'Worth fifteen minutes on Thursday?');
-// SKILL.md gotcha 2026-07-15: a plain human email closer, never flagged.
+// Gotcha "Plain human closers stay legal" (references/gotchas-log.md): a
+// plain human email closer, never flagged.
 miss('outreach-boilerplate', 'plain closer: let me know if you have questions', 'Let me know if you have any questions.');
 // A plain one-sentence statement of interest is a human close, common in
 // human-written letters. The tell is the same closer reused across letters (a

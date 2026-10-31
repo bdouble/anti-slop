@@ -849,7 +849,7 @@ New patterns land here, each with a date, when the skill misses a slop pattern i
 
 **Observed failure:** `SKILL.md` said "cap at one per piece"; the linter charged 2 points per hit against a ship target of 2, so one deliberate contrast consumed the whole budget and two failed the document outright. Effective policy was zero tolerance.
 
-**Judgment context:** zero tolerance is what produces the flattened, voiceless output the skill's own restraint section exists to prevent. Real human-written sentences turned out to use corrective negation repeatedly and legitimately — every instance corrects a belief the reader actually holds. Those sentences are now `LEGIT` and `CLEAN` fixtures precisely so no future widening can flag them. `CONTRAST_FAMILY` gives the first device a free pass; the keep-test, which no regex can run, decides the rest.
+**Judgment context:** zero tolerance is what produces the flattened, voiceless output the skill's own restraint section exists to prevent. Real human-written sentences turned out to use corrective negation repeatedly and legitimately — every instance corrects a belief the reader actually holds. Sentences of the same shapes, written for this repo, are now `LEGIT` and `CLEAN` fixtures precisely so no future widening can flag them. `CONTRAST_FAMILY` gives the first device a free pass; the keep-test, which no regex can run, decides the rest.
 
 ### 2026-10-14 — outreach formulae scored 0
 

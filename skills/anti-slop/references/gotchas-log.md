@@ -1,8 +1,8 @@
 # Gotchas
 
 Lessons from observed failures, each stated as a rule with the reason behind
-it. SKILL.md keeps a one-line digest of each. When a new failure changes what a
-writer or a rule should do, add an entry here with its reason, keep any example
+it. SKILL.md keeps a short digest. When a new failure changes what a writer or
+a rule should do, add an entry here with its reason, keep any example
 synthetic, and add a digest line to SKILL.md only if it changes what a writer
 should do.
 
@@ -63,10 +63,10 @@ should do.
 - **Freeing a finding from scoring never frees it from judgment.** The free
   first contrast used to land at `info` tier, under a footer that said "never
   act on them alone", and a textbook never-form ("The hard part was never
-  the migration. It was …") shipped on a score of 0. Findings now carry a `review`
-  disposition, `lintText` returns `requiresReview`, and the report prints the
-  keep-test questions inline, because the drafting agent reads only the lint
-  output. Pinned by `evals/eval-keep-test.mjs`.
+  the migration. It was …") shipped on a score of 0. Findings now carry a
+  `review` disposition, `lintText` returns `requiresReview`, and the report
+  prints the keep-test questions inline, because the drafting agent reads only
+  the lint output. Pinned by `evals/eval-keep-test.mjs`.
 - **Keep one catalogue.** A local de-slop catalogue kept beside the skill "for
   convenience" becomes a rival authority, and the drift runs both ways: the
   copy falls behind the skill, and it also holds rules the skill never

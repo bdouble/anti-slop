@@ -9,9 +9,9 @@
  * non-actionable texture report, and the report footer labels the whole bucket
  * "corroborate only — never act on them alone". So the single finding carrying
  * a MANDATORY judgment call was filed under, and labelled with, the system's
- * own instruction to ignore it. A drafting agent shipped a textbook
- * never-form ("The hard part was never the migration. It was …") on a score of 0
- * with no keep-test ever run.
+ * own instruction to ignore it. A drafting agent shipped a textbook never-form
+ * ("The hard part was never the migration. It was …") on a score of 0 with no
+ * keep-test ever run.
  *
  * The fix added a disposition axis (`finding.review`, `result.requiresReview`)
  * orthogonal to the five reliability tiers, and made the report print the

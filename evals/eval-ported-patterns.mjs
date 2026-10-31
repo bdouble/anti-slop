@@ -5,10 +5,10 @@
  *
  * Why this exists (2026-08-13). A separate de-slop catalogue was kept
  * alongside this skill. Over time it drifted into a partial second source of
- * truth, and an audit found four items it covered that
- * the skill did not: vague quantifiers, stacked modal hedges, template section
- * headers, and assertion-in-place-of-evidence. They were ported here so the
- * skill is the single authority again.
+ * truth, and an audit found four items it covered that the skill did not:
+ * vague quantifiers, stacked modal hedges, template section headers, and
+ * assertion-in-place-of-evidence. They were ported here so the skill is the
+ * single authority again.
  *
  * Three of the four sit close to ordinary English, so the MISS cases below
  * matter more than the HIT cases:

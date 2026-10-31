@@ -17,7 +17,7 @@ Fixture: `evals/fixtures/negative-parallelism.md`. Three labels — `KILL` (must
 | Metric | Measured on | Target | Rationale |
 |---|---|---|---|
 | Recall | `KILL` | ≥ 0.90 | Missing real slop is the cheap failure — the recipe pass is a second net. |
-| Precision | `CLEAN` | **1.00** | A false positive on genuine human prose is the expensive failure. It is what drives over-correction, and real human drafts are in this set. |
+| Precision | `CLEAN` | **1.00** | A false positive on genuine human prose is the expensive failure. It is what drives over-correction, and the `LEGIT` and `CLEAN` rows model real human prose. |
 
 Current: 37 KILL / 8 LEGIT / 23 CLEAN, recall 1.00, precision 1.00 (2026-08-12).
 
