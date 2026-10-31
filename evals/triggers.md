@@ -37,4 +37,4 @@ or requests that are purely about a person's voice or a house style guide
 ## Boundary cases (fire together with the named skill, anti-slop as the base layer)
 
 - "Draft a LinkedIn post in my voice" → byline voice skill leads; anti-slop recipe still applies underneath.
-- "Copyedit this to Every's style guide" → every-style-editor leads on mechanics; anti-slop patterns still banned.
+- "Copyedit this to our house style guide" → the house-style skill leads on mechanics; anti-slop patterns still banned.

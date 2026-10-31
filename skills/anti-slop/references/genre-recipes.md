@@ -47,24 +47,24 @@ Each genre below is a positive contract: what the output IS — its shape, lengt
 ## Cover letter
 
 - **Shape:** one central narrative — a company-specific problem you can solve, backed by proof. 3–4 short paragraphs, one page.
-- **Length:** 250–400 words general; 200–300 for executive letters, tighter and every sentence signaling scope or judgment.
+- **Length:** 250–400 words, one page; senior roles read best at the short end.
 - **Opening contract:** lead with a specific quantified achievement or a company-specific observation. Never "I am writing to apply", "To Whom It May Concern", or a self-label ("results-driven", "perfect fit"). The observation is one sourced clause that sets up your claim, never a paragraph reciting what the company does; if you can't cite where a fact about their business came from (their posting, their post, a named article), it is a guess, so cut it or state it as a pattern of their stage.
 - **Body contract:** open on their specific need, connect it to a relevant achievement of yours carrying a number, and land on one clear benefit to them. Two or three mapped outcomes, not a duties list.
 - **Closing contract:** state the next step. No "looking forward to hearing from you."
 - **Register:** confident, specific, first-person with contractions; at least one fact that only applies to this company.
 
 **Before → After:**
-- "I am writing to express my strong interest in the Director of Product role. I am a results-driven professional with a proven track record, and I believe I would be a perfect fit for your dynamic team." → "Your Q2 shareholder letter put checkout abandonment at the top of the fix list. I cut a 31% mobile-checkout drop-off to 12% at Acme in two quarters by rebuilding the payment step — the same pattern I'd start on here."
+- "I am writing to express my strong interest in the Director of Growth role. I am a results-driven professional with a proven track record, and I believe I would be a perfect fit for your dynamic team." → "Your Q2 shareholder letter put checkout abandonment at the top of the fix list. I cut a 31% mobile-checkout drop-off to 12% at Acme in two quarters by rebuilding the payment step — the same pattern I'd start on here."
 
 ## LinkedIn post
 
-- **Shape:** one claim, developed in short paragraphs. Tactical and purpose-driven, not a personal diary.
+- **Shape:** one claim, developed in short paragraphs.
 - **Length:** roughly 1,200–1,500 characters of effective content; the first ~140 characters show before the "see more" fold.
 - **Opening contract:** line one is a concrete claim, a contrarian take, or a number that earns the click. No opening question, no stacked rhetorical questions, no "1, 2, 3 — here's why" listicle framing.
 - **Closing contract:** a pointed final line that leaves a thought, or a low-friction, specific CTA. No "Agree? Let me know in the comments."
-- **Register:** professional, plain, one to three sentences per paragraph. No personal or political content.
+- **Register:** plain, one to three sentences per paragraph, in the author's own voice.
 - **Hook procedure:** write five first lines (≤110 characters each), keep the one that states something only you could, and discard the rest. Then draft, then make one pass that cuts repetition and throat-clearing. Never shorten sentences for punch: a row of fragments is the broetry tell, and real authors lengthen clipped drafts.
-- **Facts:** every number, name and anecdote comes from your notes or the source. A fake "last week a junior PM asked me…" story is the tell readers can least forgive; if the story did not happen, make the point without it.
+- **Facts:** every number, name and anecdote comes from your notes or the source. A fake "last week a junior colleague asked me…" story is the tell readers can least forgive; if the story did not happen, make the point without it.
 - **Lint:** `slop-lint.mjs post.md --genre linkedin` (or `--genre x`) adds the post rules: formula hooks on line one, generic closers ("Agree?", "Thoughts?", "drop it in the comments"), fragment runs, three-question runs, more than five hashtags or three emojis. One-sentence paragraphs, a one-line close, a specific question and a comment-gated lead magnet stay clean.
 
 **Before → After:**
@@ -108,11 +108,11 @@ Each genre below is a positive contract: what the output IS — its shape, lengt
 - **Shape:** specific signal first, one line on what you're working on, one low-friction ask.
 - **Length:** under 150 words; a cold message earns a reply by being short and specific.
 - **Opening contract:** a specific, real reason for reaching out to this person. Never "I came across your profile" or "I'd love to pick your brain." One clause on how you found them is the ceiling: never describe their own company, product, funding, or thesis back to them. They were there.
-- **Closing contract:** one concrete, easy-to-say-yes-to ask (a 15-minute call, one question, an intro). For recruiter replies, state your status plainly — open, not open, or open under conditions — plus band and fit.
+- **Closing contract:** one concrete, easy-to-say-yes-to ask (a 15-minute call, one question, an intro). For recruiter replies, state your status plainly: open, not open, or open under conditions.
 - **Register:** warm, brief, direct; no filler pleasantries, no flattery that could go to anyone.
 
 **Before → After:**
-- "Hi! I came across your profile and was really impressed by your background. I'd love to connect and pick your brain about your career journey sometime if you're open to it!" → "Your post on migrating off Segment matched a problem my team is hitting now. I'm the PM on our analytics rebuild. Could I ask you two questions about how you handled the event backfill — happy to keep it to email or a 15-minute call."
+- "Hi! I came across your profile and was really impressed by your background. I'd love to connect and pick your brain about your career journey sometime if you're open to it!" → "Your post on migrating off Segment matched a problem my team is hitting now. I'm leading our analytics rebuild. Could I ask you two questions about how you handled the event backfill — happy to keep it to email or a 15-minute call."
 
 ## Follow-up after silence
 

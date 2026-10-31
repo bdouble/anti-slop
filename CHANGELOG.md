@@ -11,6 +11,27 @@ fails CI when they disagree.
 
 ## [Unreleased]
 
+### Changed
+
+- Example and fixture sentences drawn from unpublished drafts were replaced
+  with invented sentences of the same shape and label, and comments that
+  pointed at outside projects were made generic. Every eval result is
+  unchanged.
+- `references/gotchas-log.md` is now a list of undated rules, each with its
+  reason, instead of a dated incident log.
+- The social-post fixture is now `evals/fixtures/social-post-items.md`, with
+  ids `sp-*`. The social-genre caps and hooks are described as the skill's
+  own configurable defaults.
+- `genre-recipes.md` drops a few house rules (executive-letter length, "no
+  personal or political content" on LinkedIn, "band and fit" in recruiter
+  replies). SKILL.md step 8 no longer assumes a particular drafts folder, and
+  it names no specific house-style skills.
+
+### Removed
+
+- The `frequencyLabel` field on every pattern in `data/patterns.mjs`. The
+  linter never read it.
+
 ## [2.0.1] - 2026-10-31
 
 ### Fixed
@@ -39,8 +60,8 @@ A consumer that vendors `patterns.mjs` must take `slop-lint.mjs` with it. The
 2.0.0 engine refuses an older `patterns.mjs` with a clear message and exit code 2.
 
 Prompted by an internal comparison (2026-10-31) against blader/humanizer
-v3.1.0, Wikipedia's "Signs of AI writing" and a practitioner's published Grok
-Bot prompt set. An independent review of the release candidate then found two
+v3.1.0, Wikipedia's "Signs of AI writing" and the skill's own social-post
+item list. An independent review of the release candidate then found two
 blockers and six majors, all fixed before release (see "Fixed in review").
 
 ### Changed
@@ -63,15 +84,15 @@ blockers and six majors, all fixed before release (see "Fixed in review").
     ranking or personal experience.
   - The remediation workflow adds a two-way fact diff.
   - "Fragments are legal" is replaced by "vary length by joining related
-    clauses as often as by cutting", since hand edits of agent drafts mostly
+    clauses as often as by cutting", since human edits of agent drafts mostly
     lengthened their short sentences. The `sentenceUniformity` fix text changed
     to match.
 - **SKILL.md slimmed** from 2,672 to 2,192 words.
   - The Gotchas log moved verbatim to `references/gotchas-log.md`.
   - SKILL.md keeps a digest, including the colon-plus-three-wh-clauses triad
     rule.
-  - Step 8 (keep the draft for acceptance tracking) is scoped to hand-edited
-    sends with private edit records; it says never to create draft files in a
+  - Step 8 (keep the draft for acceptance tracking) is scoped to drafts the
+    author will hand-edit and send; it says never to create draft files in a
     code or public repo.
   - CI caps SKILL.md at 2,500 words.
 - **Contrast family recall.**
@@ -164,7 +185,7 @@ blockers and six majors, all fixed before release (see "Fixed in review").
   - `broetry` (weak): three or more sentences in a row of five words or fewer;
   - `rhetoricalRun`: three questions in a row;
   - `hashtagDensity` (more than five) and `emojiDensity` (more than three),
-    house defaults from one posting guide, set in `patterns.mjs`;
+    house defaults, set in `patterns.mjs`;
   - `social-heading`: a markdown heading under `--genre x`.
 - All-genre rules:
   - `stock-proclamation` ("The future is here");
@@ -178,8 +199,8 @@ blockers and six majors, all fixed before release (see "Fixed in review").
 - `watchlist-2026`: Wikipedia's mid-2026 vocabulary cohort. Weak and
   single-sourced; "matters" and "challenge" are left out as too common.
 - `clippedCadence` (weak, feeds `stylometricCluster`): 40% or more of 10+
-  sentences at eight words or fewer. Calibrated locally on a private set of
-  hand-edited human letters, none of which reached 40%.
+  sentences at eight words or fewer. Calibrated on a private set of
+  human-edited drafts (not published), none of which reached 40%.
 - FATAL machine artifacts `utm_source=chatgpt.com` and `utm_source=openai`.
 - Judgment entries, printed under NOT LINTED: `invented-detail`,
   `unprompted-defense`, `heading-restated`, `process-narration`,
@@ -230,7 +251,7 @@ blockers and six majors, all fixed before release (see "Fixed in review").
   not generalization:
   - the 33 contrast sentences behind the recall work: 7 caught before, 26
     after;
-  - the synthetic Grok Bot items: 8 of 24 before, 20 of 24 with `--genre`;
+  - the synthetic social-post items: 8 of 24 before, 20 of 24 with `--genre`;
   - the humanizer "before" passages with any finding: 16 of 42 before, 30 of 42
     after.
 - **Humanizer "after" rewrites passing the gate**: 40 of 41 before, 41 of 41
@@ -266,18 +287,18 @@ blockers and six majors, all fixed before release (see "Fixed in review").
   passages after lint results were known, which left too little to measure
   and raised a selection-bias question. It now holds 208 passages chosen by a
   mechanical rule written into its header before the linter ran on it: one
-  README paragraph from every locally installed MIT or ISC npm package whose
+  README paragraph from every installed MIT or ISC npm package whose
   copyright years are all 2022 or earlier. It holds no Wikipedia text.
-- M6: removed private provenance from committed files.
+- M6: removed provenance notes that pointed outside this repository.
 - Held-out set: dropped three rows that also appeared in a tuning passage. Added
   ten real technical sentences (5 LEGIT, 5 CLEAN) from local-deep-research
   docs, labelled before measurement.
 
 ### Rejected after evaluation
 
-- `punctVariety`, a flag for a low share of `; : ( )`: hand-edited human
-  letters used those marks no more often than agent drafts, so it would flag
-  human style.
+- `punctVariety`, a flag for a low share of `; : ( )`: human-edited drafts
+  used those marks no more often than agent drafts, so it would flag human
+  style.
 - Resetting `anaphora` at blank lines: it would miss identical slide or
   paragraph openings.
 - Matching bare "Y rather than X": it is ordinary technical English.
@@ -329,7 +350,7 @@ Patterns 1.6.0 and 1.7.0.
   `review: 'keep-test'`, `lintText` returns `requiresReview`, the report prints
   the keep-test questions inline, and `--require-review-disposition` is an
   opt-in gate. Pinned by `evals/eval-keep-test.mjs`.
-- Four patterns ported from a consumer's local catalogue: `vague-quantifier`,
+- Four patterns ported from a separate de-slop catalogue: `vague-quantifier`,
   `hedge-stacking`, `template-header`, `assert-dont-prove`
   (`evals/eval-ported-patterns.mjs`).
 

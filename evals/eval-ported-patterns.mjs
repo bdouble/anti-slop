@@ -3,9 +3,9 @@
 /**
  * eval-ported-patterns.mjs — hit/miss contract for the patterns ported in v1.7.0.
  *
- * Why this exists (2026-08-13). A downstream consumer kept a local de-slop
- * catalogue alongside this skill. Over time the local copy drifted into a
- * partial second source of truth, and an audit found four items it covered that
+ * Why this exists (2026-08-13). A separate de-slop catalogue was kept
+ * alongside this skill. Over time it drifted into a partial second source of
+ * truth, and an audit found four items it covered that
  * the skill did not: vague quantifiers, stacked modal hedges, template section
  * headers, and assertion-in-place-of-evidence. They were ported here so the
  * skill is the single authority again.

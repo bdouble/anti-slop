@@ -57,7 +57,7 @@ Editors reliably catch shape 1 and miss the rest. All ten are the same failure.
 
 Two scope notes for anyone editing the regexes:
 
-- **Shape 6 requires a determiner after "not"** (`a` / `an` / `the`). That is deliberate. It separates the rhetorical reveal ("a hypothesis, not a fact") from the bare contrastive tail that real writers produce constantly ("grounded in architecture decisions, not slideware"). Relaxing it floods the linter with false positives — the eval fixture asserts this.
+- **Shape 6 requires a determiner after "not"** (`a` / `an` / `the`). That is deliberate. It separates the rhetorical reveal ("a hypothesis, not a fact") from the bare contrastive tail that real writers produce constantly ("grounded in customer interviews, not guesswork"). Relaxing it floods the linter with false positives — the eval fixture asserts this.
 - **Shape 5's two-sentence form requires determiners on both objects.** Without them, ordinary sequential narration matches ("We didn't sign the contract. We went home.").
 
 ## 4. The keep-test

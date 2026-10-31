@@ -9,8 +9,8 @@
  * non-actionable texture report, and the report footer labels the whole bucket
  * "corroborate only — never act on them alone". So the single finding carrying
  * a MANDATORY judgment call was filed under, and labelled with, the system's
- * own instruction to ignore it. A downstream consumer shipped a textbook
- * never-form ("The hard part was never building. It was …") on a score of 0
+ * own instruction to ignore it. A drafting agent shipped a textbook
+ * never-form ("The hard part was never the migration. It was …") on a score of 0
  * with no keep-test ever run.
  *
  * The fix added a disposition axis (`finding.review`, `result.requiresReview`)
@@ -37,7 +37,7 @@ const results = [];
 const check = (name, pass, detail = '') => results.push({ name, pass, detail });
 
 // The sentence that motivated the fix. Never-form, fails keep-test 2 and 3.
-const CONTRAST = 'The hard part was never building. It was deciding what the company would stop doing.';
+const CONTRAST = 'The hard part was never the migration. It was getting three teams to agree on a cutover date.';
 const PLAIN = 'The deploy finished at 14:02. Rollback took nine minutes.';
 
 // ── 1. The finding carries a disposition ────────────────────────────────────
