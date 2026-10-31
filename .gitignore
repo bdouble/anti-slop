@@ -1,2 +1,4 @@
 node_modules/
 .DS_Store
+# Working notes are kept out of this public repo.
+docs/

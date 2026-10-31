@@ -21,6 +21,8 @@ Fixture: `evals/fixtures/negative-parallelism.md`. Three labels — `KILL` (must
 
 Current: 37 KILL / 8 LEGIT / 23 CLEAN, recall 1.00, precision 1.00 (2026-08-12).
 
+2026-10-31: 65 KILL / 14 LEGIT / 29 CLEAN, recall 1.00, precision 1.00. The fixture scored 1.00 throughout while catching 7 of 33 outside sentences, so a perfect score here proves only fit. The generalization check is `node evals/eval-holdout.mjs` over `evals/holdout/contrast.md` (real sentences; after review dedupe 36 KILL / 23 LEGIT / 38 CLEAN: recall 0.47 at 1.2.0, 0.64 at 2.0.0, CLEAN false positives 0 both times. Never tune a regex against the holdout; move a held-out miss into this fixture and replace it there with a fresh real sentence.
+
 **The rule:** any change to a regex in `antithesis`, `countdown`, `colon-reveal`, or `not-only-but-also` runs this harness before and after. The 2026-08-02 widening was verified by eye and left the family's single most common shape undetected for ten days; assume by-eye verification is wrong.
 
 Never delete a fixture case to make a change pass. Append cases; if a case is genuinely mislabeled, change the label and say why in the same commit.

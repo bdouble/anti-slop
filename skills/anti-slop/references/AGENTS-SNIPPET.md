@@ -18,23 +18,31 @@ cover letters, summaries, PR descriptions), or when asked to "de-slop",
 1. Write by this recipe from the first sentence:
    - The first sentence carries the most specific claim available. No
      scene-setting preambles.
-   - Every claim resolves to something checkable (number, name, date, tool).
-     An evaluative label is a slot where evidence should be.
+   - Every claim resolves to something checkable (number, name, date, tool)
+     taken from the source or the author. Never invent a number, quote,
+     source, or personal experience; if the fact is missing, write the plainer
+     sentence or ask. An evaluative label is a slot where evidence should be.
    - Plain copulas: things "are", they never "serve as".
-   - One idea per sentence; vary sentence length widely; fragments are legal.
+   - One idea per sentence; vary length by joining related clauses as often
+     as by cutting. A row of clipped fragments is a tell.
    - Contrast ("not X, it's Y"), triads, dashes, metaphors: at most one
      deliberate use of each per piece.
    - State the positive; end on substance, never a summary.
    - Match confidence to evidence: precise caveats, no hedge phrases.
-2. Before finishing, read `<path-to-anti-slop>/references/pattern-catalogue.md`
-   and remove every pattern it names from the draft.
-3. Run the deterministic linter and fix findings by tier (FATAL immediately,
+2. Run the deterministic linter and fix findings by tier (FATAL immediately,
    strong as edits, weak as corroboration only):
-   `node <path-to-anti-slop>/scripts/slop-lint.mjs <file>`
-   Ship at score ≤2 with zero FATALs.
+   `node <path-to-anti-slop>/scripts/slop-lint.mjs <file>` (add
+   `--genre linkedin` or `--genre x` for a post).
+   Ship at gateScore ≤2 with zero FATALs; `--max 2` gates on it.
+3. Look up each finding in
+   `<path-to-anti-slop>/references/pattern-catalogue.md` for its rewrite. Fix
+   what the findings and the recipe call for; do not strip every listed
+   construction on sight (one deliberate contrast, triad or dash is legal, and
+   flattening a real voice is its own failure).
 4. Apply the two judgment tests the linter cannot run: the horoscope test
    (could anyone have written this, for anyone?) and genericness (would it
-   survive find-and-replace of the subject's name?).
+   survive find-and-replace of the subject's name?), then diff facts both
+   ways against the source: an added claim is an error, a lost one too.
 ```
 
 ---

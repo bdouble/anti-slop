@@ -19,20 +19,22 @@
  *   node slop-lint.mjs <file>               Human report (text/markdown)
  *   node slop-lint.mjs --html <file.html>   Strip tags first, lint visible prose
  *   node slop-lint.mjs <file> --json        Machine-readable JSON
- *   node slop-lint.mjs <file> --max 2       Exit 1 if score > 2 (FATAL always exits 1)
+ *   node slop-lint.mjs <file> --genre linkedin   Also apply the social-genre rules (linkedin|x)
+ *   node slop-lint.mjs <file> --max 2       Exit 1 if gateScore > 2 (FATAL always exits 1)
  *   cat draft.md | node slop-lint.mjs -     Read from stdin
  *
  * Library:
  *   import { lintText, scoreBand, formatReport, formatSummary, PATTERNS }
  *     from './slop-lint.mjs'
- *   lintText(text, { format: 'text'|'markdown'|'html', extraLexicons, extraRegexRules })
+ *   lintText(text, { format: 'text'|'markdown'|'html', genre: 'linkedin'|'x', extraLexicons, extraRegexRules })
  *
  * Zero dependencies. Works from either layout:
  *   scripts/slop-lint.mjs + ../data/patterns.mjs   (skill repo)
  *   slop-lint.mjs + ./patterns.mjs                 (vendored copy)
  */
 
-import { readFileSync, realpathSync } from 'fs';
+import { readFileSync, readdirSync, realpathSync, statSync } from 'fs';
+import { join } from 'path';
 import { pathToFileURL } from 'url';
 
 async function loadPatterns() {
@@ -49,9 +51,26 @@ async function loadPatterns() {
 
 export const PATTERNS = await loadPatterns();
 
+// Engine and data ship as a pair (review 2026-10-31, m7). An older patterns.mjs
+// lacks fields this engine reads (GENRES, genre gating), and the engine used to
+// crash on them. Fail with a message that names the fix instead.
+const ENGINE_MAJOR = 2;
+{
+  const found = String(PATTERNS.META?.version || '0');
+  if (Number(found.split('.')[0]) !== ENGINE_MAJOR) {
+    const msg = `slop-lint: this linter needs patterns.mjs ${ENGINE_MAJOR}.x but found ${found}. `
+      + 'Vendor slop-lint.mjs and patterns.mjs together, from the same release.';
+    if (isMain()) {
+      console.error(msg);
+      process.exit(2);
+    }
+    throw new Error(msg);
+  }
+}
+
 const BAND_NOTE = {
   FATAL: 'contains machine artifacts — fails regardless of score',
-  LOW: 'minor edits (ship target ≤2)',
+  LOW: 'minor edits',
   MEDIUM: 'significant editing needed',
   HIGH: 'likely unedited AI output — rewrite substantially',
 };
@@ -73,6 +92,44 @@ const NOT_LINTED = PATTERNS.JUDGMENT.map(
 // detectors.
 function blankComments(input) {
   return input.replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '));
+}
+
+// Code is not prose: a watched word inside `inline code` or a code fence is a
+// MENTION, not a use. Blanked the same length-preserving way as comments, for
+// the prose-style rules only: FATAL rules and rules marked `lintsCode` still
+// read the unblanked text, because a chat answer or an unfilled template often
+// arrives inside a fence (review 2026-10-31, B2: a fenced draft holding "As an
+// AI language model" and "[Hiring Manager]" had scored 0). Only a fence tagged with a
+// programming language is code; an untagged fence, or any other tag
+// (plaintext, text, email, markdown: ChatGPT's usual draft wrappers), is prose.
+// Observed 2026-10-31: `!==` and `!` in inline code counted as exclamation
+// marks in a README. Text/markdown only; HTML keeps its tags-stripped path.
+const CODE_FENCE_LANGS = new Set([
+  'js', 'javascript', 'mjs', 'cjs', 'jsx', 'ts', 'typescript', 'tsx', 'json', 'jsonc', 'json5', 'py', 'python',
+  'ipython', 'sh', 'bash', 'zsh', 'fish', 'shell', 'console', 'shellsession', 'powershell', 'ps1', 'bat', 'cmd',
+  'yaml', 'yml', 'toml', 'ini', 'cfg', 'conf', 'env', 'dotenv', 'html', 'htm', 'xml', 'svg', 'css', 'scss', 'sass',
+  'less', 'sql', 'graphql', 'gql', 'go', 'golang', 'rust', 'rs', 'java', 'kotlin', 'kt', 'swift', 'scala', 'c', 'h',
+  'cpp', 'c++', 'cc', 'hpp', 'cs', 'csharp', 'fsharp', 'rb', 'ruby', 'php', 'perl', 'pl', 'lua', 'r', 'julia',
+  'dart', 'elixir', 'ex', 'erlang', 'haskell', 'hs', 'clojure', 'clj', 'lisp', 'scheme', 'ocaml', 'zig', 'nim',
+  'objc', 'objective-c', 'vb', 'vba', 'matlab', 'diff', 'patch', 'dockerfile', 'docker', 'makefile', 'make',
+  'cmake', 'nginx', 'apache', 'hcl', 'terraform', 'tf', 'proto', 'protobuf', 'regex', 'vim', 'awk', 'sed',
+  'mermaid', 'dot', 'latex', 'tex', 'csv', 'tsv', 'http', 'log', 'jinja', 'liquid', 'handlebars', 'vue', 'svelte',
+  'astro', 'prisma', 'solidity', 'sol', 'wasm', 'asm', 'nasm',
+]);
+const isCodeFence = (info) => CODE_FENCE_LANGS.has((info.trim().split(/[\s{,]/)[0] || '').toLowerCase());
+
+function blankCode(input) {
+  const blank = (m) => m.replace(/[^\n]/g, ' ');
+  let fencedLines = 0;
+  let inlineSpans = 0;
+  const text = input
+    .replace(/^[ \t]*(```|~~~)([^\n]*)\n[\s\S]*?^[ \t]*\1[ \t]*$/gm, (m, _f, info) => {
+      if (!isCodeFence(info)) return m;
+      fencedLines += m.split('\n').length;
+      return blank(m);
+    })
+    .replace(/`[^`\n]+`/g, (m) => { inlineSpans++; return blank(m); });
+  return { text, fencedLines, inlineSpans };
 }
 
 // `title` is dropped WITH its contents, alongside style/script: it lives in <head>,
@@ -148,7 +205,7 @@ function stdev(arr) {
 
 // ── Lexicon matching (with allowances) ───────────────────────────────────────
 
-function lintLexicon(group, prose, findings) {
+function lintLexicon(group, prose, findings, words) {
   const hits = [];
   for (const term of group.terms) {
     for (const m of prose.matchAll(phraseRegex(term))) {
@@ -157,7 +214,10 @@ function lintLexicon(group, prose, findings) {
   }
   hits.sort((a, b) => a.index - b.index);
   const perTermFree = {};
-  let groupFreeLeft = group.freeAllowance || 0;
+  // Density-based allowance (2.0.0): freePerWords adds one free hit per N words
+  // of prose on top of the fixed freeAllowance, so a long report and a short
+  // post are not held to the same absolute count.
+  let groupFreeLeft = (group.freeAllowance || 0) + (group.freePerWords ? Math.floor(words / group.freePerWords) : 0);
   for (const h of hits) {
     const allowN = group.allowTerms && group.allowTerms[h.term] ? group.allowTerms[h.term] : 0;
     if (allowN) {
@@ -233,10 +293,22 @@ function detectEmDashDensity(cfg, prose, sentences, findings) {
   // Perception policy (2026-07-15): allow cfg.maxAllowed per document; flag
   // from the next one, +cfg.perExtraPoint per additional dash, capped at
   // cfg.maxPoints. Attribution lines ("— Person Name") are exempt.
+  // 2026-10-31: a SPACED en dash (" – ") is a dash to the reader and now
+  // counts; unspaced ranges ("2019–2021", "pages 4–9") do not.
   const attributions = new Set(
-    [...prose.matchAll(/^\s*—\s+[A-Z]/gm)].map((m) => m.index + m[0].indexOf('—'))
+    [...prose.matchAll(/^\s*[—–]\s+[A-Z]/gm)].map((m) => m.index + m[0].search(/[—–]/))
   );
-  const matches = [...prose.matchAll(/—|(?<=\s)--(?=\s)/g)].filter((m) => !attributions.has(m.index));
+  // Review 2026-10-31 (m4): a spaced en dash between two range tokens (numbers,
+  // weekdays, months) is a range, not a dash.
+  const RANGE = /^(?:\d[\d.,:%]*(?:am|pm)?|mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun|(?:mon|tues|wednes|thurs|fri|satur|sun)day|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)$/i;
+  const isRange = (m) => {
+    if (m[0] !== '–') return false;
+    const before = (prose.slice(Math.max(0, m.index - 20), m.index).match(/(\S+)\s+$/) || [])[1];
+    const after = (prose.slice(m.index + 1, m.index + 21).match(/^\s+(\S+)/) || [])[1];
+    const clean = (w) => (w || '').replace(/^[("'[]+|[)"',.;:\]]+$/g, '');
+    return RANGE.test(clean(before)) && RANGE.test(clean(after));
+  };
+  const matches = [...prose.matchAll(/—|(?<=\s)(?:--|–)(?=\s)/g)].filter((m) => !attributions.has(m.index) && !isRange(m));
   const count = matches.length;
   if (count <= cfg.maxAllowed) return;
   const extra = count - cfg.maxAllowed;
@@ -244,7 +316,7 @@ function detectEmDashDensity(cfg, prose, sentences, findings) {
   findings.push({
     rule: 'em-dash density', id: 'em-dash-density', tier: cfg.tier, points,
     line: lineAt(prose, matches[cfg.maxAllowed].index),
-    match: `${count} em-dashes (shipping policy: ≤${cfg.maxAllowed} per document)`,
+    match: `${count} dashes, em or spaced en (shipping policy: ≤${cfg.maxAllowed} per document)`,
     fix: cfg.fix,
   });
 }
@@ -275,6 +347,20 @@ function detectSentenceUniformity(cfg, sentences, findings) {
       rule: 'sentence uniformity (low burstiness)', id: 'sentence-uniformity',
       tier: cfg.tier, points: cfg.points, line: 1,
       match: `${counts.length} sentences, mean ${m.toFixed(1)} words, stdev ${sd.toFixed(1)} (metronomic)`,
+      fix: cfg.fix,
+    });
+  }
+}
+
+function detectClippedCadence(cfg, sentences, findings) {
+  if (!cfg) return; // vendored patterns.mjs predating 2.0.0
+  const counts = sentences.map(wordCount).filter((n) => n > 0);
+  if (counts.length < cfg.minSentences) return;
+  const clipped = counts.filter((n) => n <= cfg.maxWords).length;
+  if (clipped / counts.length >= cfg.ratio) {
+    findings.push({
+      rule: 'clipped cadence', id: 'clipped-cadence', tier: cfg.tier, points: cfg.points, line: 1,
+      match: `${clipped}/${counts.length} sentences are ${cfg.maxWords} words or fewer`,
       fix: cfg.fix,
     });
   }
@@ -316,11 +402,22 @@ function detectStarterMonotony(cfg, sentenceObjs, prose, findings) {
 }
 
 function detectAnaphora(cfg, sentenceObjs, prose, findings) {
+  // Opening key: the first word, or the first two after a function-word
+  // starter (cfg.functionStarters). One- and two-letter first words (It, In, A,
+  // We, I) stay excluded, exactly as in 1.x: a strict narrowing.
+  const fn = new Set(cfg.functionStarters || []);
+  const opening = (s) => {
+    const m = s.match(/^\W*(\w+)(?:\W+(\w+))?/);
+    if (!m) return null;
+    const first = m[1].toLowerCase();
+    if (first.length <= 2) return null;
+    return fn.has(first) ? (m[2] ? `${first} ${m[2].toLowerCase()}` : null) : first;
+  };
   let run = 1;
   for (let i = 1; i < sentenceObjs.length; i++) {
-    const prev = (sentenceObjs[i - 1].text.match(/^\W*(\w+)/) || [])[1];
-    const cur = (sentenceObjs[i].text.match(/^\W*(\w+)/) || [])[1];
-    if (prev && cur && prev.toLowerCase() === cur.toLowerCase() && prev.length > 2) {
+    const prev = opening(sentenceObjs[i - 1].text);
+    const cur = opening(sentenceObjs[i].text);
+    if (prev && cur && prev === cur && prev.length > 2) {
       run++;
       if (run >= cfg.run) {
         findings.push({
@@ -338,8 +435,10 @@ function detectAnaphora(cfg, sentenceObjs, prose, findings) {
 }
 
 function detectBoldFirstBullets(cfg, raw, findings) {
-  const md = [...raw.matchAll(/^[ \t]*[-*+][ \t]+\*\*[^*\n]+\*\*\s*[:：—-]/gm)];
-  const html = [...raw.matchAll(/<li\b[^>]*>\s*<(strong|b)\b[^>]*>[^<]+<\/\1>\s*[:：—-]/gi)];
+  // 2026-10-31: also the colon-INSIDE form ("- **Speed:** It loads fast"), the LLM
+  // default, which the old regex missed.
+  const md = [...raw.matchAll(/^[ \t]*(?:[-*+]|\d+[.)])[ \t]+\*\*[^*\n]+?(?:\*\*\s*[:：—-]|[:：]\*\*)/gm)];
+  const html = [...raw.matchAll(/<li\b[^>]*>\s*<(strong|b)\b[^>]*>(?:[^<]+<\/\1>\s*[:：—-]|[^<]*[:：]\s*<\/\1>)/gi)];
   const total = md.length + html.length;
   if (total < cfg.min) return;
   const first = md[0] || html[0];
@@ -423,6 +522,62 @@ function detectUnicodeDecoration(cfg, visible, findings) {
   });
 }
 
+// ── Emoji and social-genre detectors (2026-10-31) ────────────────────────────
+// ©/®/™ carry Extended_Pictographic in Unicode but are not emoji to a reader.
+// A ZWJ sequence (👩‍💻) is one emoji (review m5), so match the whole cluster.
+const EMOJI = /(?![©®™])\p{Extended_Pictographic}\uFE0F?(?:\u200D\p{Extended_Pictographic}\uFE0F?)*/gu;
+const HASHTAG = /(?:^|[\s(])#[A-Za-z][\w-]*/g;
+
+function detectEmojiBullets(cfg, raw, findings) {
+  const lines = [...raw.matchAll(/^[ \t]*(?:[-*+][ \t]+)?(?![©®™])\p{Extended_Pictographic}/gmu)];
+  if (lines.length < cfg.min) return;
+  findings.push({
+    rule: 'emoji list markers', id: 'emoji-bullets', tier: cfg.tier, points: cfg.points,
+    line: lineAt(raw, lines[0].index),
+    match: `${lines.length} lines open with an emoji`,
+    fix: cfg.fix,
+  });
+}
+
+// A run of consecutive sentences matching `pred`, reported once at its start.
+function detectSentenceRun(cfg, sentenceObjs, prose, findings, pred, id, rule, what) {
+  let run = 0;
+  for (let i = 0; i < sentenceObjs.length; i++) {
+    run = pred(sentenceObjs[i].text) ? run + 1 : 0;
+    if (run >= cfg.run) {
+      findings.push({
+        rule, id, tier: cfg.tier, points: cfg.points,
+        line: lineAt(prose, sentenceObjs[i - run + 1].index),
+        match: `${run} ${what} in a row`,
+        fix: cfg.fix,
+      });
+      return;
+    }
+  }
+}
+
+function detectBroetry(cfg, sentenceObjs, prose, findings) {
+  const short = (s) => { const n = wordCount(s); return n > 0 && n <= cfg.maxWords; };
+  detectSentenceRun(cfg, sentenceObjs, prose, findings, short, 'broetry', 'fragment run (broetry)',
+    `sentences of ${cfg.maxWords} words or fewer`);
+}
+
+function detectRhetoricalRun(cfg, sentenceObjs, prose, findings) {
+  const question = (s) => /\?["')\]]*$/.test(s.replace(EMOJI, '').trim());
+  detectSentenceRun(cfg, sentenceObjs, prose, findings, question, 'rhetorical-run', 'rhetorical-question run', 'questions');
+}
+
+function detectCappedCount(cfg, prose, findings, re, id, what) {
+  const matches = [...prose.matchAll(re)];
+  if (matches.length <= cfg.maxAllowed) return;
+  findings.push({
+    rule: `${what} over the cap`, id, tier: cfg.tier, points: cfg.points,
+    line: lineAt(prose, matches[cfg.maxAllowed].index),
+    match: `${matches.length} ${what} (cap ${cfg.maxAllowed})`,
+    fix: cfg.fix,
+  });
+}
+
 // ── Stylometric texture tier ─────────────────────────────────────────────────
 // Adapted from conorbronsdon/avoid-ai-writing detector/patterns.js
 // (MIT License, © 2026 Conor Bronsdon), with local changes: thresholds and
@@ -445,6 +600,8 @@ const ROLEPLAY_VERBS = /^(?:nods|sighs|laughs|smiles|frowns|shrugs|grins|winks|c
 function normalizeFull(text) {
   const flags = { zeroWidth: 0, homoglyph: 0, roleplay: 0 };
   let out = text.replace(/^﻿/, '');
+  // A ZWJ joining two emoji is part of one emoji (👩‍💻), not a bypass trick.
+  out = out.replace(/(?<=\p{Extended_Pictographic}\uFE0F?)\u200D(?=\p{Extended_Pictographic})/gu, '');
   out = out.replace(/[​‌‍﻿⁠]/g, () => { flags.zeroWidth++; return ''; });
   out = out.replace(/[Ѐ-ӿͰ-Ͽ]/g, (m) => {
     const swap = CYRILLIC_LOOKALIKES[m] ?? GREEK_LOOKALIKES[m];
@@ -608,7 +765,7 @@ function detectBypassNormalization(cfg, flags, findings) {
 const STYLOMETRIC_IDS = new Set([
   'trigram-entropy', 'cross-para-burstiness', 'punct-distribution', 'low-ttr',
   'smart-punct-signature', 'sentence-uniformity', 'paragraph-uniformity',
-  'starter-monotony',
+  'starter-monotony', 'clipped-cadence',
 ]);
 
 function detectContractionRate(cfg, prose, findings) {
@@ -632,29 +789,44 @@ function detectContractionRate(cfg, prose, findings) {
 /**
  * Lint a string for mechanical AI-writing tells.
  * @param {string} input
- * @param {{format?: 'text'|'markdown'|'html', extraLexicons?: Array, extraRegexRules?: Array}} [opts]
+ * @param {{format?: 'text'|'markdown'|'html', genre?: 'linkedin'|'x', extraLexicons?: Array, extraRegexRules?: Array}} [opts]
  * @returns {{score:number, band:string, fatal:number, findings:Array, notLinted:string[]}}
  */
 export function lintText(input, opts = {}) {
-  const raw = blankComments(String(input || ''));
   const format = opts.format || 'text';
+  const uncommented = blankComments(String(input || ''));
+  const code = format === 'html' ? { text: uncommented, fencedLines: 0, inlineSpans: 0 } : blankCode(uncommented);
+  const raw = code.text;
   const visible = format === 'html' ? stripHtml(raw) : raw;
   const prose = normalizeQuotes(visible);
   const sentenceObjs = splitSentencesWithPos(prose);
+  // FATAL rules and `lintsCode` rules read the text with code left in place.
+  // Blanking is length-preserving, so spans and line numbers line up.
+  const proseWithCode = format === 'html' ? prose : normalizeQuotes(uncommented);
+  const readsCode = (r) => r.tier === 'fatal' || r.lintsCode;
   const sentences = sentenceObjs.map((s) => s.text);
   const findings = [];
   const S = PATTERNS.STATISTICAL;
 
-  for (const g of [PATTERNS.FATAL_LEXICON, ...PATTERNS.LEXICONS, ...(opts.extraLexicons || [])]) {
-    lintLexicon(g, prose, findings);
+  const proseWords = wordCount(prose);
+  // Genre gating (2.0.0): a rule with `genres` runs only under a matching opts.genre.
+  const genre = opts.genre || null;
+  if (genre !== null && !(PATTERNS.GENRES || []).includes(genre)) {
+    throw new Error(`slop-lint: unknown genre "${genre}" (expected one of: ${(PATTERNS.GENRES || []).join(', ')})`);
   }
-  for (const r of [...PATTERNS.FATAL_REGEX, ...PATTERNS.REGEX_RULES, ...(opts.extraRegexRules || [])]) {
-    lintRegexRule(r, prose, sentenceObjs, findings);
+  const applies = (r) => !!r && (!r.genres || (genre !== null && r.genres.includes(genre)));
+
+  for (const g of [PATTERNS.FATAL_LEXICON, ...PATTERNS.LEXICONS, ...(opts.extraLexicons || [])].filter(applies)) {
+    lintLexicon(g, readsCode(g) ? proseWithCode : prose, findings, proseWords);
+  }
+  for (const r of [...PATTERNS.FATAL_REGEX, ...PATTERNS.REGEX_RULES, ...(opts.extraRegexRules || [])].filter(applies)) {
+    lintRegexRule(r, readsCode(r) ? proseWithCode : prose, sentenceObjs, findings);
   }
 
   detectEmDashDensity(S.emDashDensity, prose, sentences, findings);
   detectExclamationDensity(S.exclamationDensity, prose, findings);
   detectSentenceUniformity(S.sentenceUniformity, sentences, findings);
+  detectClippedCadence(S.clippedCadence, sentences, findings);
   detectParagraphUniformity(S.paragraphUniformity, format === 'html' ? visible : raw, findings);
   detectStarterMonotony(S.starterMonotony, sentenceObjs, prose, findings);
   detectAnaphora(S.anaphora, sentenceObjs, prose, findings);
@@ -663,6 +835,11 @@ export function lintText(input, opts = {}) {
   detectTitleCaseHeadings(S.titleCaseHeadings, format === 'html' ? '' : raw, findings);
   detectDuplication(S.duplication, prose, findings);
   detectUnicodeDecoration(S.unicodeDecoration, visible, findings);
+  if (applies(S.emojiBullets)) detectEmojiBullets(S.emojiBullets, raw, findings);
+  if (applies(S.broetry)) detectBroetry(S.broetry, sentenceObjs, prose, findings);
+  if (applies(S.rhetoricalRun)) detectRhetoricalRun(S.rhetoricalRun, sentenceObjs, prose, findings);
+  if (applies(S.hashtagDensity)) detectCappedCount(S.hashtagDensity, prose, findings, HASHTAG, 'hashtag-density', 'hashtags');
+  if (applies(S.emojiDensity)) detectCappedCount(S.emojiDensity, prose, findings, EMOJI, 'emoji-density', 'emojis');
   detectContractionRate(S.contractionRate, prose, findings);
 
   // Stylometric texture tier: full normalization (length-changing) feeds ONLY
@@ -763,7 +940,59 @@ export function lintText(input, opts = {}) {
   // LOW and still owe a disposition. Consumers that want to block on it opt in
   // via --require-review-disposition; nothing here changes existing exit codes.
   const requiresReview = deduped.filter((f) => f.review).length;
-  return { score, gateScore, band: fatal ? 'FATAL' : scoreBand(score), fatal, requiresReview, findings: deduped, notLinted: NOT_LINTED };
+  const codeSkipped = { fencedLines: code.fencedLines, inlineSpans: code.inlineSpans };
+  return { score, gateScore, band: fatal ? 'FATAL' : scoreBand(score), fatal, requiresReview, codeSkipped, findings: deduped, notLinted: NOT_LINTED };
+}
+
+// ── Texture baseline (2.0.0) ─────────────────────────────────────────────────
+// `--baseline <samples>` compares a draft's cadence with the author's own
+// reference posts. Samples set cadence; they never license a pattern. Each
+// sample is linted too, and any actionable finding in it is printed as a
+// warning: a reference post that carries a tell will teach the tell.
+
+/** Visible text of an HTML document, as the linter sees it in --html mode. */
+export function htmlToText(html) {
+  return stripHtml(blankComments(String(html || '')));
+}
+
+/** Sentence texts of a document, using the linter's own splitter (code and comments blanked). */
+export function sentencesOf(text) {
+  return splitSentencesWithPos(normalizeQuotes(blankCode(blankComments(String(text || ''))).text)).map((s) => s.text);
+}
+
+export function textureProfile(text) {
+  const prose = normalizeQuotes(blankCode(blankComments(String(text || ''))).text);
+  const sents = sentencesOf(text).filter((s) => wordCount(s) > 0);
+  const counts = sents.map(wordCount);
+  const words = wordCount(prose) || 1;
+  const maxWords = PATTERNS.STATISTICAL.clippedCadence?.maxWords ?? 8;
+  return {
+    sentences: counts.length,
+    meanWords: counts.length ? mean(counts) : 0,
+    stdevWords: counts.length ? stdev(counts) : 0,
+    clippedShare: counts.length ? counts.filter((n) => n <= maxWords).length / counts.length : 0,
+    dashesPer100: ((prose.match(/—|(?<=\s)(?:--|–)(?=\s)/g) || []).length / words) * 100,
+    contractionsPer100: ((prose.match(/\b\w+'(?:t|s|re|ve|ll|d|m)\b/gi) || []).length / words) * 100,
+    questionShare: counts.length ? sents.filter((s) => /\?["')\]]*$/.test(s)).length / counts.length : 0,
+  };
+}
+
+/** samples: [{ file, profile, tells: string[] }] */
+export function formatBaseline(draft, samples) {
+  const avg = (k) => mean(samples.map((s) => s.profile[k]));
+  const rows = [
+    ['sentences', 'sentences', 0], ['mean words/sentence', 'meanWords', 1], ['stdev words/sentence', 'stdevWords', 1],
+    ['clipped share', 'clippedShare', 2], ['dashes per 100 words', 'dashesPer100', 2],
+    ['contractions per 100 words', 'contractionsPer100', 2], ['question share', 'questionShare', 2],
+  ];
+  const lines = ['', `TEXTURE vs BASELINE (${samples.length} sample${samples.length === 1 ? '' : 's'}) — samples set cadence, never license a pattern`];
+  for (const [label, k, dp] of rows) {
+    lines.push(`  ${label.padEnd(28)} draft ${draft[k].toFixed(dp).padStart(6)}   samples ${avg(k).toFixed(dp).padStart(6)}`);
+  }
+  for (const s of samples.filter((x) => x.tells.length)) {
+    lines.push(`  ⚠ sample ${s.file} carries tells (${s.tells.join(', ')}): it can teach them; fix or drop it.`);
+  }
+  return lines;
 }
 
 export function scoreBand(score) {
@@ -809,10 +1038,14 @@ export function formatReport(result, { file } = {}) {
   lines.push('SLOP LINT' + (file ? ` — ${file}` : ''));
   lines.push('='.repeat(52));
   lines.push(`Score: ${result.score}  (${result.band} — ${BAND_NOTE[result.band]})`);
+  lines.push(`Gate score: ${result.gateScore}  (fatal/strong/lexical; ship at ≤${PATTERNS.META.shipTarget} with zero FATAL)`);
   if (result.fatal) lines.push(`⛔ ${result.fatal} FATAL artifact(s) — fix these before anything else.`);
   lines.push('');
   if (result.findings.length === 0) {
-    lines.push('No mechanical AI-writing tells detected. ✅');
+    const skippedCode = result.codeSkipped && (result.codeSkipped.fencedLines || result.codeSkipped.inlineSpans);
+    lines.push(skippedCode
+      ? 'No mechanical AI-writing tells detected in the prose (code was skipped; see below).'
+      : 'No mechanical AI-writing tells detected. ✅');
   } else {
     lines.push(`FINDINGS (${result.findings.length})`);
     for (const f of result.findings) {
@@ -829,6 +1062,11 @@ export function formatReport(result, { file } = {}) {
     }
   }
   lines.push(...formatReviewBlock(result));
+  const cs = result.codeSkipped;
+  if (cs && (cs.fencedLines || cs.inlineSpans)) {
+    lines.push('');
+    lines.push(`Not linted as prose: ${cs.fencedLines} line(s) in code fences, ${cs.inlineSpans} inline code span(s). FATAL artifacts and chat leakage are still checked there.`);
+  }
   lines.push('');
   lines.push('NOT LINTED (judgment patterns — needs the recipe pass + independent review)');
   for (const n of result.notLinted) lines.push(`  - ${n}`);
@@ -850,7 +1088,7 @@ export function formatSummary(result, { file } = {}) {
   const top = result.findings.slice(0, 4).map((f) => `${f.rule} ${f.match}`).join('; ');
   const hint = file ? ` Full report: node slop-lint.mjs "${file}"` : ' Run: node slop-lint.mjs <file>';
   return [
-    `📝 Voice lint: slop score ${result.score} (${result.band}; target ≤${PATTERNS.META.shipTarget}). ${result.findings.length} flag(s).`,
+    `📝 Voice lint: slop score ${result.score}, gate ${result.gateScore} (${result.band}; ship at gate ≤${PATTERNS.META.shipTarget}). ${result.findings.length} flag(s).`,
     `   Top: ${top}.`,
     `  ${hint}`,
   ].join('\n');
@@ -866,14 +1104,22 @@ Usage:
   node slop-lint.mjs <file>              Human report
   node slop-lint.mjs --html <file.html>  Strip tags, lint visible prose
   node slop-lint.mjs <file> --json       JSON output
-  node slop-lint.mjs <file> --max <n>    Exit 1 if score > n (FATAL always exits 1)
+  node slop-lint.mjs <file> --max <n>    Exit 1 if gateScore > n (FATAL always exits 1).
+                                         gateScore counts fatal/strong/lexical only:
+                                         weak findings never block.
   cat draft.md | node slop-lint.mjs -    Read from stdin
 
+  ${('--genre <' + PATTERNS.GENRES.join('|') + '>').padEnd(39)}Also apply that genre's rules (hooks, closers,
+                                         fragment runs, hashtag and emoji caps).
+  --baseline <file|dir>                  Compare the draft's cadence with reference
+                                         samples (.md/.txt); warns on samples that
+                                         carry tells. Samples never license a pattern.
   --require-review-disposition           Exit 1 while any finding still owes a
                                          judgment call (see KEEP-TEST REQUIRED).
                                          Off by default; for gated renders.
 
-Bands: 0–5 low · 6–12 medium · 13+ high · FATAL overrides all. Ship target: ≤${PATTERNS.META.shipTarget}.`);
+Bands (on score): 0–5 low · 6–12 medium · 13+ high · FATAL overrides all.
+Ship gate: gateScore ≤${PATTERNS.META.shipTarget} and zero FATAL.`);
     process.exit(argv.length === 0 ? 1 : 0);
   }
 
@@ -881,7 +1127,17 @@ Bands: 0–5 low · 6–12 medium · 13+ high · FATAL overrides all. Ship targe
   const isHtml = argv.includes('--html');
   const maxIdx = argv.indexOf('--max');
   const max = maxIdx !== -1 && argv[maxIdx + 1] !== undefined ? Number(argv[maxIdx + 1]) : null;
-  const flagValues = new Set([maxIdx !== -1 ? argv[maxIdx + 1] : undefined]);
+  const genreIdx = argv.indexOf('--genre');
+  const genre = genreIdx !== -1 ? argv[genreIdx + 1] : undefined;
+  if (genreIdx !== -1 && !(PATTERNS.GENRES || []).includes(genre)) {
+    console.error(genre === undefined || genre.startsWith('-')
+      ? `slop-lint: --genre needs a value: ${(PATTERNS.GENRES || []).join(', ')}`
+      : `slop-lint: --genre must be one of ${(PATTERNS.GENRES || []).join(', ')} (got "${genre}")`);
+    process.exit(2);
+  }
+  const baseIdx = argv.indexOf('--baseline');
+  const baselinePath = baseIdx !== -1 ? argv[baseIdx + 1] : undefined;
+  const flagValues = new Set([maxIdx !== -1 ? argv[maxIdx + 1] : undefined, genre, baselinePath]);
   const file = argv.find((a) => !a.startsWith('-') && !flagValues.has(a)) || (argv.includes('-') ? '-' : undefined);
 
   let content;
@@ -893,16 +1149,43 @@ Bands: 0–5 low · 6–12 medium · 13+ high · FATAL overrides all. Ship targe
   }
 
   const format = isHtml || /\.html?$/i.test(file || '') ? 'html' : 'text';
-  const result = lintText(content, { format });
+  const result = lintText(content, { format, genre });
+
+  let baseline = null;
+  if (baselinePath) {
+    let files;
+    try {
+      files = statSync(baselinePath).isDirectory()
+        ? readdirSync(baselinePath).filter((f) => /\.(md|txt)$/i.test(f)).sort().map((f) => join(baselinePath, f))
+        : [baselinePath];
+    } catch (e) {
+      console.error(`slop-lint: cannot read baseline "${baselinePath}": ${e.message}`);
+      process.exit(2);
+    }
+    const samples = files.map((f) => {
+      const text = readFileSync(f, 'utf-8');
+      const tells = lintText(text, { genre }).findings
+        .filter((x) => ['fatal', 'strong', 'lexical'].includes(x.tier) || x.review).map((x) => x.id);
+      return { file: f, profile: textureProfile(text), tells: [...new Set(tells)] };
+    });
+    if (!samples.length) {
+      console.error(`slop-lint: no .md/.txt samples in "${baselinePath}"`);
+      process.exit(2);
+    }
+    baseline = { draft: textureProfile(content), samples };
+  }
 
   if (json) {
-    console.log(JSON.stringify({ file: file || 'stdin', ...result }, null, 2));
+    console.log(JSON.stringify({ file: file || 'stdin', ...result, ...(baseline ? { baseline } : {}) }, null, 2));
   } else {
     console.log(formatReport(result, { file: file || 'stdin' }));
+    if (baseline) console.log(formatBaseline(baseline.draft, baseline.samples).join('\n'));
   }
 
   if (result.fatal > 0) process.exit(1);
-  if (max !== null && !Number.isNaN(max) && result.score > max) process.exit(1);
+  // 2.0.0: the gate is gateScore, not score. Weak findings corroborate and never
+  // block (detection guide), so a weak-only document must not fail --max.
+  if (max !== null && !Number.isNaN(max) && result.gateScore > max) process.exit(1);
   // Opt-in only: a keep-test owed is invisible to score and gateScore by
   // design, so a caller that wants it to block must ask for it explicitly.
   if (argv.includes('--require-review-disposition') && result.requiresReview > 0) {

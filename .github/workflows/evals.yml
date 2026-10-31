@@ -29,6 +29,11 @@ jobs:
       - name: Catalogue matches the pattern source
         run: node evals/check-catalogue.mjs
 
+      # SKILL.md word cap, valid frontmatter, and one version across
+      # patterns.mjs, both manifests and the CHANGELOG.
+      - name: Release hygiene
+        run: node evals/check-release.mjs
+
       - name: Negative-parallelism family regression
         run: node evals/eval-antithesis.mjs
 
@@ -39,17 +44,36 @@ jobs:
       - name: Keep-test disposition contract
         run: node evals/eval-keep-test.mjs
 
-      # The v1.7.0 ports sit close to ordinary English. Most of these checks are
+      # The patterns-v1.7.0 ports sit close to ordinary English. Most of these checks are
       # false-positive guards: a bare "might" must never fire, "would likely" is
       # an estimate, body prose is not a template header.
       - name: Ported patterns — hits and false-positive guards
         run: node evals/eval-ported-patterns.mjs
 
-      # The v1.8.0 outreach rules sit next to ordinary English too: "I look
+      # The patterns-v1.8.0 outreach rules sit next to ordinary English too: "I look
       # forward to the day", "I came across this bug", a README's "feel free to
       # open an issue", and a plain "I'd love the chance to talk" must not fire.
       - name: Outreach patterns — hits and false-positive guards
         run: node evals/eval-outreach-patterns.mjs
+
+      # 2.0.0. Human prose that used to fail ("Of course, we shipped it…" was
+      # FATAL), and the gate: --max counts gateScore, never weak findings.
+      - name: False-positive guards and the ship gate
+        run: node evals/eval-false-positives.mjs
+
+      - name: Social genre rules (--genre linkedin|x)
+        run: node evals/eval-social-genre.mjs
+
+      - name: Staging ports and evaluated re-tiering
+        run: node evals/eval-staging-ports.mjs
+
+      - name: Measurement tools (acceptance, --baseline)
+        run: node evals/eval-tools.mjs
+
+      # Text no rule was tuned against. Reports recall and false-positive
+      # rates; fails only on a FATAL in real human prose.
+      - name: Held-out set
+        run: node evals/eval-holdout.mjs
 
       # Band contract from README "Verify": clean prose must stay LOW, slop must
       # stay HIGH, machine artifacts must stay FATAL. Guards against a widened

@@ -63,6 +63,9 @@ Each genre below is a positive contract: what the output IS — its shape, lengt
 - **Opening contract:** line one is a concrete claim, a contrarian take, or a number that earns the click. No opening question, no stacked rhetorical questions, no "1, 2, 3 — here's why" listicle framing.
 - **Closing contract:** a pointed final line that leaves a thought, or a low-friction, specific CTA. No "Agree? Let me know in the comments."
 - **Register:** professional, plain, one to three sentences per paragraph. No personal or political content.
+- **Hook procedure:** write five first lines (≤110 characters each), keep the one that states something only you could, and discard the rest. Then draft, then make one pass that cuts repetition and throat-clearing. Never shorten sentences for punch: a row of fragments is the broetry tell, and real authors lengthen clipped drafts.
+- **Facts:** every number, name and anecdote comes from your notes or the source. A fake "last week a junior PM asked me…" story is the tell readers can least forgive; if the story did not happen, make the point without it.
+- **Lint:** `slop-lint.mjs post.md --genre linkedin` (or `--genre x`) adds the post rules: formula hooks on line one, generic closers ("Agree?", "Thoughts?", "drop it in the comments"), fragment runs, three-question runs, more than five hashtags or three emojis. One-sentence paragraphs, a one-line close, a specific question and a comment-gated lead magnet stay clean.
 
 **Before → After:**
 - "Ever wonder why most product launches fail? 🤔 Here's the thing nobody tells you... (1) timing (2) messaging (3) luck. Let that sink in. Agree? 👇" → "Most launches I've seen fail on distribution, not the product. We built a good tool last year and shipped it to silence — until we spent two weeks seeding it in five communities first. Same product, 4x the signups. Build is table stakes; the launch is the work."
@@ -120,7 +123,7 @@ Each genre below is a positive contract: what the output IS — its shape, lengt
 - **Register:** calm, unneedy. No apology for writing, no guilt framing, at most one exclamation mark (usually none).
 
 **Before → After:**
-- "Hi again! Just following up on my previous message in case it got lost. No pressure at all, but I would still love to connect if you have a few minutes. Feel free to let me know either way!" → "Hi Sarah, following up once. The billing rebuild I mentioned took six weeks and I can walk you through exactly how, or I can leave it here. Either is fine." *(after: yashasvishailly/job-search-writing-rules, MIT)*
+- "Hello again! Just checking in on my note from last week in case it got buried. No pressure at all, and feel free to let me know if now is a bad time. Would love to connect if you have a few minutes!" → "Hi Marcus, one follow-up on the data-platform role. Since I wrote, our team cut nightly pipeline failures from twelve a week to one, which is the problem your posting describes. Happy to walk through how on a call, or I can leave it here."
 
 ## Referral ask
 
@@ -131,7 +134,7 @@ Each genre below is a positive contract: what the output IS — its shape, lengt
 - **Register:** warm, direct, low-cost to act on.
 
 **Before → After:**
-- "Hey! Hope you're doing well. I hope you don't mind me reaching out, but I saw that your company is hiring for a role that I think might be a good fit for me. Would you be able to refer me? I'd really appreciate it!" → "Hey Priya, Northwind posted an ops role on Tuesday and it's the job I've been doing for three years. Here's a two-line version you can paste if you're willing to refer me: [two lines]. If you'd rather not, say so and I'll apply cold." *(after: yashasvishailly/job-search-writing-rules, MIT)*
+- "Hi Jordan! Hope you're doing well. I hope you don't mind me asking, but your team just posted an analytics role that looks like a match for my background. Would it be possible for you to put my name forward? It would mean a lot!" → "Hi Jordan, Lumen Labs posted a senior analytics role on Monday, and it is the work I have done for four years. Two lines you can forward as-is: I rebuilt a retail chain's demand forecast and cut stockouts 18%; I run SQL and dbt daily. If you would rather not refer me, tell me and I'll apply directly."
 
 ## Application form answer
 
@@ -142,4 +145,4 @@ Each genre below is a positive contract: what the output IS — its shape, lengt
 - **Register:** plain and specific; a sentence that would fit any company's form unchanged is cut.
 
 **Before → After:**
-- "I'm incredibly excited about Halo's mission and I feel like my values really align with the team's. I've always been passionate about fintech and I'd love to be part of such an innovative journey." → "Payments companies hit an operations wall around Series B, when finance still reconciles by hand and nobody has time to fix it. I've sat in that seat. I want the version of the job where I fix it before it calcifies." *(after: yashasvishailly/job-search-writing-rules, MIT)*
+- "I'm so excited about Fernway's mission and I truly believe my values align with the team's. I've always been passionate about logistics and would love to join such an innovative journey." → "Freight brokers lose margin when a load is re-booked by hand after a missed pickup. I built the re-booking flow at my last company and cut those hours by half. That is the problem I want to work on here."

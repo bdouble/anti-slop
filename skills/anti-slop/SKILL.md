@@ -41,13 +41,16 @@ style guide (e.g. `every-style-editor`, `style-editor`).
 1. **The first sentence carries the most specific claim you have.** No
    scene-setting, no "In today's…", no restating the question.
 2. **Every claim resolves to something checkable** — a number, a name, a date,
-   a tool, an event. An evaluative label ("significant", "proven") is a slot
-   where the evidence should be.
+   a tool, an event — **from the source or the author.** Never invent a number,
+   quote, source, ranking, or personal experience; if the fact is missing,
+   write the plainer sentence or ask. An evaluative label ("significant",
+   "proven") is a slot where the evidence should be.
 3. **Things ARE what they are.** Plain copulas: "is", "has", "does". A thing
    "serves as" nothing.
-4. **One idea per sentence; sentences vary widely in length.** A 5-word
-   sentence lands harder next to a 25-word one. Fragments are legal. Read it
-   aloud; if the rhythm is a metronome, break it.
+4. **One idea per sentence; sentences vary widely in length.** Vary length by
+   joining related clauses as often as by cutting: a 25-word sentence next to
+   a 6-word one. Read it aloud; if the rhythm is a metronome, or a row of
+   clipped fragments, fix it.
 5. **Contrast, triads, dashes, and metaphors are spent deliberately — roughly
    once each per piece.** Each device used reflexively becomes a tell.
 6. **State the positive.** Name what the thing is. A surviving "not X" has to
@@ -56,7 +59,7 @@ style guide (e.g. `every-style-editor`, `style-editor`).
    that adds something. Never a summary of what the reader just read.
 8. **Write with the confidence of the evidence, no more.** Precise caveats
    ("in 7 of 10 cases") beat hedges ("arguably", "in many ways") and beat
-   false certainty.
+   false certainty. Keep the source's uncertainty; do not round it away.
 
 ## Negative parallelism — intercept it before you write it
 
@@ -123,6 +126,8 @@ Repairs, keep-test procedure, and the legitimate-use gallery:
 | Every bullet "**Keyword**: sentence" | Vary format, or write prose. |
 | "Great question!" / "I hope this helps" | Delete — chat register never ships. |
 | "I hope this message finds you well. I just wanted to reach out…" / "no pressure, feel free to…" | First clause: why you're writing to this person. Last line: one specific ask, alone. |
+| "Let's dive into…" / "Honestly?" / "The real question is…" | Delete the run-up; make the point it announced. |
+| "Agree?" / "Thoughts?" / "Drop it in the comments" (posts) | One specific question the reader can answer, or end on the fact. |
 | Three perfectly parallel triads in a row | Vary to 2, 4, or 5 items; keep one deliberate triad. |
 | More than one em-dash per document | Perception rule: readers read "—" as AI even when it isn't. Keep at most one; replace by role (aside→commas, definition→colon, interruption→period). |
 
@@ -145,22 +150,35 @@ like anyone. Cut in proportion to the actual slop.
 ## Remediation workflow
 
 1. Read the whole piece once without editing.
-2. Run `scripts/slop-lint.mjs <file>` — fix every FATAL immediately; treat
-   strong findings as edits to make, lexical as edits to consider, weak as
-   corroboration only.
+2. Run `scripts/slop-lint.mjs <file>` (add `--genre linkedin` or `--genre x`
+   for a post) — fix every FATAL immediately; treat strong findings as edits to
+   make, lexical as edits to consider, weak as corroboration only.
 3. Tag remaining sentences against `references/pattern-catalogue.md`; rewrite
    by the recipe, not by synonym-swapping (thesaurus swaps create their own
    tell).
 4. Apply the two judgment tests the linter cannot run: **horoscope test**
-   (could anyone have written this, for anyone? → inject what only this
-   author/subject could produce) and **genericness** (would it survive
-   find-and-replace of the subject's name? → it must not).
-5. **Edit-fidelity check** — before shipping, confirm the pass did not
+   (could anyone have written this, for anyone? → add what only this
+   author/subject could produce, taken from the source or the author) and
+   **genericness** (would it survive find-and-replace of the subject's name?
+   → it must not).
+5. **Fact diff, both ways.** List every number, name, date, ranking, quote and
+   "at once"/"first"/"only" claim in the source and in your draft. An added
+   claim is an error; a lost claim is an error unless a pattern required the
+   cut. Triad, qualifier and bold edits are where rankings and "simultaneously"
+   claims get dropped.
+6. **Edit-fidelity check** — before shipping, confirm the pass did not
    over-correct: would the author still recognize this as theirs? Did a strong
    human sentence get rewritten only for consistency, or a real hedge or aside
    get cut as if it were filler? Restore what you over-cut. Removing slop must
    not cost voice.
-6. Re-run the linter, then read aloud once. Ship at score ≤2 with zero FATALs.
+7. Re-run the linter, then read aloud once. Ship at gateScore ≤2 with zero
+   FATALs (`--max 2` gates on it; weak findings never block).
+8. Only when the author will hand-edit and send the result (a cover letter,
+   outreach, a post) and the project keeps private edit records: save your
+   draft there, not in a scratchpad. Never create draft files in a code repo,
+   a public repo, or anything that ships. After the author edits it,
+   `scripts/acceptance.mjs <draft> <final>` reports how much shipped
+   unchanged: the outcome the score is a proxy for.
 
 ## Red flags — you are about to emit slop
 
@@ -169,82 +187,39 @@ like anyone. Cut in proportion to the actual slop.
 - You reach for a contrast to make a plain fact sound profound.
 - Every paragraph is coming out the same size.
 - You cannot point at the evidence for an adjective you just wrote.
+- You are about to write a number, name or anecdote the source does not contain.
 
 ## Genre shapes
 
 Per-genre contracts (cover letter, email, LinkedIn, essay, resume bullets):
 `references/genre-recipes.md`. Detection reliability tiers and false-positive
-guardrails: `references/detection-guide.md`.
+guardrails: `references/detection-guide.md`. For a LinkedIn or X post, lint
+with `--genre`; to match an author's cadence, add `--baseline <samples-dir>`
+(samples set cadence and never license a banned pattern).
 
-## Gotchas (append-only — grown from observed failures, never rewritten)
+## Gotchas — digest
 
-- 2026-07-15: "Let me know if you have questions" is normal human email
-  register — only flag chat-leakage phrasings ("let me know if you'd like me
-  to"), never plain closers.
-- 2026-07-15: Do not "fix" forced positivity in job applications by inserting
-  self-deprecating gap admissions — that is a different failure, not a repair.
-- 2026-07-15: Em-dash policy hardened to ≤1 per document (perception rule:
-  readers assume "—" means AI even in genuinely human prose). This is a
-  SHIPPING policy for text we produce; as a detection signal about someone
-  else's text the em-dash remains weak — never accuse on it.
-- 2026-08-12: The linter had been enforcing de facto ZERO negative parallelism
-  (2 points flat against a ship target of 2) while this file said "cap at one."
-  Contrast devices now get one free per document. If a piece reads flattened
-  after a de-slop pass, check whether a legitimate contrast was cut to satisfy
-  a budget that no longer exists.
-- 2026-08-12: `"It's not about speed. It's about accuracy."` — the catalogue's
-  own headline example — matched no regex at all until the eval fixture caught
-  it. Assume by-eye verification of regex coverage is wrong; run
-  `evals/eval-antithesis.mjs` in the repo.
-- 2026-08-12: `--html` linted `<title>` text as prose. A resume whose body had
-  zero em-dashes still tripped the ≤1 policy and blocked a DOCX render, on the
-  templated `<title>Name — CV</title>` alone. `stripHtml` now drops `title` with
-  its contents alongside `style`/`script`. When a lint finding cites punctuation
-  or a phrase you cannot find in the visible copy, check `<head>` before editing
-  the prose — the finding may be about markup no reader sees.
-- 2026-08-13: A downstream consumer kept a local de-slop catalogue beside this
-  skill, and it drifted into a partial second source of truth — an audit found
-  four items it covered that the skill did not (vague quantifiers, stacked modal
-  hedges, template section headers, assertion-in-place-of-evidence), ported in
-  v1.7.0. Lesson for consumers: a local catalogue kept "for convenience" becomes
-  a rival authority, and the drift runs BOTH ways — the copy can fall behind the
-  skill, and it can also hold rules the skill never learned. Keep one catalogue.
-  Three of the four ports sit close to ordinary English, so they carry explicit
-  false-positive guards in `evals/eval-ported-patterns.mjs`: a bare
-  "might"/"could" never fires, `likely` is excluded from the hedge stack
-  ("would likely take a week" is an estimate, not a hedge), `template-header` is
-  anchored to markdown heading syntax, and `vague-quantifier` stays weak-tier
-  with two free per document.
-- 2026-08-13: The one-free-contrast allowance was zeroing the freed finding to
-  `info` — the same tier as the non-actionable texture report, which the report
-  footer labels "corroborate only — never act on them alone." So the single
-  finding carrying a MANDATORY keep-test was filed under the system's own
-  instruction to ignore it, and a consumer shipped a textbook never-form ("The
-  hard part was never building. It was …") on a score of 0. Freeing something
-  from SCORING is not the same as freeing it from JUDGMENT; the five tiers only
-  encode detector reliability, so that state had no representation. Findings now
-  carry a `review` disposition, `lintText` returns `requiresReview`, and the
-  report prints the three keep-test questions inline — pointing at
-  `references/negative-parallelism.md` did not work, because the drafting agent
-  only reads the lint output. Pinned by `evals/eval-keep-test.mjs`.
-- 2026-08-12: A vendored copy of this skill drifted two minor versions behind
-  (v1.3.0 vs v1.5.0) and silently enforced the retired zero-contrast budget, so
-  a legitimate contrast got cut from a shipping document to satisfy a rule that
-  no longer existed. If a consumer vendors these files, it must verify the hash
-  before trusting a score — a stale linter fails closed in the wrong direction,
-  flattening prose rather than passing slop.
-- 2026-09-30: A cover-letter sentence built as a colon + a three-part list of parallel wh-clauses ("Paces speeds up the early decisions every project depends on: where it can go, how it connects to the grid, and what it will take to permit.") passed the linter at score 0, the corpus and package overlap checks, and the voice-judge (which counted it as one of two triads, under its three-list threshold and as company-specific), and Brian cut it by hand as "the AI slop pattern": three examples plus the common phrasing. It is specific to the company but the SHAPE is the tell: abstract lead ("the early decisions every project depends on") + colon + where/how/what triplet that lists the obvious parts of the domain. Company-specific nouns do not launder a stock structure. When a sentence defines what the employer does, say the one thing that matters to the writer in their own words ("working on electric infrastructure acceleration is incredibly compelling") instead of enumerating three sub-parts. Not yet lintable as a regex (the colon-then-triplet form is common in legitimate prose); treat as a judgment check alongside rule-of-three, and count this shape toward the triad budget even when the triad is inside one sentence.
-- 2026-10-14: Outreach formulae scored 0. `application-boilerplate` matched exact
-  strings, so "I hope this MESSAGE finds you well" and "I came across Northwind"
-  slipped past, and whole stock follow-ups and referral asks linted clean. Cold
-  DMs and follow-ups rarely pass a render gate, so the linter is often their only
-  mechanical check. Now covered by `outreach-boilerplate`, `permission-hedge`,
-  and a one-free `exclamationDensity`. Two things stay legal on purpose: a plain
-  one-sentence statement of interest ("I'd love the chance to talk it through"),
-  which real hand-edited letters use, and bare "if/but/just/I think", whose
-  blanket ban (common in job-search rule lists) flattens connected prose. A
-  closer is a tell when it repeats across letters; catch that at the corpus
-  level, not per document. Pinned by `evals/eval-outreach-patterns.mjs`.
+The dated log of observed failures, verbatim and append-only, is
+`references/gotchas-log.md`. Read it before drafting a cover letter or
+outreach, and before changing a rule. What it taught:
+
+- Plain human closers ("Let me know if you have questions", "I'd love the
+  chance to talk") stay legal; flag chat leakage and permission-seeking.
+- Never "fix" forced positivity with self-deprecating admissions.
+- ≤1 dash is a shipping policy for our text, never evidence about anyone else's.
+- One contrast per piece is legal, and it still owes the keep-test.
+- Verify a rule with the evals and the held-out set, never by eye.
+- A finding you cannot see in the copy may sit in `<head>`, a comment or code.
+- Keep one catalogue; a vendored copy must match the source hash.
+- A colon plus three parallel wh-clauses counts toward the triad budget, even
+  inside one sentence, and company nouns do not launder it. Say the one thing
+  that matters in the writer's own words.
+- Bare "if", "but", "just" and "I think" stay legal; a blanket ban flattens
+  connected prose.
+- If a piece reads flattened after a de-slop pass, check whether a legitimate
+  contrast was cut.
+- Weak findings never block; gate on gateScore.
+- Specific means sourced: never invent to satisfy the recipe.
 
 ## Related
 
@@ -252,11 +227,8 @@ guardrails: `references/detection-guide.md`.
   reads it; the prose catalogue derives from it; append-mostly).
 - `references/negative-parallelism.md` — the family reference behind the section
   above: ten shapes, five repairs, keep-test gallery, provenance.
-- Repo `evals/` (maintainer tooling, not shipped inside the skill) —
-  `eval-antithesis.mjs` scores the contrast family against a labeled fixture.
-  Run it before and after ANY change to a contrast regex.
-  `eval-keep-test.mjs` pins the disposition contract: that a freed contrast
-  still reports a keep-test, and that doing so never moves a score.
-  `eval-outreach-patterns.mjs` pins the outreach rules and their
-  false-positive guards.
+- `references/gotchas-log.md` — every observed failure, dated.
+- Repo `evals/` (maintainer tooling, not shipped inside the skill) — run every
+  `eval-*.mjs` and `check-*.mjs` before and after ANY rule change, and read
+  `eval-holdout.mjs`, which measures text no rule was tuned against.
 - Codex / non-Claude runtimes: `references/AGENTS-SNIPPET.md`.

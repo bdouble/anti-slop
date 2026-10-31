@@ -1,6 +1,6 @@
 # Detection Guide
 
-Last updated: 2026-07-15
+Last updated: 2026-10-31
 
 This guide governs how much weight a finding carries and what action it justifies. It is the guardrail that keeps the skill a remediation tool, not an accusation engine. Detection scores; it never verdicts.
 
@@ -17,7 +17,9 @@ Findings carry a tier from `data/patterns.mjs`. Act by tier, not by count:
 - lexical: word and phrase lists (AI-signature words, buzzwords, adverbial bloat). Real signal, but time-decaying and genre-noisy. Treat as an edit to consider; confirm the word is empty in context before cutting.
 - weak and info: paragraph uniformity, starter monotony, zero contractions. Corroboration only. Never act on a weak finding alone; it counts only inside a cluster. (Em-dash density moved to strong on 2026-07-15 — as a *shipping policy*, not a detection signal; see the myth section for the distinction.)
 
-Ship target: total score of 2 or below, with zero fatals.
+Ship gate: gateScore (the fatal, strong and lexical points) of 2 or below, with zero fatals. Weak and info findings never block; the CLI `--max` flag gates on gateScore. The total `score`, which includes weak findings, only sets the descriptive band.
+
+Post-specific rules (formula hooks, generic closers, fragment runs, hashtag and emoji caps) run only under `--genre linkedin|x`. A one-line paragraph or "Thoughts?" is a convention in one genre and a tell in another, so default linting never applies them.
 
 ## The em-dash myth (worked example of a bad standalone tell)
 
@@ -33,7 +35,7 @@ Each of these is produced by careful human writers as often as by models. On the
 - absence of contractions
 - academic vocabulary in isolation ("delve", "unpack", "ascertain")
 - em-dashes
-- the rule of three (a cornerstone of good human rhetoric)
+- the rule of three (a cornerstone of good human rhetoric). The 2026-10-31 review adopted humanizer's distinct-item test (§6) for when it IS the tell: check that each item adds a distinct idea; three items where the meaning has two is filler
 
 Use them only to corroborate a cluster already flagged by stronger tells.
 

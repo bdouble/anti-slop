@@ -1,6 +1,6 @@
 # Anti-Slop Pattern Catalogue
 
-Last updated: 2026-10-14
+Last updated: 2026-10-31
 
 This catalogue is derived from `data/patterns.mjs`. The .mjs file wins any conflict. It exists to give each machine-detectable pattern a plain-language rule and concrete before/after rewrites, so a writer can fix a finding by recipe instead of by synonym-swap. When the skill misses a new slop pattern in real use, append a new entry under "Appended from observed failures" with a date; never rewrite an existing entry, and never edit this file to disagree with the .mjs source.
 
@@ -12,12 +12,12 @@ Two representation notes, both faithful to the source:
 
 ## Contents
 
-- [Lexical](#lexical) — `self-praise` · `ai-signature` · `ai-cliche` · `corporate-buzzword` · `adverbial-bloat` · `vague-quantifier` · `watchlist` · `elegant-variation` · `over-correction`
-- [Syntactic](#syntactic) — `hedge` · `hedge-stacking` · `copula-avoidance` · `antithesis` · `not-only-but-also` · `self-posed-qa` · `colon-reveal` · `countdown` · `dramatic-fragment` · `trailing-participle` · `sentenceUniformity` · `anaphora` · `overused-transition` · `wordy` · `concession-pivot` · `starterMonotony` · `contractionRate` · `rule-of-three-abuse`
-- [Structural](#structural) — `meta-commentary` · `signposted-conclusion` · `closing-tautology` · `template-header` · `boldFirstBullets` · `duplication` · `paragraphUniformity` · `boldDensity` · `titleCaseHeadings` · `one-point-dilution` · `fractal-summaries`
-- [Rhetorical](#rhetorical) — `significance-inflation` · `assert-dont-prove` · `despite-challenges` · `false-suspense` · `rhetorical-setup` · `vague-attribution` · `imagine-opener` · `false-range` · `invented-label` · `dead-metaphor` · `analogy-stacking` · `mirrored-metaphor`
-- [Tonal](#tonal) — `application-boilerplate` · `outreach-boilerplate` · `permission-hedge` · `era-opener` · `chat-leakage` · `engagement-bait` · `patronizing-analogy` · `ten-x-hype` · `horoscope` · `genericness` · `forced-positivity` · `manufactured-personality` · `false-vulnerability`
-- [Mechanical](#mechanical) — `machine-artifact` · `placeholder` · `chat-opener` · `emDashDensity` · `exclamationDensity` · `unicodeDecoration` · `latin-sidebar`
+- [Lexical](#lexical) — `self-praise` · `ai-signature` · `ai-cliche` · `corporate-buzzword` · `adverbial-bloat` · `vague-quantifier` · `watchlist` · `elegant-variation` · `over-correction` · `watchlist-2026`
+- [Syntactic](#syntactic) — `hedge` · `hedge-stacking` · `copula-avoidance` · `antithesis` · `not-only-but-also` · `self-posed-qa` · `colon-reveal` · `countdown` · `dramatic-fragment` · `trailing-participle` · `sentenceUniformity` · `anaphora` · `overused-transition` · `wordy` · `concession-pivot` · `starterMonotony` · `contractionRate` · `rule-of-three-abuse` · `single-qualifier` · `clippedCadence` · `rhetoricalRun`
+- [Structural](#structural) — `meta-commentary` · `signposted-conclusion` · `closing-tautology` · `template-header` · `boldFirstBullets` · `duplication` · `paragraphUniformity` · `boldDensity` · `titleCaseHeadings` · `one-point-dilution` · `fractal-summaries` · `self-narration` · `broetry` · `social-heading` · `heading-restated` · `process-narration`
+- [Rhetorical](#rhetorical) — `significance-inflation` · `assert-dont-prove` · `despite-challenges` · `false-suspense` · `rhetorical-setup` · `vague-attribution` · `imagine-opener` · `false-range` · `invented-label` · `dead-metaphor` · `analogy-stacking` · `mirrored-metaphor` · `staged-runup` · `phantom-objection` · `deep-saying` · `corrective-framing` · `unprompted-defense`
+- [Tonal](#tonal) — `application-boilerplate` · `outreach-boilerplate` · `permission-hedge` · `era-opener` · `chat-leakage` · `engagement-bait` · `patronizing-analogy` · `ten-x-hype` · `horoscope` · `genericness` · `forced-positivity` · `manufactured-personality` · `false-vulnerability` · `stock-proclamation` · `social-closer` · `hook-formula` · `invented-detail` · `re-explaining`
+- [Mechanical](#mechanical) — `machine-artifact` · `placeholder` · `chat-opener` · `emDashDensity` · `exclamationDensity` · `unicodeDecoration` · `latin-sidebar` · `source-disclaimer` · `emojiBullets` · `hashtagDensity` · `emojiDensity`
 - [Stylometric texture](#stylometric-texture) — `trigramEntropy` · `crossParaBurstiness` · `punctDistribution` · `lowTtr` · `smartPunctSignature` · `bypassNormalization` · `stylometricCluster`
 - [Appended from observed failures](#appended-from-observed-failures)
 
@@ -106,6 +106,13 @@ Word- and phrase-level tells. Lexicons decay as models train away from publicize
 - "We endeavored to ameliorate the situation." → "We fixed it."
 **The rule (positive form):** revert to the plain word; anything that fails the say-it-aloud test goes.
 
+### Mid-2026 cohort word (`watchlist-2026`)
+**Tier:** weak · **Family:** Lexical · **Detection:** linter · **False-positive risk:** high
+**Why it's slop:** Wikipedia's "Signs of AI writing" (2026-10-31 revision) lists a vocabulary cohort for mid-2026 models; the linter keeps clearer, dependable, echoed, foster, practical, prioritize, steady and universally ("matters" and "challenge" were dropped on review as too common to signal anything). Every word is ordinary English, and the list has a single vendor-blog source, so only a cluster counts: two free plus one per 300 words.
+**Before → After:**
+- "The plan is practical and steady. It matters because teams prioritize dependable tools." → "The plan reuses the billing service we already run, so it ships in two sprints."
+**The rule (positive form):** name the concrete thing the cohort word gestures at. Review this list at the next quarterly pass.
+
 ---
 
 ## Syntactic
@@ -114,7 +121,7 @@ Sentence-level constructions. Several are legitimate rhetorical figures used onc
 
 ### Hedge phrase (`hedge`)
 **Tier:** strong · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** low
-**Why it's slop:** "it's worth noting", "at its core", "in many ways" is throat-clearing that delays the sentence that stands on its own.
+**Why it's slop:** "it's worth noting", "it is important to note", "at its core" is throat-clearing that delays the sentence that stands on its own. (2026-10-31: lone qualifiers such as "arguably" and "in many ways" moved to the weak Single qualifier entry below.)
 **Before → After:**
 - "It's worth noting that the API is rate-limited." → "The API allows 100 requests a minute."
 - "In many ways, this is arguably the better approach." → "This approach wins on latency and costs the same."
@@ -138,7 +145,7 @@ Sentence-level constructions. Several are legitimate rhetorical figures used onc
 - "The library serves as a central hub for logging." → "The library is where all logging goes."
 - "The city boasts a thriving tech scene." → "The city has 200 funded startups."
 - "This role stands as a testament to her growth." → "She was promoted twice in three years."
-**The rule (positive form):** use the plain copula: things are what they are. (The linter allows two before flagging.)
+**The rule (positive form):** use the plain copula: things are what they are. (2026-10-31: the linter allows one per 250 words, so a short post gets none free.)
 
 ### Negative parallelism / antithesis (`antithesis`)
 **Tier:** strong · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** low-at-density
@@ -211,14 +218,14 @@ Sentence-level constructions. Several are legitimate rhetorical figures used onc
 **Why it's slop:** when every sentence lands at 15–20 words with the same subject-verb-object shape, the metronome rhythm is the most durable statistical tell; it survives word-swapping.
 **Before → After:**
 - "The team met on Monday. They reviewed the plan. They agreed on scope. They set a deadline." → "The team met Monday. In an hour they had scope, an owner, and a date two weeks out."
-**The rule (positive form):** vary length drastically: a 5-word sentence next to a 25-word one, a fragment for punch.
+**The rule (positive form):** vary length by joining related clauses as often as by cutting: a 25-word sentence next to a 6-word one. (2026-10-31: "a fragment for punch" removed; hand edits of agent drafts mostly lengthened their short sentences.)
 
 ### Anaphora abuse (`anaphora`)
 **Tier:** strong · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** low-moderate (deliberate anaphora is a known device)
 **Why it's slop:** three or more consecutive sentences opening with the same words reads as a template unless it is a deliberate, earned build.
 **Before → After:**
 - "They assume users will pay. They assume developers will build. They assume ecosystems will emerge." → "The plan assumes users pay, developers build on top, and an ecosystem follows — none of which has happened yet."
-**The rule (positive form):** vary the openings, or merge the parallel items into one sentence.
+**The rule (positive form):** vary the openings, or merge the parallel items into one sentence. (2026-10-31: after "The" or "This" the first two words must match, so "The board… The vote… The second vote…" stays clean; one- and two-letter starters such as "It" stay excluded, as before.)
 
 ### Overused transition (`overused-transition`)
 **Tier:** lexical · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** moderate
@@ -230,12 +237,12 @@ Sentence-level constructions. Several are legitimate rhetorical figures used onc
 
 ### Wordy construction (`wordy`)
 **Tier:** weak · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** low
-**Why it's slop:** "due to the fact that", "in order to", "at this point in time" spend five words on one word's work.
+**Why it's slop:** "due to the fact that", "at this point in time" spend five words on one word's work. (2026-10-31: "in order to" left the list; Wikipedia counts it as a sign of human writing.)
 **Before → After:**
 - "We delayed the release due to the fact that the tests were failing." → "We delayed the release because the tests were failing."
-- "In order to reduce cost, we conducted an analysis." → "To cut cost, we analyzed the invoices."
+- "With regard to cost, we conducted an analysis." → "We analyzed the invoices for cost."
 - "At this point in time we monitor it on a daily basis." → "We monitor it daily now."
-**The rule (positive form):** compress to the single word (because, to, now).
+**The rule (positive form):** compress to the single word (because, about, now).
 
 ### Concession-pivot (`concession-pivot`)
 **Tier:** weak · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** high
@@ -266,6 +273,27 @@ Sentence-level constructions. Several are legitimate rhetorical figures used onc
 - "Fast, efficient, and reliable." → "It answers in under 200ms."
 - "We build, we ship, we scale." → "We shipped the beta to 5,000 users last month."
 **The rule (positive form):** vary list length to 2, 4, or 5; replace a filler adjective triad with one precise word.
+
+### Single qualifier (`single-qualifier`)
+**Tier:** weak · **Family:** Syntactic · **Detection:** linter · **False-positive risk:** high
+**Why it's slop:** usually it isn't. Humanizer §9 and Wikipedia's "Signs of human writing" both call a lone qualifier ("arguably", "in many ways", "to some extent") a human habit, and a small local frequency count found no signal either way. A pile of them makes every claim sound unsure, so only the second one in a piece scores, at weak tier. Moved out of strong `hedge` on 2026-10-31; stacks ("might arguably") still score as `hedge-stacking`.
+**Before → After:**
+- "Arguably the launch went fine. In many ways it was early. To some extent we were lucky." → "The launch went fine, two weeks early, helped by a quiet news cycle."
+**The rule (positive form):** keep the one qualifier the evidence needs, and make it precise.
+
+### Clipped cadence (`clippedCadence`)
+**Tier:** weak · **Family:** Syntactic · **Detection:** linter (10+ sentences) · **False-positive risk:** moderate
+**Why it's slop:** when 40% or more of the sentences run eight words or fewer, the prose reads as a row of punches. It is the cadence an agent produces when told to "vary length" by cutting, and hand edits of agent drafts went the other way, mostly lengthening the short sentences. Calibrated on a private set of hand-edited human letters, none of which reached 40%. Feeds `stylometricCluster`.
+**Before → After:**
+- "We shipped it. It broke. We fixed it. Users came back. Churn fell." → "We shipped it, it broke, and the fix took two days; within a month the users who had left were back and churn was down."
+**The rule (positive form):** join related clauses as often as you cut; keep a short sentence where it lands a new fact.
+
+### Rhetorical-question run (`rhetoricalRun`)
+**Tier:** strong · **Family:** Syntactic · **Detection:** linter, under `--genre linkedin|x` only · **False-positive risk:** low in posts
+**Why it's slop:** three questions in a row ("Why does this matter? What does it mean for PMs? Where do we go from here?") stage a reveal instead of making the point. Elsewhere a run of questions can be an honest agenda, so the rule is genre-gated.
+**Before → After:**
+- "Why does this matter? What does it mean for PMs? Where do we go from here?" → "PMs who skip churn interviews lose the cheapest data they will ever get."
+**The rule (positive form):** ask one question you will answer, or answer it.
 
 ---
 
@@ -309,7 +337,7 @@ Document shape and formatting tells: how the piece is laid out and where it anno
 
 ### Bold-first bullets (`boldFirstBullets`)
 **Tier:** strong · **Family:** Structural · **Detection:** linter · **False-positive risk:** low-moderate
-**Why it's slop:** every list item formatted `**Keyword**: sentence` is a near-ubiquitous generated-markdown shape almost nobody hand-writes for a whole list.
+**Why it's slop:** every list item formatted `**Keyword**: sentence` (or `**Keyword:** sentence`, the colon-inside form matched since 2026-10-31) is a near-ubiquitous generated-markdown shape almost nobody hand-writes for a whole list.
 **Before → After:**
 - "**Security**: we encrypt at rest. **Performance**: we cache reads. **Scale**: we shard by tenant." → "We encrypt at rest, cache reads, and shard by tenant."
 **The rule (positive form):** write the bullets as prose, or vary the formatting so it does not scan as a template.
@@ -355,6 +383,41 @@ Document shape and formatting tells: how the piece is laid out and where it anno
 **Before → After:**
 - "In this section we'll explore X. [content] As we've seen, X." → The content alone.
 **The rule (positive form):** one summary per document at most; trust the reader.
+
+### Writing about the document (`self-narration`)
+**Tier:** weak · **Family:** Structural · **Detection:** linter · **False-positive risk:** moderate
+**Why it's slop:** humanizer §25. Text that says what it replaced, how it was assembled, or how it is laid out ("was added to replace", "anything unconfirmed is flagged rather than guessed", "the table below compares") describes itself instead of its subject. Weak, because a change log legitimately says what replaced what.
+**Before → After:**
+- "This function was added to replace the previous approach of iterating through all items." → "This function looks items up by key, so it runs in constant time."
+**The rule (positive form):** describe the subject; keep a caveat only if it changes what the reader should do.
+
+### Fragment run (`broetry`)
+**Tier:** weak · **Family:** Structural · **Detection:** linter, under `--genre linkedin|x` only · **False-positive risk:** moderate
+**Why it's slop:** three or more sentences in a row of five words or fewer ("I got fired. On a Tuesday. No warning."), whether on one line or one per paragraph, is the LinkedIn "broetry" shape and the X "choppy fragments" tell. Short paragraphs as such are not flagged: common posting practice is a line break every one or two sentences.
+**Before → After:**
+- "I got fired.\n\nOn a Tuesday.\n\nNo warning." → "I was let go on a Tuesday, with no warning, three weeks after a strong review."
+**The rule (positive form):** merge the fragments into one sentence that carries the fact.
+
+### Markdown heading in an X post (`social-heading`)
+**Tier:** strong · **Family:** Structural · **Detection:** linter, under `--genre x` only · **False-positive risk:** low
+**Why it's slop:** X renders no markdown, so "## The Problem" in a post is a pasted document, not a post.
+**Before → After:**
+- "## The Problem\nTeams ship too slowly." → "Most teams ship too slowly because every change waits on one reviewer."
+**The rule (positive form):** make the heading a sentence or delete it.
+
+### Heading restated (`heading-restated`)
+**Tier:** judgment · **Family:** Structural · **Detection:** judgment (not linted) · **False-positive risk:** n/a
+**Why it's slop:** humanizer §24. The first sentence under a heading repeats the heading ("## Performance" → "Speed matters.").
+**Before → After:**
+- "## Performance\nSpeed matters. When users hit a slow page, they leave." → "## Performance\nPages that take over two seconds lose a third of visitors."
+**The rule (positive form):** start each section with its first new fact.
+
+### Narrating the work (`process-narration`)
+**Tier:** judgment · **Family:** Structural · **Detection:** judgment (not linted) · **False-positive risk:** n/a
+**Why it's slop:** humanizer §25 at paragraph scale: an account of how the document was researched, sourced or organized that the reader did not need. The phrase-level form is linted as `self-narration`.
+**Before → After:**
+- "To prepare this summary I reviewed each vendor's pricing page and cross-checked the figures." → "Vendor A charges $12 a seat; vendor B charges $9 with a 50-seat minimum."
+**The rule (positive form):** keep a source credit the reader can follow; cut the story of how you worked.
 
 ---
 
@@ -458,6 +521,42 @@ Argument and persuasion moves that inflate, tease, or borrow authority.
 - "Success isn't a destination, it's a journey." → "We review goals every quarter and cut what isn't working."
 - "Culture isn't what you say, it's what you do." → "We publish every postmortem, names included."
 **The rule (positive form):** if it would fit on a poster, delete it and state what you actually do.
+
+### Staged run-up (`staged-runup`)
+**Tier:** lexical · **Family:** Rhetorical · **Detection:** linter · **False-positive risk:** low-moderate
+**Why it's slop:** humanizer §4. "Let's dive into", a "Here's what you need to know." that ends its line, a sentence-initial "Honestly?", "Let's be honest:" announce a point instead of making it. Only the standalone run-up fires: "Here's what you need to know before Monday: the badge office opens at 8", "Let's be honest with the customer" and "Did I enjoy it, honestly?" are ordinary (review, 2026-10-31).
+**Before → After:**
+- "Let's dive into how caching works in Next.js. Here's what you need to know." → "Next.js caches each route's output until you revalidate it."
+- "Is it worth the price? Honestly? It depends." → "It is worth it if you use it weekly."
+**The rule (positive form):** delete the run-up and start with the point.
+
+### Arguing with no one (`phantom-objection`)
+**Tier:** lexical · **Family:** Rhetorical · **Detection:** linter · **False-positive risk:** moderate
+**Why it's slop:** humanizer §5. "A tempting approach would be…", "I'm not arguing that…", "This isn't mainly about…" rebut an objection nobody raised, usually left over from an earlier draft. "To be clear", "I'm not saying", "Don't get me wrong" and "This is not to say" are left out as everyday speech.
+**Before → After:**
+- "A tempting approach would be to rotate tokens by restarting the auth service, but that would drop every session. Rotation happens in place." → "Tokens rotate in place, so active sessions survive."
+**The rule (positive form):** keep an objection only when you name who holds it and answer it in full.
+
+### Saying that sounds deep (`deep-saying`)
+**Tier:** weak · **Family:** Rhetorical · **Detection:** linter · **False-positive risk:** moderate
+**Why it's slop:** humanizer §3. "The real question is…", "What really matters is…", "Efficiency becomes a trap" sound profound and assert nothing a reader can check. Weak, corroboration only, since the review found ordinary uses ("The real question is whether finance will fund the second team"); "is the language of", "is the currency of" and "the heart of the matter" were dropped because "The yen is the currency of Japan" is literal.
+**Before → After:**
+- "The real question is whether teams can adapt." → "Two of the five teams missed the migration date."
+**The rule (positive form):** state the claim the saying gestures at, with its evidence.
+
+### Corrective framing (`corrective-framing`)
+**Tier:** weak · **Family:** Rhetorical · **Detection:** linter · **False-positive risk:** moderate
+**Why it's slop:** Wikipedia's mid-2026 sign. "Should be treated as X rather than Y" and "does not establish that" tell the reader how to classify a claim in place of showing the evidence. Weak, corroboration only: legal and statistical prose uses both plainly ("should be treated as a floor rather than an estimate").
+**Before → After:**
+- "Claims about its suspension should be treated as religious tradition rather than as an archaeological explanation." → "The suspension story appears in two 19th-century travel accounts and no excavation report."
+**The rule (positive form):** say what the source shows, and stop.
+
+### Arguing with no one, paragraph scale (`unprompted-defense`)
+**Tier:** judgment · **Family:** Rhetorical · **Detection:** judgment (not linted) · **False-positive risk:** n/a
+**Why it's slop:** humanizer §5 beyond the phrase list: whole paragraphs that rebut an objection or reject an option nobody proposed. Several in a row is a stronger sign than one.
+**Before → After:**
+- "Some will say we should have built this in-house. That would have taken a year." (nobody said so) → delete; keep the reason you chose the vendor.
+**The rule (positive form):** answer objections the reader actually holds, and name who holds them.
 
 ---
 
@@ -569,6 +668,41 @@ Register and stance problems: the prose adopts a voice (chatbot, brochure, hype)
 - "And yes, I'm openly obsessed with this product." → "I've used it daily for two years; here's the one feature I'd change."
 **The rule (positive form):** remove the meta-commentary and let the substance carry the sincerity.
 
+### Stock proclamation (`stock-proclamation`)
+**Tier:** lexical · **Family:** Tonal · **Detection:** linter · **False-positive risk:** low
+**Why it's slop:** "The future is here", "Welcome to the future" proclaim instead of claim. ("The game has changed" was dropped on review: sports writing uses it literally.) From the Grok Bot LinkedIn filter; applies in every genre.
+**Before → After:**
+- "AI agents now write the first draft of every spec. The future is here." → "AI agents now write the first draft of every spec on our team; review takes ten minutes."
+**The rule (positive form):** end on the fact that made you want to write it.
+
+### Engagement-bait closer (`social-closer`)
+**Tier:** strong · **Family:** Tonal · **Detection:** linter, under `--genre linkedin|x` only · **False-positive risk:** low in posts
+**Why it's slop:** "Agree?", "Thoughts?", "Drop it in the comments", "Follow for more" ask for nothing specific, and common posting guidance holds that "Thoughts?" kills engagement. A specific question ("Which field would you cut first?") and a comment-gated lead magnet ("Comment CHECKLIST and I'll send it") stay clean. In an email, "Thoughts?" is a fine close, so the rule is genre-gated.
+**Before → After:**
+- "Roadmaps are a promise you cannot keep.\n\nAgree?" → "Roadmaps are a promise you cannot keep. Which date on yours would you defend in public?"
+**The rule (positive form):** end on one question the reader can answer, or on your strongest fact.
+
+### Formula hook (`hook-formula`)
+**Tier:** strong · **Family:** Tonal · **Detection:** linter, first line only, under `--genre linkedin|x` · **False-positive risk:** low in posts
+**Why it's slop:** "I'm thrilled to announce", "Unpopular opinion:", "Here's what I learned", and an opening question are the stock LinkedIn hooks, and common posting guidance says "no opening question". An essay may open with a question, so the rule is genre-gated.
+**Before → After:**
+- "I'm thrilled to announce that our first coaching cohort is live." → "Our first coaching cohort starts Monday with 14 PMs from 9 companies."
+**The rule (positive form):** write five first lines of 110 characters or fewer and keep the one that states something only you could.
+
+### Invented detail (`invented-detail`)
+**Tier:** judgment · **Family:** Tonal · **Detection:** judgment (not linted) · **False-positive risk:** n/a
+**Why it's slop:** a number, name, quote, source, ranking or anecdote that is not in the source or the author's notes. The recipe's specificity rule invites it unless the fact has to come from somewhere; a fake "last week a junior PM asked me…" is the LinkedIn failure readers forgive least. Humanizer and the Grok Bot prompts both make this their first rule.
+**Before → After:**
+- "Last week a junior PM asked me a question that stopped me in my tracks." (it didn't happen) → state the point without the story, or use one that did.
+**The rule (positive form):** diff facts both ways against the source; if a fact is missing, write the plainer sentence or ask.
+
+### Re-explaining what the reader knows (`re-explaining`)
+**Tier:** judgment · **Family:** Tonal · **Detection:** judgment (not linted) · **False-positive risk:** n/a
+**Why it's slop:** humanizer §26. A reply that restates the problem, the diagnosis and the evidence the other person already has, with the decision in the last line.
+**Before → After:**
+- "As you noted, the merge leaves pipeline_id stale… [four sentences of their own findings] …so I'll open a ticket." → "I'll open a separate ticket for MergeService; the fallback here can stay until then."
+**The rule (positive form):** lead with the decision and add only what the reader does not have.
+
 ---
 
 ## Mechanical
@@ -594,7 +728,7 @@ Markup and artifact tells. The three fatal entries are near-certain proof of une
 
 ### Chatbot opener (`chat-opener`)
 **Tier:** fatal · **Family:** Mechanical · **Detection:** linter · **False-positive risk:** near-zero
-**Why it's slop:** "Great question!", "Certainly!", "Absolutely!" at the start betrays copy-paste straight from a chat window.
+**Why it's slop:** "Great question!", "Certainly!", or an acknowledgement followed by an offer of content ("Absolutely! Here's an email you can send…", "Of course! Here are three options…", "Below is…", "I've rewritten…") opening the document, a paragraph, or the line under a heading or subject line betrays copy-paste straight from a chat window. (2026-10-31: courtesy words alone never fire, so "Of course, we shipped it on Friday…", "Sure, I'll be there at 3", "Of course, I'd be happy to introduce you" and "Great question. We priced it per seat…" stay clean.)
 **Before → After:**
 - "Great question! Here are the top three considerations." → "The top consideration is data residency."
 - "Certainly, I can help with that." → Delete; answer the question.
@@ -606,7 +740,7 @@ Markup and artifact tells. The three fatal entries are near-certain proof of une
 **Before → After:**
 - "The plan — which we drafted in March — has three parts — each with a lead — and ships in June." → "We drafted the plan in March. It has three parts, each with a lead, and ships in June."
 - "We shipped it — and it broke." → "We shipped it. And it broke."
-**The rule (positive form):** at most one em-dash per document (attribution lines "— Name" exempt); replace every other one by role: aside → commas or parentheses, definition → colon, interruption → period, list-explanation → semicolon.
+**The rule (positive form):** at most one em-dash per document (attribution lines "— Name" exempt; a spaced en dash " – " counts as a dash since 2026-10-31; ranges such as "2019–2021", "Monday – Friday" and "9 – 5" do not); replace every other one by role: aside → commas or parentheses, definition → colon, interruption → period, list-explanation → semicolon.
 
 ### Exclamation density (`exclamationDensity`)
 **Tier:** strong · **Family:** Mechanical · **Detection:** linter · **False-positive risk:** low (one per piece is always free; markdown images and `!=` are skipped)
@@ -631,6 +765,34 @@ Markup and artifact tells. The three fatal entries are near-certain proof of une
 - "Use a fast store (e.g., Redis)." → "Use a fast store like Redis."
 - "the primary owner (i.e., the on-call engineer)" → "the primary owner, meaning the on-call engineer."
 **The rule (positive form):** write "like" or "such as" for examples, "meaning" or "specifically" for restatements.
+
+### Source-availability disclaimer (`source-disclaimer`)
+**Tier:** strong · **Family:** Mechanical · **Detection:** linter · **False-positive risk:** low
+**Why it's slop:** a retrieval chatbot that found nothing says so ("not extensively documented in readily available sources", "in the provided sources", "based on available information") and then guesses, often adding that a person "maintains a low profile" (matched only after a speculation verb, "suggesting she maintains a low profile"; "The firm maintains a low profile in the press" is a plain fact). Humanizer §23 and Wikipedia's words to watch. Not matched: "not publicly available until Q3" (a release date), "not well documented" (a human complaint), "widely available" (a product claim).
+**Before → After:**
+- "While details about the company's founding are not extensively documented in readily available sources, it appears to have been established in the 1990s." → "The company was founded in 1994 (state business registry)." — or leave the founding date out.
+**The rule (positive form):** state what you know with its source; leave out what you don't.
+
+### Emoji list markers (`emojiBullets`)
+**Tier:** weak · **Family:** Mechanical · **Detection:** linter (2+ lines) · **False-positive risk:** low-moderate
+**Why it's slop:** humanizer §20 and the Grok "emoji-filled list": "✅ Ship small / ✅ Measure retention" or "🚀 **Launch Phase:**" decorates a list instead of writing it. © ® ™ are not counted. Weak since review: human release notes and checklists use ✅ markers too.
+**Before → After:**
+- "✅ Talk to users weekly\n✅ Ship small\n✅ Measure retention" → "Talk to users every week, ship in small pieces, and watch retention."
+**The rule (positive form):** use plain markers or a sentence.
+
+### Hashtags over the cap (`hashtagDensity`)
+**Tier:** strong · **Family:** Mechanical · **Detection:** linter, under `--genre linkedin|x` only · **False-positive risk:** low
+**Why it's slop:** a house default from one posting guide allows three to five hashtags or none (more than eight kills reach); six or more reads as reach-farming. Change `maxAllowed` in `data/patterns.mjs` if your venue differs.
+**Before → After:**
+- "#Product #AI #Leadership #Startups #Growth #SaaS" → "#ProductManagement #Onboarding #SaaS"
+**The rule (positive form):** three to five specific hashtags, or none.
+
+### Emojis over the cap (`emojiDensity`)
+**Tier:** strong · **Family:** Mechanical · **Detection:** linter, under `--genre linkedin|x` only · **False-positive risk:** low
+**Why it's slop:** a house default from one posting guide allows three emojis per post; more stand in for words. Change `maxAllowed` in `data/patterns.mjs` if your venue differs.
+**Before → After:**
+- "Shipped 🚀 Tested ✅ Measured 📈 Celebrated 🎉" → "We shipped, tested and measured the billing page this week. 🎉"
+**The rule (positive form):** at most three, none in place of a word.
 
 ---
 
@@ -694,3 +856,9 @@ New patterns land here, each with a date, when the skill misses a slop pattern i
 **Observed failure:** `application-boilerplate` is an exact-string lexicon, so "I hope this finds you well" fired and "I hope this message finds you well" did not; "I came across your profile" fired and "I came across Northwind" did not. Thirteen common outreach openers and closers scored 0 one by one, and two whole stock messages (a follow-up after silence and a referral ask, from yashasvishailly/job-search-writing-rules, MIT) scored 0 end to end. Cold DMs, follow-ups, and referral asks usually ship without a render gate, so the linter is often the only mechanical check they get.
 
 **Judgment context:** the fix is two regex rules (`outreach-boilerplate`, `permission-hedge`) and a one-free `exclamationDensity`, held to `evals/eval-outreach-patterns.mjs`. Two candidate bans were rejected after scanning a real author's sent letters. "I'd love the chance to talk it through" is his own hand-edited close, so a plain one-sentence statement of interest stays legal; what is a tell is the same closer across many letters, which only a corpus check can see. And the source list's blanket ban on "if", "but", "just", and "I think" would flag ordinary connected prose ("That said", "But" as an opener), the over-correction the restraint section warns against. Only phrases that ask permission to have written are matched.
+
+### 2026-10-31 — 100% on the fixture, 21% outside it
+
+**Observed failure:** a comparison against blader/humanizer, Wikipedia's "Signs of AI writing" and a practitioner's Grok Bot LinkedIn/X filters ran the contrast family over 33 real contrast sentences and caught 7. The fixture still scored 100%, because every regex had been fitted to it. A hyphen inside X broke the headline shape ("It's not just a weight-loss drug, it's…" scored clean; "a weight loss drug" fired). The same pass found human prose failing outright: "Of course, we shipped it on Friday…" was FATAL "Chatbot opener", three sentences opening with "The" cost a strong 3 points, and a word mentioned inside inline code scored as a use. It also found the linter catching 14 of 42 humanizer "before" passages and 8 of 24 Grok items: the staging tells (run-ups, phantom objections, deep sayings, closers, source disclaimers) and every post-specific tell were missing.
+
+**Judgment context:** a fixture you tune against stops measuring once the regexes fit it, so `evals/holdout/` holds real contrast sentences and real human prose that no rule may be tuned against, reported by `evals/eval-holdout.mjs` before and after every change. Three proposals were settled by evidence rather than adopted: `punctVariety` (a low share of ; : ( )) was rejected because a private set of hand-edited human letters used those marks no more often than agent drafts did, so it would flag human style; resetting `anaphora` at blank lines was rejected because identical slide or paragraph openings are a tell, and requiring two matching words after "The" or "This" fixes the "The…" false positive on its own (one- and two-letter starters such as "It" stay excluded, as in 1.x); and bare "Y rather than X" stays unmatched because technical prose uses it constantly. Post-specific rules are genre-gated (`--genre linkedin|x`) so that "Thoughts?" in an email and a one-line paragraph in a memo are untouched.

@@ -10,8 +10,9 @@
  * finds you well", and "I came across your profile" but not "I came across
  * Northwind". Thirteen common outreach clichés each scored 0, and two whole
  * "before" messages (a follow-up after silence and a referral ask) scored 0 end
- * to end. The whole-message HIT cases below are those "before" examples, from
- * yashasvishailly/job-search-writing-rules (before-after.md, MIT License).
+ * to end. The whole-message HIT cases below rebuild those shapes in messages
+ * written for this repo (2026-10-31: the earlier quoted examples were replaced
+ * because their copyright line could not be confirmed).
  *
  * The MISS cases matter more than the HITs. Several of these phrases sit next
  * to ordinary English: "I look forward to the day…" in an essay, "I came across
@@ -118,11 +119,11 @@ miss('exclamation-density', 'markdown image and != are not exclamations', '![dia
 
 // ── Whole "before" messages that previously scored 0 ───────────────────────
 minScore('follow-up after silence (scored 0 before v1.8.0)',
-  'Hi again! Just following up on my previous message in case it got lost. No pressure at all, but I would still love to connect if you have a few minutes. Feel free to let me know either way!', 6);
+  'Hello again! Just checking in on my note from last week in case it got buried. No pressure at all, and feel free to let me know if now is a bad time. Would love to connect if you have a few minutes!', 6);
 minScore('referral ask (scored 0 before v1.8.0)',
-  "Hey! Hope you're doing well. I hope you don't mind me reaching out, but I saw that your company is hiring for a role that I think might be a good fit for me. Would you be able to refer me? I'd really appreciate it!", 6);
+  "Hi Jordan! Hope you're doing well. I hope you don't mind me asking, but your team just posted an analytics role that looks like a match for my background. Would it be possible for you to put my name forward? It would mean a lot!", 6);
 minScore('cold DM (scored 5 before v1.8.0)',
-  "Hi Sarah, I hope this message finds you well! I came across Northwind and I've been following your journey since the seed round. I'm really passionate about ops and I just wanted to reach out. I don't have SaaS experience, but I'm a fast learner and I'd love the chance to chat if you're open to it. Looking forward to hearing from you!", 13);
+  "Hi Priya, I hope this email finds you well! I recently came across Lumen Labs and I've been following your journey since the Series A. I'm deeply passionate about developer tools and I just wanted to reach out. I'm new to the space, but I learn quickly and would love the chance to chat if you're open to it. Looking forward to hearing from you!", 13);
 
 // ── Registration ───────────────────────────────────────────────────────────
 for (const id of ['outreach-boilerplate', 'permission-hedge']) {

@@ -39,18 +39,27 @@ Paste the block from `skills/anti-slop/references/AGENTS-SNIPPET.md` into your
 .claude-plugin/         plugin + marketplace manifests
 skills/anti-slop/       the Agent Skill
 ├── SKILL.md            recipe · negative parallelism · fast catalogue · workflow
-├── data/patterns.mjs   THE canonical pattern source (machine-readable, 77 patterns)
+├── data/patterns.mjs   THE canonical pattern source (machine-readable, 100 patterns)
 ├── references/         pattern catalogue · negative parallelism · genre recipes ·
-│                       detection guide · Codex shim
-└── scripts/slop-lint.mjs   zero-dep Node CLI linter (reads patterns.mjs)
+│                       detection guide · gotchas log · Codex shim
+└── scripts/
+    ├── slop-lint.mjs   zero-dep Node CLI linter (reads patterns.mjs)
+    └── acceptance.mjs  share of a draft the author shipped unchanged
 evals/                  maintainer tooling — not shipped inside the skill
 ├── triggers.md         skill-routing evals (should / should-not trigger)
 ├── check-catalogue.mjs catalogue ↔ pattern-source drift check
 ├── eval-antithesis.mjs contrast-family recall/precision harness
 ├── eval-keep-test.mjs  keep-test disposition contract (+ scoring invariance)
-├── eval-ported-patterns.mjs  v1.7.0 ports: hit/miss + false-positive guards
-├── eval-outreach-patterns.mjs  v1.8.0 outreach rules: hit/miss + false-positive guards
-├── fixtures/           labeled corpus for the harness
+├── eval-ported-patterns.mjs  patterns-v1.7.0 ports: hit/miss + false-positive guards
+├── eval-outreach-patterns.mjs  patterns-v1.8.0 outreach rules: hit/miss + false-positive guards
+├── eval-false-positives.mjs    human-prose guards + the gateScore ship gate
+├── eval-social-genre.mjs       --genre linkedin|x rules vs the Grok Bot items
+├── eval-staging-ports.mjs      humanizer/Wikipedia ports + evaluated re-tiering
+├── eval-tools.mjs              acceptance.mjs and --baseline
+├── eval-holdout.mjs            recall + false positives on text never tuned against
+├── check-release.mjs           SKILL.md word cap, frontmatter, one version everywhere
+├── fixtures/           labeled tuning corpus (contrast family, humanizer, Grok)
+├── holdout/            held-out contrast sentences + real human prose (never tune here)
 └── corpus/             whole-document lint fixtures (slop · clean · fatal · laundered)
 ```
 
@@ -59,13 +68,27 @@ evals/                  maintainer tooling — not shipped inside the skill
 ```bash
 node skills/anti-slop/scripts/slop-lint.mjs draft.md            # human report
 node skills/anti-slop/scripts/slop-lint.mjs draft.md --json     # machine-readable
-node skills/anti-slop/scripts/slop-lint.mjs draft.md --max 2    # exit 1 above ship target
+node skills/anti-slop/scripts/slop-lint.mjs draft.md --max 2    # exit 1 if gateScore > 2
+node skills/anti-slop/scripts/slop-lint.mjs post.md --genre linkedin   # + LinkedIn/X post rules
+node skills/anti-slop/scripts/slop-lint.mjs post.md --baseline samples/ # cadence vs reference posts
+node skills/anti-slop/scripts/acceptance.mjs draft.md sent.md   # how much shipped unchanged
 ```
 
 Findings carry reliability tiers — `fatal` (machine artifacts: placeholders,
 chat leakage — any hit fails), `strong` (structural constructions), `lexical`
 (date-versioned word lists; these decay), `weak` (corroborating only, never
-actionable alone). Score bands: 0–5 low · 6–12 medium · 13+ high; ship target ≤2.
+actionable alone). Score bands: 0–5 low · 6–12 medium · 13+ high. The ship gate
+is `gateScore` ≤2 with zero FATAL: `gateScore` counts fatal, strong and lexical
+points only, so weak findings never block, and `--max` gates on it (since
+2.0.0; before that it gated on the total score).
+
+`--genre linkedin|x` adds rules that are tells only in a post: formula hooks on
+line one, generic closers ("Agree?", "Thoughts?"), fragment runs, three-question
+runs, and more than five hashtags or three emojis. Without the flag they never
+run, because a one-line paragraph or "Thoughts?" is normal elsewhere. The
+hashtag (5) and emoji (3) caps and the no-opening-question hook rule are house
+defaults from one posting guide; change them in `data/patterns.mjs` if your
+venue differs.
 
 The linter is a floor, not the whole pass. Judgment patterns it cannot see (the
 horoscope test, genericness, dead metaphor, voice authenticity) print in a NOT
@@ -102,6 +125,14 @@ See `skills/anti-slop/references/negative-parallelism.md`.
 - Any change to a contrast regex must run `evals/eval-antithesis.mjs` before
   and after. A by-eye coverage check has already missed the family's most
   common shape once.
+- Report `evals/eval-holdout.mjs` before and after every rule change, and never
+  tune against `evals/holdout/`. The contrast family once scored 100% on its own
+  fixture and 21% on outside sentences. To fix a held-out miss, copy it into a
+  tuning fixture and replace it in the holdout with a fresh real sentence.
+- SKILL.md stays under 2,500 words (`evals/check-release.mjs`). Rules in
+  `patterns.mjs` cost no prompt tokens; prose in SKILL.md is read on every use.
+- One version: `META.version`, both manifests and the newest CHANGELOG release
+  must match.
 - Freeing a finding from SCORING never frees it from JUDGMENT. The contrast
   allowance zeroes points but sets `review: 'keep-test'`, counted in
   `result.requiresReview` and printed with its questions inline. Keep the two
@@ -116,9 +147,18 @@ See `skills/anti-slop/references/negative-parallelism.md`.
 node evals/check-catalogue.mjs      # catalogue ↔ pattern source
 node evals/eval-antithesis.mjs      # contrast family: recall + precision
 node evals/eval-keep-test.mjs       # keep-test disposition + scoring invariance
-node evals/eval-ported-patterns.mjs # v1.7.0 ports + their FP guards
-node evals/eval-outreach-patterns.mjs # v1.8.0 outreach rules + their FP guards
+node evals/eval-ported-patterns.mjs # patterns-v1.7.0 ports + their FP guards
+node evals/eval-outreach-patterns.mjs # patterns-v1.8.0 outreach rules + their FP guards
+node evals/eval-false-positives.mjs  # human-prose guards + the gateScore gate
+node evals/eval-social-genre.mjs     # --genre linkedin|x rules
+node evals/eval-staging-ports.mjs    # humanizer/Wikipedia ports + re-tiering
+node evals/eval-tools.mjs            # acceptance.mjs + --baseline
+node evals/eval-holdout.mjs          # held-out recall + human-prose false positives
+node evals/check-release.mjs         # word cap, frontmatter, versions
 ```
+
+`eval-holdout.mjs --human-dir <dir>` also lints a private folder of your own
+writing, reported separately; keep that folder out of this public repo.
 
 Whole-document bands:
 
@@ -138,7 +178,8 @@ added as a labeled case — that is how the pattern set has actually improved.
 
 - **Slop we miss** → add a `KILL` line to `evals/fixtures/negative-parallelism.md`
   (contrast family) or a passage to `evals/corpus/` (anything else).
-- **Good writing we flag** → add a `CLEAN` line. These matter most: a false
+- **Good writing we flag** → add a `CLEAN` line (to the tuning fixture or an
+  eval's MISS cases, never to `evals/holdout/`). These matter most: a false
   positive on real human prose is what drives the over-correction that leaves a
   draft technically clean and voiceless.
 - **A construction that is real but earns its keep** → add a `LEGIT` line.
@@ -158,6 +199,13 @@ Never delete a fixture case to make a change pass.
 - **petergyang/no-ai-slop** (MIT, © 2026 Peter Yang) — the `colon-reveal`,
   `dramatic-fragment`, and `rhetorical-setup` patterns, re-scoped locally to
   reduce false positives.
+- **blader/humanizer** (MIT, © 2025 Siqi Chen) — the 2.0.0 staging lexicons
+  (`staged-runup`, `phantom-objection`, `deep-saying`, `self-narration`), the
+  no-invention rule and two-way fact diff, and the before/after fixtures in
+  `evals/fixtures/humanizer-passages.md`.
+- **A practitioner's published Grok Bot content prompts** — the LinkedIn and X
+  slop items behind the `--genre` rules and `evals/fixtures/grok-items.md`
+  (synthetic sentences; the prompts name items without examples).
 - **tropes.fyi** (Ossama Chaib), **Pangram's guide to spotting AI writing**,
   **Wikipedia:Signs of AI writing**, and Kobak et al.'s excess-vocabulary study
   — primary pattern sources (see per-pattern citations in the catalogue).
@@ -170,4 +218,7 @@ Full third-party notices: [LICENSE](LICENSE).
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE). Third-party text quoted in `evals/fixtures/` and
+`evals/holdout/` keeps its own license (including CC BY-SA 4.0 for Wikipedia)
+and is not covered by the MIT grant; see
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

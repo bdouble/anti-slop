@@ -89,3 +89,44 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+### blader/humanizer
+
+The staging lexicons `staged-runup`, `phantom-objection`, `deep-saying` and
+`self-narration`, the `source-disclaimer` phrasings, and the no-invention rule
+and two-way fact diff in `skills/anti-slop/SKILL.md` are adapted from this
+project (v3.1.0), trimmed locally to reduce false positives (documented
+inline). Its before/after examples are reproduced as test fixtures in
+`evals/fixtures/humanizer-passages.md`.
+
+```
+MIT License
+
+Copyright (c) 2025 Siqi Chen
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+### Evaluation data under other licenses
+
+The MIT grant above does not cover third-party text quoted for testing. Files
+under `evals/fixtures/` and `evals/holdout/` that quote other sources, and
+the quoted strings in the eval scripts, stay under their original licenses
+(including CC BY-SA 4.0 for Wikipedia text). Each source, its copyright, its
+license and the changes made are listed in `THIRD_PARTY_NOTICES.md`.

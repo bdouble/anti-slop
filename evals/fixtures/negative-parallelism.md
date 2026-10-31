@@ -16,6 +16,14 @@ Sources: the ten shapes of the family; the ~10 real instances that motivated the
 
 Append new cases; never delete one to make a change pass.
 
+License: rows written for this repo are MIT. Quoted rows stay under their
+sources' licenses and are NOT covered by the repository's MIT grant: `hz-*`
+rows quote blader/humanizer (MIT, Copyright (c) 2025 Siqi Chen), `wk-*` rows
+quote Wikipedia's "Signs of AI writing" (© Wikipedia contributors, CC BY-SA 4.0,
+https://creativecommons.org/licenses/by-sa/4.0/), and the `caesar` row is
+Shakespeare (public domain). Full notices: `THIRD_PARTY_NOTICES.md` at the
+repo root.
+
 ## Cases
 
 KILL | shape1-additive-a | It's not just a win for the private bank — it's a win for the entire enterprise.
@@ -88,3 +96,66 @@ CLEAN | never-plain | I have never used that library in production.
 CLEAN | just-plain | Just send me the link when it's ready.
 CLEAN | point-plain | The point of the exercise is to find the constraint.
 CLEAN | no-list | No blockers, two risks, one open decision.
+
+## Appended 2026-10-31: external contrast sentences
+
+An internal comparison against blader/humanizer, Wikipedia's "Signs of AI writing" and a practitioner prompt set (2026-10-31) ran the family over 33 contrast sentences
+taken verbatim from humanizer's examples (blader/humanizer, MIT) and Wikipedia's
+"Signs of AI writing" (CC BY-SA 4.0), and caught 7 (21%). They are appended
+here so the misses are pinned. Bare "Y rather than X" sentences from that set
+are left out on purpose: the linter does not match bare "rather than", which is
+ordinary technical English (the corrective "should be treated as X rather than
+Y" form is covered by `corrective-framing` instead). A held-out set that no
+regex is tuned against lives in `evals/holdout/contrast.md`.
+
+KILL | hz-beat | It's not just about the beat riding under the vocals; it's part of the aggression and atmosphere.
+KILL | hz-merely-song | It's not merely a song, it's a statement.
+KILL | hz-does-not-mean | This does not mean every choice is equal. It means there is no external system that confirms which choice is right.
+KILL | hz-hero-feature | It's not just a feature; it's a whole new way to collaborate.
+KILL | hz-lisbon-sights | But what truly makes Lisbon special isn't just the sights — it's the feeling.
+KILL | hz-lisbon-place | Lisbon isn't just a place to visit; it's a place to fall in love with, again and again.
+KILL | wk-not-only-dismissive | This choice of language is not only dismissive but also unnecessarily harsh and confrontational.
+KILL | wk-doesnt-just | This remark doesn't just undermine the editor's argument; it questions their very right to participate.
+KILL | wk-it-only | This approach doesn't help resolve disputes or improve content; it only escalates tensions.
+KILL | wk-are-not-just | These comments are not just dismissive—they're outright disrespectful.
+KILL | wk-you-not-only | By continuing, you not only discourage participation but also damage the collaborative spirit.
+KILL | wk-not-grounded | The viewer is presented with a self-image that is not grounded in visual mastery, but in what Amelia Jones terms performance.
+KILL | wk-rather-sentence | This dispersal is not dissolution. Rather, it constitutes what Deleuze might describe as becoming.
+KILL | wk-mirror-portal | Through this lens, Kusama's self-portrait is not a mirror but a portal.
+KILL | wk-colon-not | It is a portal: not a representation of self, but a mechanism for its constant reinvention.
+KILL | wk-isnt-just-sourcing | The issue here isn't just sourcing—it's framing.
+KILL | wk-thats-not-just | That's not just a sourcing issue—it's a systemic bias.
+KILL | wk-derives-not-only | The film's popularity derives not only from its digital animation, but also from its ability to make a figure meaningful.
+KILL | wk-isnt-wp | This isn't WP:NBIO — it's WP:1EVENT in disguise.
+KILL | wk-not-a-career | Not a career, not a body of work, not sustained relevance — just an algorithmic moment.
+KILL | wk-topic-is-not | The topic is not who feels warm fuzzies from visibility, it's whether this article meets the threshold.
+KILL | wk-aint | This ain't bludgeoning — it's surgical teardown of a weak argument.
+KILL | wk-not-just-but | This requires not just respectful communication, but a genuine focus on resolving issues constructively.
+KILL | wk-isnt-imagining | This isn't imagining what policy should be — it's recognizing how consensus has shaped its application.
+KILL | wk-same-verb | And consensus doesn't grow from silence — it grows from critique, correction, and clarity.
+LEGIT | wk-my-own | If there were any errors in interpretation, they were my own — not mistakes caused by the AI.
+LEGIT | wk-not-because | One of the admins blocked me — not because of the AI usage itself — but because I didn't respond.
+
+Hyphenated compounds inside X broke the headline shape (2026-10-31 bug: the
+first scored clean while "a weight loss drug" without the hyphen was flagged).
+
+KILL | hyphen-weight-loss | It's not just a weight-loss drug, it's a turning point for obesity care.
+KILL | hyphen-real-time | It's not just a real-time dashboard, it's an early-warning system.
+KILL | hyphen-ai-powered | This is not just an AI-powered tool, it's a teammate.
+
+Factual corrections share the shape. They are LEGIT: the reader really may
+believe X, so a human waives them on review.
+
+LEGIT | factual-tokenizer | The bug isn't in the parser; it's in the tokenizer.
+LEGIT | factual-cert | The outage wasn't the deploy; it was an expired certificate.
+LEGIT | factual-same-verb | The script doesn't run on Windows; it runs on macOS and Linux.
+LEGIT | factual-preposition | We met not in Boston but in Chicago.
+
+Guards for the 2026-10-31 shapes: near-misses that must stay clean.
+
+CLEAN | guard-does-not-mean | A green build does not mean the migration ran. Check the row count.
+CLEAN | guard-not-just-yet | Can we ship it today? Not just yet, but Thursday looks likely.
+CLEAN | guard-not-a-but | The vendor was not a fit for us, but the call was useful.
+CLEAN | guard-no-repeat | No coffee, one croissant, and two hours of review.
+CLEAN | guard-doesnt-semicolon | The cron job doesn't retry; we page the on-call engineer instead.
+CLEAN | guard-rather-plain | Duplicate keys override earlier values rather than throwing an error.
